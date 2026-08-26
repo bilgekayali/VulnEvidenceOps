@@ -1,0 +1,47 @@
+{
+  "schema_version": "vulnevidenceops.control-evidence-matrix.v1",
+  "matrix_id": "vulnevidenceops-v0.1-foundation",
+  "controls": [
+    {
+      "control_id": "VEO-INV-001",
+      "objective": "Bind each finding to an external asset reference, source identity and immutable evidence digest.",
+      "required_record_types": ["vulnerability_finding", "evidence_reference"],
+      "framework_references": ["ISO-IEC-27001:2022-A.8.8", "NIST-CSF-2.0-ID.RA-01"]
+    },
+    {
+      "control_id": "VEO-TRI-001",
+      "objective": "Record an accountable and evidence-linked triage disposition.",
+      "required_record_types": ["triage_decision"],
+      "framework_references": ["NIST-CSF-2.0-ID.RA", "NIST-SP-800-40-Rev.4"]
+    },
+    {
+      "control_id": "VEO-REM-001",
+      "objective": "Assign remediation ownership, an action, a due date and a change reference.",
+      "required_record_types": ["remediation_record"],
+      "framework_references": ["ISO-IEC-27001:2022-A.8.8", "NIST-SP-800-40-Rev.4"]
+    },
+    {
+      "control_id": "VEO-ACC-001",
+      "objective": "Keep residual-risk acceptance explicit, evidence-linked, compensated and time bounded.",
+      "required_record_types": ["risk_acceptance"],
+      "framework_references": ["NIST-CSF-2.0-ID.RA", "EU-2022-2554-Article-9"]
+    },
+    {
+      "control_id": "VEO-VER-001",
+      "objective": "Require evidence-linked verification that is independent from the remediation owner.",
+      "required_record_types": ["verification_record"],
+      "framework_references": ["ISO-IEC-27001:2022-A.8.8", "NIST-SP-800-40-Rev.4"]
+    },
+    {
+      "control_id": "VEO-CLS-001",
+      "objective": "Permit closure only after supported disposition or effective independent verification.",
+      "required_record_types": ["triage_decision", "verification_record"],
+      "framework_references": ["NIST-CSF-2.0-ID.RA", "EU-2022-2554-Article-9"]
+    }
+  ],
+  "non_claims": {
+    "automated_compliance_score": false,
+    "framework_applicability_determined": false,
+    "production_control_effectiveness_proven": false
+  }
+}

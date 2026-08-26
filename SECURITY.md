@@ -1,0 +1,9 @@
+# Security policy
+
+Please report suspected vulnerabilities privately through GitHub's security-advisory reporting
+channel when available. Do not open a public issue containing exploit details, credentials,
+production identifiers or confidential evidence.
+
+VulnEvidenceOps is an alpha reference library. It has no scanner, patching, authentication,
+storage or production-enforcement capability. A security report should distinguish a defect in the
+local evidence contract from an out-of-scope production-system claim.

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/assurance-dossier.schema.json",
+  "title": "Vulnerability assurance dossier",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "finding_id", "assessed_at", "input_sha256", "policy_sha256", "lifecycle_state", "assurance_position", "remediation_due_at", "overdue", "gaps", "control_evidence", "evidence_inventory", "non_claims"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.assurance-dossier.v1"},
+    "case_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "assessed_at": {"type": "string", "format": "date-time"},
+    "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lifecycle_state": {"enum": ["detected", "triaged", "verification_pending", "risk_accepted", "revalidation_required", "closed_verified", "closed_dispositioned"]},
+    "assurance_position": {"enum": ["current", "with_gaps", "overdue", "revalidation_required"]},
+    "remediation_due_at": {"type": "string", "format": "date-time"},
+    "overdue": {"type": "boolean"},
+    "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "control_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["control_id", "status", "reason", "evidence_refs"],
+        "properties": {
+          "control_id": {"type": "string", "pattern": "^VEO-[A-Z]{3}-[0-9]{3}$"},
+          "status": {"enum": ["represented", "gap", "not_applicable"]},
+          "reason": {"type": "string", "minLength": 1},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "evidence_inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "artifact_ref", "artifact_sha256", "collected_at", "source_identity", "synthetic"],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "collected_at": {"type": "string", "format": "date-time"},
+          "source_identity": {"type": "string", "minLength": 1},
+          "synthetic": {"type": "boolean"}
+        }
+      }
+    },
+    "non_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_inventory_completeness_established", "production_remediation_established", "regulatory_compliance_established", "residual_risk_acceptability_established", "scanner_completeness_established", "vulnerability_absence_established"],
+      "properties": {
+        "asset_inventory_completeness_established": {"const": false},
+        "production_remediation_established": {"const": false},
+        "regulatory_compliance_established": {"const": false},
+        "residual_risk_acceptability_established": {"const": false},
+        "scanner_completeness_established": {"const": false},
+        "vulnerability_absence_established": {"const": false}
+      }
+    }
+  }
+}

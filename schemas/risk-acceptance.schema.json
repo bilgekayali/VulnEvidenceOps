@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/risk-acceptance.schema.json",
+  "title": "Risk acceptance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "finding_id", "accepted_at", "expires_at", "risk_owner_role", "approver_role", "rationale", "compensating_control_refs", "evidence_refs"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.risk-acceptance.v1"},
+    "decision_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "accepted_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "risk_owner_role": {"type": "string", "minLength": 1},
+    "approver_role": {"type": "string", "minLength": 1},
+    "rationale": {"type": "string", "minLength": 1},
+    "compensating_control_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use VulnEvidenceOps, please cite this software."
+title: "VulnEvidenceOps"
+type: software
+version: 0.1.0
+authors:
+  - family-names: "Kayalı"
+    given-names: "Bilge"
+repository-code: "https://github.com/bilgekayali/VulnEvidenceOps"
+license: Apache-2.0
