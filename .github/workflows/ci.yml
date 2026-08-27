@@ -66,3 +66,12 @@ jobs:
           vulnevidenceops schema \
             schemas/intake-batch.schema.json \
             /tmp/vulnevidenceops-cyclonedx-intake.json
+          vulnevidenceops schema \
+            schemas/exposure-context-bundle.schema.json \
+            examples/synthetic-exposure-context.json
+          vulnevidenceops exposure examples/synthetic-exposure-context.json \
+            --as-of 2026-01-20T00:00:00Z \
+            --output /tmp/vulnevidenceops-exposure-assessment.json
+          vulnevidenceops schema \
+            schemas/exposure-context-assessment.schema.json \
+            /tmp/vulnevidenceops-exposure-assessment.json

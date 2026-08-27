@@ -13,7 +13,7 @@ def test_cli_version_and_digest(capsys):
     with pytest.raises(SystemExit) as captured:
         main(["--version"])
     assert captured.value.code == 0
-    assert capsys.readouterr().out.strip() == "0.2.0"
+    assert capsys.readouterr().out.strip() == "0.3.0"
 
     assert main(["digest-json", str(ROOT / "examples" / "synthetic-policy.json")]) == 0
     assert len(capsys.readouterr().out.strip()) == 64
@@ -57,6 +57,27 @@ def test_cli_assesses_with_default_policy_to_stdout(capsys):
         == 0
     )
     assert json.loads(capsys.readouterr().out)["assurance_position"] == "current"
+
+
+def test_cli_assesses_exposure_context_to_file(tmp_path):
+    output = tmp_path / "exposure-assessment.json"
+    assert (
+        main(
+            [
+                "exposure",
+                str(ROOT / "examples" / "synthetic-exposure-context.json"),
+                "--as-of",
+                "2026-01-20T00:00:00Z",
+                "--output",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    assessment = json.loads(output.read_text(encoding="utf-8"))
+    assert assessment["context_position"] == "current"
+    assert assessment["gaps"] == []
+    assert all(value is False for value in assessment["non_claims"].values())
 
 
 def test_cli_fails_cleanly_for_invalid_case(tmp_path):

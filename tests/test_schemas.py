@@ -10,15 +10,24 @@ from vulnevidenceops import (
     adapt_cyclonedx,
     adapt_sarif,
     assess_case,
+    assess_exposure_context,
     validate_document,
 )
 
-from .helpers import ROOT, case, case_document, policy, policy_document
+from .helpers import (
+    ROOT,
+    case,
+    case_document,
+    exposure_bundle,
+    exposure_document,
+    policy,
+    policy_document,
+)
 
 
 def test_every_public_schema_is_draft_2020_12_and_well_formed():
     schemas = sorted((ROOT / "schemas").glob("*.schema.json"))
-    assert len(schemas) == 12
+    assert len(schemas) == 16
     for path in schemas:
         schema = json.loads(path.read_text(encoding="utf-8"))
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -81,3 +90,27 @@ def test_generated_intake_batches_validate_against_the_public_schema():
     schema = ROOT / "schemas" / "intake-batch.schema.json"
     validate_document(schema, sarif.to_dict())
     validate_document(schema, cyclonedx.to_dict())
+
+
+def test_exposure_example_and_generated_assessment_validate():
+    document = exposure_document()
+    validate_document(
+        ROOT / "schemas" / "exposure-context-bundle.schema.json",
+        document,
+    )
+    validate_document(
+        ROOT / "schemas" / "exploit-intelligence.schema.json",
+        document["exploit_intelligence"][0],
+    )
+    validate_document(
+        ROOT / "schemas" / "business-criticality.schema.json",
+        document["business_criticality"][0],
+    )
+    assessment = assess_exposure_context(
+        exposure_bundle(),
+        assessed_at="2026-01-20T00:00:00Z",
+    )
+    validate_document(
+        ROOT / "schemas" / "exposure-context-assessment.schema.json",
+        assessment.to_dict(),
+    )

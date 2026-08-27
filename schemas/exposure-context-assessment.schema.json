@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/exposure-context-assessment.schema.json",
+  "title": "Exposure context assessment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "context_id", "finding_id", "asset_ref", "assessed_at", "input_sha256", "context_position", "exploit_intelligence", "business_criticality", "gaps", "evidence_inventory", "non_claims"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.exposure-context-assessment.v1"},
+    "context_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "asset_ref": {"type": "string", "minLength": 1},
+    "assessed_at": {"type": "string", "format": "date-time"},
+    "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "context_position": {"enum": ["current", "partial", "stale", "unavailable", "with_gaps"]},
+    "exploit_intelligence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["intelligence_id", "technical_identifier", "signal", "source_identity", "source_ref", "asserted_at", "valid_until", "statement", "currentness", "evidence_refs"],
+        "properties": {
+          "intelligence_id": {"type": "string", "minLength": 1},
+          "technical_identifier": {"type": "string", "minLength": 1},
+          "signal": {"enum": ["active_exploitation_reported", "known_exploited_catalogued", "no_exploitation_signal_reported", "proof_of_concept_reported", "public_exploit_reported", "unknown"]},
+          "source_identity": {"type": "string", "minLength": 1},
+          "source_ref": {"type": "string", "minLength": 1},
+          "asserted_at": {"type": "string", "format": "date-time"},
+          "valid_until": {"type": "string", "format": "date-time"},
+          "statement": {"type": "string", "minLength": 1},
+          "currentness": {"enum": ["current", "evidence_future", "evidence_missing", "evidence_source_mismatch", "evidence_unlinked", "expired", "future"]},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "business_criticality": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["classification_id", "business_service_ref", "criticality", "accountable_role", "source_identity", "source_ref", "classified_at", "valid_until", "rationale", "currentness", "evidence_refs"],
+        "properties": {
+          "classification_id": {"type": "string", "minLength": 1},
+          "business_service_ref": {"type": "string", "minLength": 1},
+          "criticality": {"enum": ["business_critical", "business_supporting", "mission_critical", "non_critical", "unclassified"]},
+          "accountable_role": {"type": "string", "minLength": 1},
+          "source_identity": {"type": "string", "minLength": 1},
+          "source_ref": {"type": "string", "minLength": 1},
+          "classified_at": {"type": "string", "format": "date-time"},
+          "valid_until": {"type": "string", "format": "date-time"},
+          "rationale": {"type": "string", "minLength": 1},
+          "currentness": {"enum": ["current", "evidence_future", "evidence_missing", "evidence_source_mismatch", "evidence_unlinked", "expired", "future"]},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "evidence_inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "artifact_ref", "artifact_sha256", "media_type", "collected_at", "source_identity", "synthetic"],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "media_type": {"type": "string", "minLength": 1},
+          "collected_at": {"type": "string", "format": "date-time"},
+          "source_identity": {"type": "string", "minLength": 1},
+          "synthetic": {"type": "boolean"}
+        }
+      }
+    },
+    "non_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["autonomous_prioritization_established", "business_impact_established", "exploitability_established", "remediation_sla_established", "risk_score_established", "source_assertion_truth_established"],
+      "properties": {
+        "autonomous_prioritization_established": {"const": false},
+        "business_impact_established": {"const": false},
+        "exploitability_established": {"const": false},
+        "remediation_sla_established": {"const": false},
+        "risk_score_established": {"const": false},
+        "source_assertion_truth_established": {"const": false}
+      }
+    }
+  }
+}

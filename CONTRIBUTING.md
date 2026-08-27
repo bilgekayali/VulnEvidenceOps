@@ -8,6 +8,8 @@ Contributions must preserve the repository's evidence-only, non-operating bounda
 4. Run `ruff check .`, `pytest` and `python tools/release_contract.py --emit --verify`.
 5. Keep all examples synthetic and pass `synthetic=true` for generated evidence records.
 6. Adapter changes must preserve one mapping per candidate record or fail the whole batch.
+7. Exposure assertions must retain source identity, evidence linkage and explicit expiry; they
+   must not introduce autonomous scores, priorities or SLA decisions.
 
 Do not commit real hostnames, IP addresses, credentials, customer identifiers, proprietary scanner
 exports, exploit payloads or confidential vulnerability evidence. Framework mappings must remain

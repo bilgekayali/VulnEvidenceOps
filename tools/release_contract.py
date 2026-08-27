@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v0.2 release contract."""
+"""Emit and verify the VulnEvidenceOps v0.3 release contract."""
 
 from __future__ import annotations
 
@@ -21,7 +21,9 @@ EXAMPLE = ROOT / "examples" / "synthetic-case.json"
 POLICY = ROOT / "examples" / "synthetic-policy.json"
 SARIF_EXAMPLE = ROOT / "examples" / "synthetic-sarif.json"
 CYCLONEDX_EXAMPLE = ROOT / "examples" / "synthetic-cyclonedx.json"
+EXPOSURE_EXAMPLE = ROOT / "examples" / "synthetic-exposure-context.json"
 INTAKE_MODULE = ROOT / "src" / "vulnevidenceops" / "intake.py"
+EXPOSURE_MODULE = ROOT / "src" / "vulnevidenceops" / "exposure.py"
 WORKFLOWS = ROOT / ".github" / "workflows"
 _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 _USES = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
@@ -124,6 +126,31 @@ def _intake_adapters() -> dict[str, object]:
     }
 
 
+def _exposure_context() -> dict[str, object]:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops.exposure import (
+        CONTEXT_POSITIONS,
+        CURRENTNESS_STATES,
+        EXPOSURE_CONTEXT_CONTRACT,
+    )
+
+    entries = [
+        {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in (EXPOSURE_MODULE, EXPOSURE_EXAMPLE)
+    ]
+    return {
+        "context_positions": sorted(CONTEXT_POSITIONS),
+        "contract": EXPOSURE_CONTEXT_CONTRACT,
+        "currentness_states": sorted(CURRENTNESS_STATES),
+        "example_count": 1,
+        "sha256": _sha(entries),
+    }
+
+
 def compute() -> dict[str, dict[str, object]]:
     return {
         "public_api": _public_api(),
@@ -131,6 +158,7 @@ def compute() -> dict[str, dict[str, object]]:
         "control_matrix": _control_matrix(),
         "synthetic_example": _synthetic_example(),
         "intake_adapters": _intake_adapters(),
+        "exposure_context": _exposure_context(),
     }
 
 
@@ -221,6 +249,37 @@ def _verify_intake_examples() -> None:
             raise SystemExit("intake non-claims must remain explicit false values")
 
 
+def _verify_exposure_example() -> None:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops import (
+        ExposureContextBundle,
+        assess_exposure_context,
+        validate_document,
+    )
+
+    example = _json(EXPOSURE_EXAMPLE)
+    validate_document(SCHEMA_DIR / "exposure-context-bundle.schema.json", example)
+    for record in example["exploit_intelligence"]:
+        validate_document(SCHEMA_DIR / "exploit-intelligence.schema.json", record)
+    for record in example["business_criticality"]:
+        validate_document(SCHEMA_DIR / "business-criticality.schema.json", record)
+    assessment = assess_exposure_context(
+        ExposureContextBundle.from_dict(example),
+        assessed_at="2026-01-20T00:00:00Z",
+    ).to_dict()
+    validate_document(
+        SCHEMA_DIR / "exposure-context-assessment.schema.json",
+        assessment,
+    )
+    if assessment["context_position"] != "current" or assessment["gaps"]:
+        raise SystemExit("synthetic exposure context must be current with no gaps")
+    if any(assessment["non_claims"].values()):
+        raise SystemExit("exposure non-claims must remain explicit false values")
+    if any(item.get("synthetic") is not True for item in example["evidence_catalog"]):
+        raise SystemExit("committed exposure evidence must be explicitly synthetic")
+
+
 def verify() -> dict[str, dict[str, object]]:
     manifest = _json(MANIFEST)
     computed = compute()
@@ -230,14 +289,14 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "0.2.0":
-        raise SystemExit("package and release-contract versions must equal 0.2.0")
+    ) != "0.3.0":
+        raise SystemExit("package and release-contract versions must equal 0.3.0")
     if manifest.get("release_stage") != "alpha-reference":
-        raise SystemExit("v0.2 release stage must remain alpha-reference")
+        raise SystemExit("v0.3 release stage must remain alpha-reference")
     if "Development Status :: 3 - Alpha" not in project.get("classifiers", []):
-        raise SystemExit("v0.2 package classifier must remain Alpha")
+        raise SystemExit("v0.3 package classifier must remain Alpha")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v0.2 contract")
+        raise SystemExit("console-script surface differs from the v0.3 contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
@@ -245,7 +304,7 @@ def verify() -> dict[str, dict[str, object]]:
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
     if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v0.2 source promotion boundary was removed")
+        raise SystemExit("v0.3 source promotion boundary was removed")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -264,6 +323,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "SECURITY.md",
         ROOT / "docs" / "ARCHITECTURE.md",
         ROOT / "docs" / "CONTROL_EVIDENCE_MATRIX.md",
+        ROOT / "docs" / "EXPOSURE_CONTEXT.md",
         ROOT / "docs" / "INTAKE_ADAPTERS.md",
         ROOT / "docs" / "ROADMAP.md",
         ROOT / "docs" / "RELEASE_PROCESS.md",
@@ -277,12 +337,13 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*0\.2\.0\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*0\.3\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()
     _verify_examples()
     _verify_intake_examples()
+    _verify_exposure_example()
     return computed
 
 

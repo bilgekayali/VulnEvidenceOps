@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/exposure-context-bundle.schema.json",
+  "title": "Exposure context bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "context_id", "finding", "evidence_catalog", "exploit_intelligence", "business_criticality"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.exposure-context-bundle.v1"},
+    "context_id": {"type": "string", "minLength": 1},
+    "finding": {"$ref": "https://schemas.vulnevidenceops.dev/v1/vulnerability-finding.schema.json"},
+    "evidence_catalog": {
+      "type": "array",
+      "items": {"$ref": "https://schemas.vulnevidenceops.dev/v1/evidence-reference.schema.json"}
+    },
+    "exploit_intelligence": {
+      "type": "array",
+      "items": {"$ref": "https://schemas.vulnevidenceops.dev/v1/exploit-intelligence.schema.json"}
+    },
+    "business_criticality": {
+      "type": "array",
+      "items": {"$ref": "https://schemas.vulnevidenceops.dev/v1/business-criticality.schema.json"}
+    }
+  }
+}

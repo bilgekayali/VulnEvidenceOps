@@ -1,6 +1,6 @@
 # Release process
 
-The committed `0.2.0` version is an alpha source boundary. It does not imply a Git tag, GitHub
+The committed `0.3.0` version is an alpha source boundary. It does not imply a Git tag, GitHub
 Release, package publication or deployment.
 
 A release candidate must pass on the exact candidate SHA:
@@ -10,8 +10,8 @@ A release candidate must pass on the exact candidate SHA:
 3. `python tools/release_contract.py --emit --verify`;
 4. deterministic direct-dependency CycloneDX generation;
 5. wheel build and clean-environment CLI assessment;
-6. clean-wheel SARIF and CycloneDX intake smoke tests;
+6. clean-wheel SARIF, CycloneDX and exposure-context smoke tests;
 7. human review of the explicit non-claims and synthetic-data boundary.
 
 Tagging and GitHub Release creation require a separate human decision after the exact merged
-`main` SHA has passed the same gates. Package publication and deployment are not part of v0.2.
+`main` SHA has passed the same gates. Package publication and deployment are not part of v0.3.
