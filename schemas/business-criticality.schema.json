@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/business-criticality.schema.json",
+  "title": "Business-service criticality assertion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification_id", "asset_ref", "business_service_ref", "criticality", "accountable_role", "source_identity", "source_ref", "classified_at", "valid_until", "rationale", "evidence_refs"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.business-criticality.v1"},
+    "classification_id": {"type": "string", "minLength": 1},
+    "asset_ref": {"type": "string", "minLength": 1},
+    "business_service_ref": {"type": "string", "minLength": 1},
+    "criticality": {"enum": ["business_critical", "business_supporting", "mission_critical", "non_critical", "unclassified"]},
+    "accountable_role": {"type": "string", "minLength": 1},
+    "source_identity": {"type": "string", "minLength": 1},
+    "source_ref": {"type": "string", "minLength": 1},
+    "classified_at": {"type": "string", "format": "date-time"},
+    "valid_until": {"type": "string", "format": "date-time"},
+    "rationale": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

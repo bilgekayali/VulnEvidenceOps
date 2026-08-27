@@ -11,11 +11,12 @@ from typing import Any
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
 from .canonical import sha256_digest
+from .exposure import ExposureContextBundle, assess_exposure_context
 from .intake import adapt_cyclonedx, adapt_sarif
 from .models import VulnerabilityCase, VulnerabilityPolicy
 from .schema import DocumentValidationError, validate_document
 
-STABLE_CLI_COMMANDS = ("assess", "digest-json", "intake", "schema")
+STABLE_CLI_COMMANDS = ("assess", "digest-json", "exposure", "intake", "schema")
 
 
 def _read_json(path: Path) -> Any:
@@ -72,6 +73,14 @@ def _parser() -> argparse.ArgumentParser:
     assess.add_argument("--policy", type=Path)
     assess.add_argument("--as-of", required=True)
     assess.add_argument("--output", type=Path)
+
+    exposure = commands.add_parser(
+        "exposure",
+        help="Assess evidence-backed exploit and business context currentness.",
+    )
+    exposure.add_argument("bundle", type=Path)
+    exposure.add_argument("--as-of", required=True)
+    exposure.add_argument("--output", type=Path)
     return parser
 
 
@@ -123,6 +132,11 @@ def main(argv: list[str] | None = None) -> int:
             )
             dossier = assess_case(case, assessed_at=args.as_of, policy=policy)
             _write_json(dossier.to_dict(), args.output)
+            return 0
+        if args.command == "exposure":
+            bundle = ExposureContextBundle.from_dict(_read_json(args.bundle))
+            assessment = assess_exposure_context(bundle, assessed_at=args.as_of)
+            _write_json(assessment.to_dict(), args.output)
             return 0
     except (DocumentValidationError, KeyError, TypeError, ValueError) as exc:
         raise SystemExit(str(exc)) from exc

@@ -10,7 +10,7 @@
 
 ## Primary threats
 
-| Threat | v0.2 response | Residual boundary |
+| Threat | v0.3 response | Residual boundary |
 |---|---|---|
 | Evidence substitution | Exact SHA-256 artifact digest and opaque evidence ID | External artifact authenticity and custody |
 | Finding relabelling | Immutable finding, asset and source references | External inventory correctness |
@@ -23,6 +23,10 @@
 | Silent adapter omission | Every candidate result or vulnerability-affect pair maps or the batch fails | Upstream export completeness |
 | Severity translation drift | Fixed, versioned mapping rules and explicit fallback notices | Source severity correctness |
 | Source-record substitution | Artifact, canonical document and source-record digests plus JSON Pointers | External custody and authenticity |
+| Stale context treated as current | Explicit assertion expiry and evidence collection-time checks | Trusted external time and refresh cadence |
+| Context-source substitution | Assertion and evidence source identities must match | Real source identity and authenticity |
+| Conflicting context hidden | Concurrent contradictory exploit or criticality assertions become explicit gaps | Human source adjudication |
+| Context converted into an implicit decision | No score, priority, SLA or business-impact output; explicit false non-claims | Downstream use and human governance |
 
 ## Trust assumptions
 

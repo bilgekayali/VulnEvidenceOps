@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.2.0 — Alpha Intake & Governance Reference**.
+Current package boundary: **VulnEvidenceOps v0.3.0 — Alpha Exposure Context Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.2.0 — Alpha Intake & Governance
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.2 scope
+## v0.3 scope
 
 The initial boundary provides:
 
@@ -39,6 +39,15 @@ The v0.2 intake boundary additionally provides:
 - explicit, caller-supplied asset/source references and observation time;
 - fail-closed handling of unsupported versions and incomplete candidate records.
 
+The v0.3 exposure-context boundary adds:
+
+- time-bounded exploit-intelligence assertions tied to finding technical identifiers;
+- accountable business-criticality assertions tied to finding asset references;
+- explicit source identities, source references and evidence references for every assertion;
+- deterministic currentness states for missing, unlinked, mismatched, future or expired evidence;
+- distinct `current`, `partial`, `stale`, `unavailable` and `with_gaps` context positions;
+- visible conflict gaps without selecting a preferred source or computing a risk score.
+
 ## Portfolio boundary
 
 | Repository | Primary ownership |
@@ -47,7 +56,7 @@ The v0.2 intake boundary additionally provides:
 | DORAOps | ICT operational resilience, incidents, testing, continuity and third-party evidence |
 | ModelRiskOps | Model/AI inventory, validation, monitoring, change and deployment-governance evidence |
 | ai-threat-detection-framework | Synthetic AI-assisted alert scoring and evaluation evidence |
-| **VulnEvidenceOps** | Vulnerability finding, triage, acceptance, remediation, verification and closure evidence |
+| **VulnEvidenceOps** | Vulnerability finding, exposure context, decisions, remediation and closure evidence |
 
 VulnEvidenceOps links to external assets, controls, changes and tickets through opaque references.
 It does not duplicate enterprise inventory, incident management, BCM, TPRM, model governance or
@@ -82,6 +91,9 @@ vulnevidenceops intake sarif examples/synthetic-sarif.json \
   --source-ref synthetic-source:export-001 \
   --asset-ref synthetic-asset:repository-001 \
   --synthetic
+
+vulnevidenceops exposure examples/synthetic-exposure-context.json \
+  --as-of 2026-01-20T00:00:00Z
 ```
 
 ## Standards posture
@@ -98,6 +110,8 @@ VulnEvidenceOps does **not** by itself establish:
 - CVE, CWE, CVSS, vendor-advisory or scanner accuracy;
 - source-artifact authenticity or full upstream-format conformance;
 - source severity, asset identity or finding validity merely because an adapter mapped it;
+- exploitability, business impact, source truth, remediation priority or an SLA merely because
+  an exposure-context assertion is current;
 - successful patching, mitigation or production verification;
 - acceptable residual risk or valid accountable authority;
 - ISO, NIST, DORA or other legal/regulatory compliance;
@@ -110,6 +124,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Architecture](docs/ARCHITECTURE.md)
 - [Control/evidence matrix](docs/CONTROL_EVIDENCE_MATRIX.md)
 - [Intake adapters](docs/INTAKE_ADAPTERS.md)
+- [Exposure context](docs/EXPOSURE_CONTEXT.md)
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)

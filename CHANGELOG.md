@@ -2,7 +2,15 @@
 
 All notable source releases are documented here.
 
-## 0.2.0 - Unreleased
+## 0.3.0 - Unreleased
+
+- Added evidence-backed, time-bounded exploit-intelligence assertions.
+- Added accountable asset-to-business-service criticality assertions.
+- Added deterministic currentness, conflict and context-availability assessment.
+- Added public exposure-context schemas, CLI operation, synthetic example and release gates.
+- Preserved explicit non-claims for scoring, priority, exploitability and business impact.
+
+## 0.2.0 - 2026-08-27 (source promotion)
 
 - Added strict SARIF 2.1.0 and CycloneDX 1.5/1.6 JSON intake adapters.
 - Added digest-bound intake batches and per-finding source mapping records.

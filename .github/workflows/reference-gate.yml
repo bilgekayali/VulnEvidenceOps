@@ -58,5 +58,10 @@ jobs:
             --asset-ref-prefix synthetic-component: \
             --synthetic \
             --output /tmp/vulnevidenceops-clean-cyclonedx-intake.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops exposure \
+            examples/synthetic-exposure-context.json \
+            --as-of 2026-01-20T00:00:00Z \
+            --output /tmp/vulnevidenceops-clean-exposure-assessment.json
           test -s /tmp/vulnevidenceops-clean-sarif-intake.json
           test -s /tmp/vulnevidenceops-clean-cyclonedx-intake.json
+          test -s /tmp/vulnevidenceops-clean-exposure-assessment.json

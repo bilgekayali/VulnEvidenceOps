@@ -1,0 +1,68 @@
+{
+  "schema_version": "vulnevidenceops.exposure-context-bundle.v1",
+  "context_id": "CTX-SYNTH-001",
+  "finding": {
+    "schema_version": "vulnevidenceops.vulnerability-finding.v1",
+    "finding_id": "FIND-SYNTH-001",
+    "asset_ref": "synthetic-asset:web-001",
+    "source_ref": "synthetic-scanner:reference-v1",
+    "title": "Synthetic input-validation weakness",
+    "severity": "high",
+    "first_observed_at": "2026-01-01T00:00:00Z",
+    "technical_identifiers": ["CVE-2099-0001", "CWE-79"],
+    "evidence_refs": ["EVD-SYNTH-OBS-001"]
+  },
+  "evidence_catalog": [
+    {
+      "schema_version": "vulnevidenceops.evidence-reference.v1",
+      "evidence_id": "EVD-SYNTH-EXP-001",
+      "artifact_ref": "synthetic://intelligence/exploit-001.json",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "media_type": "application/json",
+      "collected_at": "2026-01-05T00:00:00Z",
+      "source_identity": "synthetic-intelligence:reference-v1",
+      "synthetic": true
+    },
+    {
+      "schema_version": "vulnevidenceops.evidence-reference.v1",
+      "evidence_id": "EVD-SYNTH-BIZ-001",
+      "artifact_ref": "synthetic://service-catalog/classification-001.json",
+      "artifact_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "media_type": "application/json",
+      "collected_at": "2026-01-03T00:00:00Z",
+      "source_identity": "synthetic-service-catalog:reference-v1",
+      "synthetic": true
+    }
+  ],
+  "exploit_intelligence": [
+    {
+      "schema_version": "vulnevidenceops.exploit-intelligence.v1",
+      "intelligence_id": "EXP-SYNTH-001",
+      "finding_id": "FIND-SYNTH-001",
+      "technical_identifier": "CVE-2099-0001",
+      "signal": "known_exploited_catalogued",
+      "source_identity": "synthetic-intelligence:reference-v1",
+      "source_ref": "synthetic-intelligence:catalog-entry-001",
+      "asserted_at": "2026-01-05T00:00:00Z",
+      "valid_until": "2026-07-05T00:00:00Z",
+      "statement": "Synthetic catalogue reports the reference identifier as known exploited.",
+      "evidence_refs": ["EVD-SYNTH-EXP-001"]
+    }
+  ],
+  "business_criticality": [
+    {
+      "schema_version": "vulnevidenceops.business-criticality.v1",
+      "classification_id": "BIZ-SYNTH-001",
+      "asset_ref": "synthetic-asset:web-001",
+      "business_service_ref": "synthetic-service:customer-portal",
+      "criticality": "business_critical",
+      "accountable_role": "synthetic-service-owner",
+      "source_identity": "synthetic-service-catalog:reference-v1",
+      "source_ref": "synthetic-service-catalog:classification-001",
+      "classified_at": "2026-01-03T00:00:00Z",
+      "valid_until": "2027-01-03T00:00:00Z",
+      "rationale": "Synthetic customer-facing service classification for contract testing.",
+      "evidence_refs": ["EVD-SYNTH-BIZ-001"]
+    }
+  ]
+}
