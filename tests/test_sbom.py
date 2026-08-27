@@ -8,7 +8,7 @@ def test_sbom_binds_package_and_direct_dependencies():
 
     assert sbom["bomFormat"] == "CycloneDX"
     assert sbom["specVersion"] == "1.5"
-    assert sbom["metadata"]["component"]["version"] == "0.1.0"
+    assert sbom["metadata"]["component"]["version"] == "0.2.0"
     assert [item["name"] for item in sbom["components"]] == list(DIRECT_RUNTIME_DEPENDENCIES)
 
 

@@ -1,0 +1,51 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:00000000-0000-4000-8000-000000000001",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-01-05T00:00:00Z",
+    "component": {
+      "type": "application",
+      "bom-ref": "synthetic-app",
+      "name": "synthetic-application",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/synthetic-a@1.0.0",
+      "name": "synthetic-a",
+      "version": "1.0.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/synthetic-b@2.0.0",
+      "name": "synthetic-b",
+      "version": "2.0.0"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "CVE-2099-0002",
+      "source": {"name": "Synthetic Advisory Source"},
+      "ratings": [
+        {"severity": "high"},
+        {"severity": "critical"}
+      ],
+      "cwes": [79],
+      "description": "Synthetic dependency input-validation weakness",
+      "affects": [
+        {"ref": "pkg:pypi/synthetic-a@1.0.0"},
+        {"ref": "pkg:pypi/synthetic-b@2.0.0"}
+      ]
+    },
+    {
+      "id": "SYNTH-ADVISORY-0001",
+      "ratings": [{"severity": "unknown"}],
+      "detail": "Synthetic advisory with intentionally unmapped severity",
+      "affects": [{"ref": "pkg:pypi/synthetic-b@2.0.0"}]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Synthetic SAST Reference",
+          "rules": [
+            {
+              "id": "SYNTH-RULE-001",
+              "defaultConfiguration": {"level": "error"}
+            },
+            {
+              "id": "SYNTH-RULE-002",
+              "defaultConfiguration": {"level": "warning"}
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "SYNTH-RULE-001",
+          "level": "error",
+          "message": {"text": "Synthetic unsafe data-flow observation"},
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {"uri": "synthetic/source.py"}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "SYNTH-RULE-002",
+          "message": {"markdown": "Synthetic **configuration** observation"},
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {"uri": "synthetic/config.yml"}
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

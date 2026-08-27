@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v0.1 release contract."""
+"""Emit and verify the VulnEvidenceOps v0.2 release contract."""
 
 from __future__ import annotations
 
@@ -19,6 +19,9 @@ SCHEMA_DIR = ROOT / "schemas"
 MATRIX = ROOT / "configs" / "control-evidence-matrix.json"
 EXAMPLE = ROOT / "examples" / "synthetic-case.json"
 POLICY = ROOT / "examples" / "synthetic-policy.json"
+SARIF_EXAMPLE = ROOT / "examples" / "synthetic-sarif.json"
+CYCLONEDX_EXAMPLE = ROOT / "examples" / "synthetic-cyclonedx.json"
+INTAKE_MODULE = ROOT / "src" / "vulnevidenceops" / "intake.py"
 WORKFLOWS = ROOT / ".github" / "workflows"
 _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 _USES = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
@@ -101,12 +104,33 @@ def _synthetic_example() -> dict[str, object]:
     }
 
 
+def _intake_adapters() -> dict[str, object]:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops.intake import INTAKE_ADAPTER_VERSION, SUPPORTED_INTAKE_FORMATS
+
+    entries = [
+        {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in (INTAKE_MODULE, CYCLONEDX_EXAMPLE, SARIF_EXAMPLE)
+    ]
+    return {
+        "adapter_contract": INTAKE_ADAPTER_VERSION,
+        "example_count": 2,
+        "formats": list(SUPPORTED_INTAKE_FORMATS),
+        "sha256": _sha(entries),
+    }
+
+
 def compute() -> dict[str, dict[str, object]]:
     return {
         "public_api": _public_api(),
         "schema_set": _schema_set(),
         "control_matrix": _control_matrix(),
         "synthetic_example": _synthetic_example(),
+        "intake_adapters": _intake_adapters(),
     }
 
 
@@ -154,6 +178,49 @@ def _verify_examples() -> None:
         raise SystemExit("assessor control IDs differ from the control/evidence matrix")
 
 
+def _verify_intake_examples() -> None:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops import adapt_cyclonedx, adapt_sarif, validate_document
+
+    common = {
+        "collected_at": "2026-01-05T00:00:00Z",
+        "observed_at": "2026-01-04T00:00:00Z",
+        "source_identity": "synthetic-source:reference-v1",
+        "source_ref": "synthetic-source:export-001",
+        "synthetic": True,
+    }
+    sarif_raw = SARIF_EXAMPLE.read_bytes()
+    cyclonedx_raw = CYCLONEDX_EXAMPLE.read_bytes()
+    batches = [
+        adapt_sarif(
+            _json(SARIF_EXAMPLE),
+            artifact_ref="synthetic://intake/sarif.json",
+            artifact_sha256=hashlib.sha256(sarif_raw).hexdigest(),
+            asset_ref="synthetic-asset:repository-001",
+            **common,
+        ),
+        adapt_cyclonedx(
+            _json(CYCLONEDX_EXAMPLE),
+            artifact_ref="synthetic://intake/cyclonedx.json",
+            artifact_sha256=hashlib.sha256(cyclonedx_raw).hexdigest(),
+            asset_ref_prefix="synthetic-component:",
+            **common,
+        ),
+    ]
+    if [len(batch.findings) for batch in batches] != [2, 3]:
+        raise SystemExit("synthetic intake examples have unexpected mapping cardinality")
+    for batch in batches:
+        document = batch.to_dict()
+        validate_document(SCHEMA_DIR / "intake-batch.schema.json", document)
+        if batch.source_artifact.synthetic is not True:
+            raise SystemExit("committed intake evidence must be explicitly synthetic")
+        if len(batch.findings) != len(batch.mappings):
+            raise SystemExit("every synthetic intake finding must have one source mapping")
+        if any(document["non_claims"].values()):
+            raise SystemExit("intake non-claims must remain explicit false values")
+
+
 def verify() -> dict[str, dict[str, object]]:
     manifest = _json(MANIFEST)
     computed = compute()
@@ -163,14 +230,14 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "0.1.0":
-        raise SystemExit("package and release-contract versions must equal 0.1.0")
+    ) != "0.2.0":
+        raise SystemExit("package and release-contract versions must equal 0.2.0")
     if manifest.get("release_stage") != "alpha-reference":
-        raise SystemExit("v0.1 release stage must remain alpha-reference")
+        raise SystemExit("v0.2 release stage must remain alpha-reference")
     if "Development Status :: 3 - Alpha" not in project.get("classifiers", []):
-        raise SystemExit("v0.1 package classifier must remain Alpha")
+        raise SystemExit("v0.2 package classifier must remain Alpha")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v0.1 contract")
+        raise SystemExit("console-script surface differs from the v0.2 contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
@@ -178,7 +245,7 @@ def verify() -> dict[str, dict[str, object]]:
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
     if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v0.1 source promotion boundary was removed")
+        raise SystemExit("v0.2 source promotion boundary was removed")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -197,6 +264,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "SECURITY.md",
         ROOT / "docs" / "ARCHITECTURE.md",
         ROOT / "docs" / "CONTROL_EVIDENCE_MATRIX.md",
+        ROOT / "docs" / "INTAKE_ADAPTERS.md",
         ROOT / "docs" / "ROADMAP.md",
         ROOT / "docs" / "RELEASE_PROCESS.md",
         ROOT / "docs" / "SECURITY_BOUNDARY.md",
@@ -209,11 +277,12 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*0\.1\.0\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*0\.2\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()
     _verify_examples()
+    _verify_intake_examples()
     return computed
 
 

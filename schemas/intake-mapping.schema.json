@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/intake-mapping.schema.json",
+  "title": "Intake source mapping",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mapping_id", "finding_id", "source_record_refs", "source_record_sha256", "mapped_fields", "notices"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.intake-mapping.v1"},
+    "mapping_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "source_record_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "mapped_fields": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "notices": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
