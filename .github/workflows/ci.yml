@@ -42,3 +42,27 @@ jobs:
           vulnevidenceops schema \
             schemas/assurance-dossier.schema.json \
             /tmp/vulnevidenceops-dossier.json
+          vulnevidenceops intake sarif examples/synthetic-sarif.json \
+            --artifact-ref synthetic://intake/sarif.json \
+            --collected-at 2026-01-05T00:00:00Z \
+            --observed-at 2026-01-04T00:00:00Z \
+            --source-identity synthetic-source:reference-v1 \
+            --source-ref synthetic-source:export-001 \
+            --asset-ref synthetic-asset:repository-001 \
+            --synthetic \
+            --output /tmp/vulnevidenceops-sarif-intake.json
+          vulnevidenceops schema \
+            schemas/intake-batch.schema.json \
+            /tmp/vulnevidenceops-sarif-intake.json
+          vulnevidenceops intake cyclonedx examples/synthetic-cyclonedx.json \
+            --artifact-ref synthetic://intake/cyclonedx.json \
+            --collected-at 2026-01-05T00:00:00Z \
+            --observed-at 2026-01-04T00:00:00Z \
+            --source-identity synthetic-source:reference-v1 \
+            --source-ref synthetic-source:export-001 \
+            --asset-ref-prefix synthetic-component: \
+            --synthetic \
+            --output /tmp/vulnevidenceops-cyclonedx-intake.json
+          vulnevidenceops schema \
+            schemas/intake-batch.schema.json \
+            /tmp/vulnevidenceops-cyclonedx-intake.json

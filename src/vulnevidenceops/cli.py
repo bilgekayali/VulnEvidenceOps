@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -10,14 +11,20 @@ from typing import Any
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
 from .canonical import sha256_digest
+from .intake import adapt_cyclonedx, adapt_sarif
 from .models import VulnerabilityCase, VulnerabilityPolicy
 from .schema import DocumentValidationError, validate_document
 
-STABLE_CLI_COMMANDS = ("assess", "digest-json", "schema")
+STABLE_CLI_COMMANDS = ("assess", "digest-json", "intake", "schema")
 
 
 def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_json_artifact(path: Path) -> tuple[Any, str]:
+    artifact = path.read_bytes()
+    return json.loads(artifact.decode("utf-8")), hashlib.sha256(artifact).hexdigest()
 
 
 def _write_json(document: Any, output: Path | None) -> None:
@@ -44,6 +51,22 @@ def _parser() -> argparse.ArgumentParser:
     schema.add_argument("schema", type=Path)
     schema.add_argument("document", type=Path)
 
+    intake = commands.add_parser(
+        "intake",
+        help="Map a supported source artifact to a digest-bound intake batch.",
+    )
+    intake.add_argument("source_format", choices=("cyclonedx", "sarif"))
+    intake.add_argument("document", type=Path)
+    intake.add_argument("--artifact-ref", required=True)
+    intake.add_argument("--collected-at", required=True)
+    intake.add_argument("--observed-at", required=True)
+    intake.add_argument("--source-identity", required=True)
+    intake.add_argument("--source-ref", required=True)
+    intake.add_argument("--asset-ref")
+    intake.add_argument("--asset-ref-prefix")
+    intake.add_argument("--synthetic", action="store_true")
+    intake.add_argument("--output", type=Path)
+
     assess = commands.add_parser("assess", help="Build a deterministic assurance dossier.")
     assess.add_argument("case", type=Path)
     assess.add_argument("--policy", type=Path)
@@ -61,6 +84,35 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "schema":
             validate_document(args.schema, _read_json(args.document))
             print("valid")
+            return 0
+        if args.command == "intake":
+            document, artifact_sha256 = _read_json_artifact(args.document)
+            common = {
+                "artifact_ref": args.artifact_ref,
+                "artifact_sha256": artifact_sha256,
+                "collected_at": args.collected_at,
+                "observed_at": args.observed_at,
+                "source_identity": args.source_identity,
+                "source_ref": args.source_ref,
+                "synthetic": args.synthetic,
+            }
+            if args.source_format == "sarif":
+                if args.asset_ref is None:
+                    raise ValueError("--asset-ref is required for SARIF intake")
+                if args.asset_ref_prefix is not None:
+                    raise ValueError("--asset-ref-prefix is only valid for CycloneDX intake")
+                batch = adapt_sarif(document, asset_ref=args.asset_ref, **common)
+            else:
+                if args.asset_ref_prefix is None:
+                    raise ValueError("--asset-ref-prefix is required for CycloneDX intake")
+                if args.asset_ref is not None:
+                    raise ValueError("--asset-ref is only valid for SARIF intake")
+                batch = adapt_cyclonedx(
+                    document,
+                    asset_ref_prefix=args.asset_ref_prefix,
+                    **common,
+                )
+            _write_json(batch.to_dict(), args.output)
             return 0
         if args.command == "assess":
             case = VulnerabilityCase.from_dict(_read_json(args.case))

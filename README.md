@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.1.0 — Alpha Governance Foundation**.
+Current package boundary: **VulnEvidenceOps v0.2.0 — Alpha Intake & Governance Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.1.0 — Alpha Governance Foundati
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.1 scope
+## v0.2 scope
 
 The initial boundary provides:
 
@@ -29,6 +29,15 @@ The initial boundary provides:
 - internal control-to-evidence results of `represented`, `gap` or `not_applicable`;
 - a deterministic assurance dossier with explicit non-claims;
 - Draft 2020-12 JSON Schemas, a CLI, synthetic examples and release-integrity gates.
+
+The v0.2 intake boundary additionally provides:
+
+- strict adapters for SARIF 2.1.0 and CycloneDX 1.5/1.6 JSON;
+- one explicit mapping record for every normalized source result or vulnerability-affect pair;
+- raw-artifact, canonical-document and per-record SHA-256 identities;
+- JSON Pointer traceability without embedding raw scanner payloads in governance records;
+- explicit, caller-supplied asset/source references and observation time;
+- fail-closed handling of unsupported versions and incomplete candidate records.
 
 ## Portfolio boundary
 
@@ -64,6 +73,15 @@ vulnevidenceops schema schemas/case-bundle.schema.json examples/synthetic-case.j
 vulnevidenceops assess examples/synthetic-case.json \
   --policy examples/synthetic-policy.json \
   --as-of 2026-01-20T00:00:00Z
+
+vulnevidenceops intake sarif examples/synthetic-sarif.json \
+  --artifact-ref synthetic://intake/sarif.json \
+  --collected-at 2026-01-05T00:00:00Z \
+  --observed-at 2026-01-04T00:00:00Z \
+  --source-identity synthetic-source:reference-v1 \
+  --source-ref synthetic-source:export-001 \
+  --asset-ref synthetic-asset:repository-001 \
+  --synthetic
 ```
 
 ## Standards posture
@@ -78,6 +96,8 @@ VulnEvidenceOps does **not** by itself establish:
 
 - complete asset or vulnerability discovery;
 - CVE, CWE, CVSS, vendor-advisory or scanner accuracy;
+- source-artifact authenticity or full upstream-format conformance;
+- source severity, asset identity or finding validity merely because an adapter mapped it;
 - successful patching, mitigation or production verification;
 - acceptable residual risk or valid accountable authority;
 - ISO, NIST, DORA or other legal/regulatory compliance;
@@ -89,6 +109,7 @@ VulnEvidenceOps does **not** by itself establish:
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Control/evidence matrix](docs/CONTROL_EVIDENCE_MATRIX.md)
+- [Intake adapters](docs/INTAKE_ADAPTERS.md)
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)

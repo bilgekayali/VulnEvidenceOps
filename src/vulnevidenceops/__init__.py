@@ -1,8 +1,9 @@
-"""Intentional public surface for VulnEvidenceOps v0.1."""
+"""Intentional public surface for VulnEvidenceOps v0.2."""
 
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
 from .canonical import canonical_json_bytes, sha256_digest
+from .intake import IntakeBatch, IntakeMapping, adapt_cyclonedx, adapt_sarif
 from .models import (
     AssuranceDossier,
     EvidenceReference,
@@ -22,6 +23,8 @@ __all__ = [
     "AssuranceDossier",
     "DocumentValidationError",
     "EvidenceReference",
+    "IntakeBatch",
+    "IntakeMapping",
     "PACKAGE_VERSION",
     "RemediationRecord",
     "RiskAcceptance",
@@ -31,6 +34,8 @@ __all__ = [
     "VulnerabilityFinding",
     "VulnerabilityPolicy",
     "assess_case",
+    "adapt_cyclonedx",
+    "adapt_sarif",
     "canonical_json_bytes",
     "sha256_digest",
     "validate_document",

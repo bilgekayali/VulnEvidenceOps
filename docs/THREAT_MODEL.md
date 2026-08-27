@@ -10,7 +10,7 @@
 
 ## Primary threats
 
-| Threat | v0.1 response | Residual boundary |
+| Threat | v0.2 response | Residual boundary |
 |---|---|---|
 | Evidence substitution | Exact SHA-256 artifact digest and opaque evidence ID | External artifact authenticity and custody |
 | Finding relabelling | Immutable finding, asset and source references | External inventory correctness |
@@ -20,6 +20,9 @@
 | Future-dated evidence | Records after `assessed_at` cannot satisfy controls | Trusted external time |
 | Missing scanner coverage | Explicit non-claim and inventory/evidence gap | Discovery and scanner completeness |
 | Malicious input | JSON Schema and local invariant checks | Host resource limits and sandboxing |
+| Silent adapter omission | Every candidate result or vulnerability-affect pair maps or the batch fails | Upstream export completeness |
+| Severity translation drift | Fixed, versioned mapping rules and explicit fallback notices | Source severity correctness |
+| Source-record substitution | Artifact, canonical document and source-record digests plus JSON Pointers | External custody and authenticity |
 
 ## Trust assumptions
 
