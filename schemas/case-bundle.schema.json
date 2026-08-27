@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/case-bundle.schema.json",
+  "title": "Vulnerability case bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "finding", "evidence_catalog"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.case-bundle.v1"},
+    "case_id": {"type": "string", "minLength": 1},
+    "finding": {"$ref": "https://schemas.vulnevidenceops.dev/v1/vulnerability-finding.schema.json"},
+    "evidence_catalog": {
+      "type": "array",
+      "items": {"$ref": "https://schemas.vulnevidenceops.dev/v1/evidence-reference.schema.json"}
+    },
+    "triage": {"$ref": "https://schemas.vulnevidenceops.dev/v1/triage-decision.schema.json"},
+    "remediation": {"$ref": "https://schemas.vulnevidenceops.dev/v1/remediation-record.schema.json"},
+    "risk_acceptance": {"$ref": "https://schemas.vulnevidenceops.dev/v1/risk-acceptance.schema.json"},
+    "verification": {"$ref": "https://schemas.vulnevidenceops.dev/v1/verification-record.schema.json"}
+  }
+}

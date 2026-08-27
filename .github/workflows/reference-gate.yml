@@ -1,0 +1,40 @@
+name: Reference Gate
+
+on:
+  push:
+    branches: [main, "agent/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  reference-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install candidate and development dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Verify release contract
+        run: python tools/release_contract.py --emit --verify
+      - name: Build deterministic dependency SBOM
+        run: |
+          python tools/build_sbom.py --output /tmp/vulnevidenceops-sbom.json
+          test -s /tmp/vulnevidenceops-sbom.json
+      - name: Build wheel
+        run: python -m build --wheel
+      - name: Clean-wheel smoke
+        run: |
+          python -m venv /tmp/vulnevidenceops-clean
+          /tmp/vulnevidenceops-clean/bin/python -m pip install dist/*.whl
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops --version
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops assess \
+            examples/synthetic-case.json \
+            --policy examples/synthetic-policy.json \
+            --as-of 2026-01-20T00:00:00Z \
+            --output /tmp/vulnevidenceops-clean-dossier.json
+          test -s /tmp/vulnevidenceops-clean-dossier.json

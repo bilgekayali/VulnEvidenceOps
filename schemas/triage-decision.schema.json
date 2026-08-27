@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/triage-decision.schema.json",
+  "title": "Triage decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "finding_id", "decided_at", "accountable_role", "disposition", "rationale", "evidence_refs"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.triage-decision.v1"},
+    "decision_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "decided_at": {"type": "string", "format": "date-time"},
+    "accountable_role": {"type": "string", "minLength": 1},
+    "disposition": {"enum": ["confirmed", "duplicate", "false_positive"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "duplicate_of": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"disposition": {"const": "duplicate"}}, "required": ["disposition"]},
+      "then": {"required": ["duplicate_of"]},
+      "else": {"not": {"required": ["duplicate_of"]}}
+    }
+  ]
+}

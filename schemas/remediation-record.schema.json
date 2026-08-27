@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/remediation-record.schema.json",
+  "title": "Remediation record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "remediation_id", "finding_id", "owner_role", "planned_at", "due_at", "action", "change_ref", "evidence_refs"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.remediation-record.v1"},
+    "remediation_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "owner_role": {"type": "string", "minLength": 1},
+    "planned_at": {"type": "string", "format": "date-time"},
+    "due_at": {"type": "string", "format": "date-time"},
+    "action": {"type": "string", "minLength": 1},
+    "change_ref": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

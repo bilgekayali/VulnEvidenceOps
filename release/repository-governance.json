@@ -1,0 +1,12 @@
+{
+  "schema_version": "vulnevidenceops.repository-governance.v1",
+  "default_branch": "main",
+  "pull_request_required": true,
+  "required_approvals": 0,
+  "conversation_resolution_required": true,
+  "force_pushes_allowed": false,
+  "branch_deletion_allowed": false,
+  "required_workflow_names": ["CI", "CodeQL", "Reference Gate"],
+  "enforcement_verified": false,
+  "verification_note": "Committed policy is design evidence only; live GitHub enforcement must be verified separately."
+}

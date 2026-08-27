@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/evidence-reference.schema.json",
+  "title": "Evidence reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "artifact_ref", "artifact_sha256", "media_type", "collected_at", "source_identity", "synthetic"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.evidence-reference.v1"},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "artifact_ref": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "media_type": {"type": "string", "minLength": 1},
+    "collected_at": {"type": "string", "format": "date-time"},
+    "source_identity": {"type": "string", "minLength": 1},
+    "synthetic": {"type": "boolean"}
+  }
+}
