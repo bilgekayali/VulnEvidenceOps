@@ -11,5 +11,11 @@
   "reviewer": null,
   "reviewed_at": null,
   "evidence_refs": [],
-  "blockers": ["independent_human_review_pending"]
+  "requirement_status": "waived-by-owner",
+  "waiver": {
+    "approved_by": "Bilge Kayalı",
+    "approved_at": "2026-08-28",
+    "reason": "Repository owner explicitly authorized bypassing the independent-review prerequisite before merging PR #7."
+  },
+  "blockers": []
 }

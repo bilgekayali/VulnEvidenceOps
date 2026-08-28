@@ -21,9 +21,5 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Verify frozen v1 compatibility surface
         run: python tools/stable_candidate.py --emit --verify
-      - name: Verify final promotion remains blocked pending review
-        run: |
-          if python tools/stable_candidate.py --require-final-review; then
-            echo "final promotion unexpectedly passed" >&2
-            exit 1
-          fi
+      - name: Verify final-promotion prerequisite or accountable waiver
+        run: python tools/stable_candidate.py --require-final-review

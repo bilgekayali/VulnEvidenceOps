@@ -22,7 +22,8 @@ The following are intentional v1 candidate public surfaces:
 
 Final v1.0 patch releases must remain backward compatible with this baseline. Additive changes
 require an explicit compatibility review; removals or incompatible schema changes require a new
-major version. The candidate is not a final stable release while independent review is pending.
+major version. Independent review was not performed; its prerequisite was explicitly waived by the
+repository owner and that waiver must not be described as review completion.
 
 No package version implies a Git tag, GitHub Release, package publication, deployment, security
 assessment, compliance decision or production-readiness attestation.

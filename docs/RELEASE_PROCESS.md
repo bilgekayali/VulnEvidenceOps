@@ -20,8 +20,9 @@ A release candidate must pass on the exact candidate SHA:
 10. `python tools/stable_candidate.py --emit --verify` against the frozen v1 baseline.
 
 Final stable promotion must additionally pass
-`python tools/stable_candidate.py --require-final-review`. The candidate intentionally fails that
-command until an identified independent reviewer and linked review evidence are recorded.
+`python tools/stable_candidate.py --require-final-review`. This is satisfied either by an identified
+independent reviewer with linked evidence or by an explicit, accountable repository-owner waiver.
+The waiver does not constitute or imply independent review.
 
 Tagging and GitHub Release creation require a separate human decision after the exact merged
 `main` SHA has passed the same gates. Package publication and deployment are separate decisions.

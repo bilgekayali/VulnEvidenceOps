@@ -80,8 +80,8 @@ The v0.6 integration-contract boundary adds:
   semantic compatibility, payload truth and production interoperability.
 
 The v1 candidate additionally freezes the Python API, CLI, runtime-dependency and byte-exact
-public-schema surfaces. Independent human review is still pending, so this candidate is not a
-final stable release and cannot pass the final-promotion gate.
+public-schema surfaces. Independent human review was not performed; the repository owner explicitly
+waived that prerequisite. This candidate is still not a final stable release.
 
 ## Portfolio boundary
 

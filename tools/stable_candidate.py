@@ -69,7 +69,22 @@ def verify(*, require_final_review: bool = False) -> dict[str, object]:
         raise SystemExit("a completed review requires evidence references")
     if not completed and (reviewer is not None or evidence_refs != []):
         raise SystemExit("a pending review must not imply reviewer identity or evidence")
-    if require_final_review and not completed:
+    requirement_status = review.get("requirement_status")
+    waiver = review.get("waiver")
+    if requirement_status not in {"required", "waived-by-owner"}:
+        raise SystemExit("independent-review requirement status differs")
+    waived = requirement_status == "waived-by-owner"
+    if waived:
+        if not isinstance(waiver, dict):
+            raise SystemExit("an owner waiver requires an accountable waiver record")
+        if not all(
+            isinstance(waiver.get(field), str) and waiver[field].strip()
+            for field in ("approved_by", "approved_at", "reason")
+        ):
+            raise SystemExit("owner waiver identity, date and reason are required")
+    elif waiver is not None:
+        raise SystemExit("a required review must not contain a waiver")
+    if require_final_review and not (completed or waived):
         raise SystemExit("final stable promotion is blocked: independent human review pending")
 
     evidence = _json(EVIDENCE)
@@ -84,6 +99,8 @@ def verify(*, require_final_review: bool = False) -> dict[str, object]:
         raise SystemExit("candidate evidence must not imply publication")
     if evidence.get("independent_review_completed") is not completed:
         raise SystemExit("candidate evidence and review status differ")
+    if evidence.get("independent_review_requirement") != requirement_status:
+        raise SystemExit("candidate evidence and review requirement differ")
     return computed
 
 

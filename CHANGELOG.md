@@ -6,7 +6,8 @@ All notable source releases are documented here.
 
 - Froze the intended v1 Python API, CLI, runtime-dependency and public-schema surfaces.
 - Added a byte-exact compatibility gate and a dedicated stable-candidate workflow.
-- Added deterministic candidate evidence and a fail-closed independent-review record.
+- Added deterministic candidate evidence and an accountable owner waiver that remains distinct
+  from independent review completion.
 - Kept final `1.0.0`, tagging, GitHub Release creation and publication as separate decisions.
 
 ## 0.6.0 - 2026-08-28 (source promotion)

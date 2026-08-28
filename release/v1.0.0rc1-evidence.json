@@ -10,6 +10,7 @@
   "clean_wheel_smoke_required": true,
   "compatibility_baseline_required": true,
   "independent_review_completed": false,
+  "independent_review_requirement": "waived-by-owner",
   "human_release_decision_required": true,
   "tag_created": false,
   "github_release_created": false,

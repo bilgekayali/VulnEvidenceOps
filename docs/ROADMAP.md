@@ -39,9 +39,9 @@ or consumer acceptance.
 
 - Frozen Python API, CLI, dependency and byte-exact schema baseline.
 - Deterministic clean-wheel release evidence and a dedicated compatibility gate.
-- Independent human review remains pending and blocks final stable promotion.
+- Independent human review was not performed; its prerequisite was explicitly waived by the owner.
 
 ## Candidate later boundary
 
-- **v1.0.0 — Stable reference:** independent review evidence, exact post-merge commit binding and
-  a separate human release decision.
+- **v1.0.0 — Stable reference:** exact post-merge commit binding and a separate human release
+  decision; the owner waiver must remain visible if no independent review is later performed.

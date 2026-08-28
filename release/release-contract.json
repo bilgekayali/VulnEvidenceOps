@@ -4,6 +4,7 @@
   "target_stable_version": "1.0.0",
   "release_stage": "stable-candidate",
   "independent_review_completed": false,
+  "independent_review_requirement": "waived-by-owner",
   "public_api": {"symbol_count": 40, "sha256": "d505dabab923200b01fc5469225d85f9576e52907f57f3f237b44134491fb398"},
   "schema_set": {"file_count": 26, "sha256": "3c3699f8b622f2a0240287ebc02e6900463eeb58263e2f38393e5b2d30bc8ce9"},
   "control_matrix": {"control_count": 6, "sha256": "a61e4bc59c3663c8f7a2732f76c85c653b75217d15e3690d83a8a685acedfe12"},

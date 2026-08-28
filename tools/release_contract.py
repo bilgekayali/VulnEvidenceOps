@@ -604,6 +604,8 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("v1 release stage must remain stable-candidate")
     if manifest.get("independent_review_completed") is not False:
         raise SystemExit("candidate must not imply completed independent review")
+    if manifest.get("independent_review_requirement") != "waived-by-owner":
+        raise SystemExit("candidate must preserve the explicit owner waiver")
     if "Development Status :: 4 - Beta" not in project.get("classifiers", []):
         raise SystemExit("v1 candidate package classifier must remain Beta")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
