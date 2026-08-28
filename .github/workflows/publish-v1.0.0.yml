@@ -1,0 +1,44 @@
+name: Publish v1.0.0
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/publish-v1.0.0.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  github-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify exact stable source boundary
+        run: |
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          assert project["version"] == "1.0.0"
+          assert "Development Status :: 5 - Production/Stable" in project["classifiers"]
+          PY
+      - name: Create exact-SHA Git tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$GITHUB_REF_NAME" = "main"
+          gh release create v1.0.0 \
+            --target "$GITHUB_SHA" \
+            --title "VulnEvidenceOps v1.0.0 — Stable Reference" \
+            --notes-file - <<'EOF'
+          VulnEvidenceOps v1.0.0 freezes the public Python API, CLI, runtime-dependency and
+          byte-exact JSON Schema surfaces for the synthetic stable-reference boundary.
+
+          Independent human review was not performed. The repository owner explicitly waived that
+          prerequisite; the accountable waiver remains committed with `review_completed: false`.
+
+          This release does not attest production safety, vulnerability absence, scanner
+          completeness, remediation effectiveness or regulatory compliance. It does not publish a
+          package to a package index and does not deploy anything.
+          EOF
