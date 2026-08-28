@@ -84,3 +84,24 @@ jobs:
           vulnevidenceops schema \
             schemas/portfolio-assurance-view.schema.json \
             /tmp/vulnevidenceops-portfolio-view.json
+          vulnevidenceops schema \
+            schemas/build-provenance.schema.json \
+            examples/synthetic-build-provenance.json
+          vulnevidenceops schema \
+            schemas/verification-key.schema.json \
+            examples/synthetic-verification-key.json
+          vulnevidenceops schema \
+            schemas/signed-evidence-envelope.schema.json \
+            examples/synthetic-signed-evidence-envelope.json
+          vulnevidenceops schema \
+            schemas/anchor-receipt.schema.json \
+            examples/synthetic-anchor-receipt.json
+          vulnevidenceops verify-evidence \
+            examples/synthetic-signed-evidence-envelope.json \
+            --key examples/synthetic-verification-key.json \
+            --receipt examples/synthetic-anchor-receipt.json \
+            --as-of 2026-01-20T00:05:00Z \
+            --output /tmp/vulnevidenceops-signature-verification.json
+          vulnevidenceops schema \
+            schemas/signature-verification.schema.json \
+            /tmp/vulnevidenceops-signature-verification.json

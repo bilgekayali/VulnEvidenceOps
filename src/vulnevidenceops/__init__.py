@@ -1,4 +1,4 @@
-"""Intentional public surface for VulnEvidenceOps v0.4."""
+"""Intentional public surface for VulnEvidenceOps v0.5."""
 
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
@@ -24,11 +24,22 @@ from .models import (
 )
 from .portfolio import PortfolioAssuranceView, PortfolioBundle, assess_portfolio
 from .schema import DocumentValidationError, validate_document
+from .signed_evidence import (
+    AnchorReceipt,
+    BuildProvenance,
+    SignatureVerification,
+    SignedEvidenceEnvelope,
+    VerificationKey,
+    sign_evidence,
+    verify_signed_evidence,
+)
 
 __version__ = PACKAGE_VERSION
 
 __all__ = [
+    "AnchorReceipt",
     "AssuranceDossier",
+    "BuildProvenance",
     "BusinessCriticality",
     "DocumentValidationError",
     "EvidenceReference",
@@ -42,8 +53,11 @@ __all__ = [
     "PortfolioBundle",
     "RemediationRecord",
     "RiskAcceptance",
+    "SignatureVerification",
+    "SignedEvidenceEnvelope",
     "TriageDecision",
     "VerificationRecord",
+    "VerificationKey",
     "VulnerabilityCase",
     "VulnerabilityFinding",
     "VulnerabilityPolicy",
@@ -54,5 +68,7 @@ __all__ = [
     "adapt_sarif",
     "canonical_json_bytes",
     "sha256_digest",
+    "sign_evidence",
     "validate_document",
+    "verify_signed_evidence",
 ]

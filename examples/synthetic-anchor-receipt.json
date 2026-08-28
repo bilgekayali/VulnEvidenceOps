@@ -1,0 +1,11 @@
+{
+  "anchor_type": "transparency_log",
+  "anchored_at": "2026-01-20T00:04:00Z",
+  "artifact_ref": "synthetic://anchors/ANCHOR-SYNTH-001.json",
+  "artifact_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "envelope_sha256": "969afc54564f86b69972e965e3af568b57117c160439b91b2ab7290ea631a137",
+  "provider_identity": "synthetic-anchor:reference-only",
+  "receipt_id": "ANCHOR-SYNTH-001",
+  "schema_version": "vulnevidenceops.anchor-receipt.v1",
+  "synthetic": true
+}

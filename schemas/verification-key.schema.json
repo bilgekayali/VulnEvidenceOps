@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/verification-key.schema.json",
+  "title": "Ed25519 verification key",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "key_id", "algorithm", "public_key_base64", "public_key_sha256", "issuer_identity", "valid_from", "valid_until", "revoked_at", "synthetic"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.verification-key.v1"},
+    "key_id": {"type": "string", "minLength": 1},
+    "algorithm": {"const": "ed25519"},
+    "public_key_base64": {"type": "string", "minLength": 44, "maxLength": 44, "pattern": "^[A-Za-z0-9+/]+={0,2}$"},
+    "public_key_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "issuer_identity": {"type": "string", "minLength": 1},
+    "valid_from": {"type": "string", "format": "date-time"},
+    "valid_until": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+    "revoked_at": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+    "synthetic": {"type": "boolean"}
+  }
+}

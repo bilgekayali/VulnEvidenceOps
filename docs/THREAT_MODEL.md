@@ -7,10 +7,12 @@
 - lifecycle ordering and currentness;
 - closure and risk-acceptance integrity;
 - deterministic dossier reproduction.
+- signed-payload and verification-key binding;
+- exact build-provenance representation.
 
 ## Primary threats
 
-| Threat | v0.4 response | Residual boundary |
+| Threat | v0.5 response | Residual boundary |
 |---|---|---|
 | Evidence substitution | Exact SHA-256 artifact digest and opaque evidence ID | External artifact authenticity and custody |
 | Finding relabelling | Immutable finding, asset and source references | External inventory correctness |
@@ -32,8 +34,16 @@
 | Exception age presented as approval | Age, expiry, evidence and policy states are separate; approval remains a non-claim | Real authority and risk appetite |
 | Raw counts presented as compliance | No percentage, weighted score or rank is produced; explicit false non-claims | Downstream presentation and interpretation |
 | Incomplete portfolio scope | Opaque scope reference and explicit asset-inventory completeness non-claim | External inventory and query completeness |
+| Signed payload substitution | Canonical payload SHA-256 and context-bound Ed25519 signature are checked separately | Private-key compromise and external custody |
+| Signature metadata substitution | Payload type, digest, key ID, algorithm and claimed time are inside the signed statement | Signer identity and authority |
+| Wrong or stale verification key | Public-key fingerprint plus claimed-signing-time lifecycle state | Trusted key distribution and revocation source |
+| Claimed signing time treated as trusted | Future-time gap and explicit trusted-time non-claim | Trusted timestamp authority validation |
+| Anchor receipt substitution | Exact envelope binding, receipt digest and temporal state | External receipt authenticity and provider trust |
+| Build metadata treated as build trust | Exact subject, Git object, invocation and material identities plus explicit false non-claims | Builder security, reproducibility and artifact safety |
+| Private key committed with examples | Only a synthetic public key and signed outputs are committed; release gate rejects private-key fields/PEM markers | Contributor practices outside committed examples |
 
 ## Trust assumptions
 
-The caller controls input authenticity, actor identity, artifact custody and system-of-record
-integrity. SHA-256 syntax and deterministic processing do not prove those external facts.
+The caller controls input authenticity, actor identity, private-key custody, verification-key
+distribution, anchor-provider trust, artifact custody and system-of-record integrity. SHA-256
+syntax, Ed25519 validity and deterministic processing do not prove those external facts.

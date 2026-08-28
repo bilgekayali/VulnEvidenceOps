@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/anchor-receipt.schema.json",
+  "title": "External anchor receipt metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "envelope_sha256", "provider_identity", "anchor_type", "anchored_at", "artifact_ref", "artifact_sha256", "synthetic"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.anchor-receipt.v1"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "envelope_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_identity": {"type": "string", "minLength": 1},
+    "anchor_type": {"enum": ["ledger", "other", "rfc3161", "transparency_log"]},
+    "anchored_at": {"type": "string", "format": "date-time"},
+    "artifact_ref": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "synthetic": {"type": "boolean"}
+  }
+}

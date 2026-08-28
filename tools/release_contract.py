@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v0.4 release contract."""
+"""Emit and verify the VulnEvidenceOps v0.5 release contract."""
 
 from __future__ import annotations
 
@@ -23,9 +23,14 @@ SARIF_EXAMPLE = ROOT / "examples" / "synthetic-sarif.json"
 CYCLONEDX_EXAMPLE = ROOT / "examples" / "synthetic-cyclonedx.json"
 EXPOSURE_EXAMPLE = ROOT / "examples" / "synthetic-exposure-context.json"
 PORTFOLIO_EXAMPLE = ROOT / "examples" / "synthetic-portfolio.json"
+BUILD_PROVENANCE_EXAMPLE = ROOT / "examples" / "synthetic-build-provenance.json"
+VERIFICATION_KEY_EXAMPLE = ROOT / "examples" / "synthetic-verification-key.json"
+SIGNED_ENVELOPE_EXAMPLE = ROOT / "examples" / "synthetic-signed-evidence-envelope.json"
+ANCHOR_RECEIPT_EXAMPLE = ROOT / "examples" / "synthetic-anchor-receipt.json"
 INTAKE_MODULE = ROOT / "src" / "vulnevidenceops" / "intake.py"
 EXPOSURE_MODULE = ROOT / "src" / "vulnevidenceops" / "exposure.py"
 PORTFOLIO_MODULE = ROOT / "src" / "vulnevidenceops" / "portfolio.py"
+SIGNED_EVIDENCE_MODULE = ROOT / "src" / "vulnevidenceops" / "signed_evidence.py"
 WORKFLOWS = ROOT / ".github" / "workflows"
 _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 _USES = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
@@ -180,6 +185,41 @@ def _portfolio_assurance() -> dict[str, object]:
     }
 
 
+def _signed_evidence() -> dict[str, object]:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops.signed_evidence import (
+        ANCHOR_TYPES,
+        KEY_STATES,
+        SIGNATURE_ALGORITHMS,
+        SIGNED_EVIDENCE_CONTRACT,
+        VERIFICATION_POSITIONS,
+    )
+
+    entries = [
+        {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in (
+            SIGNED_EVIDENCE_MODULE,
+            BUILD_PROVENANCE_EXAMPLE,
+            VERIFICATION_KEY_EXAMPLE,
+            SIGNED_ENVELOPE_EXAMPLE,
+            ANCHOR_RECEIPT_EXAMPLE,
+        )
+    ]
+    return {
+        "algorithms": sorted(SIGNATURE_ALGORITHMS),
+        "anchor_types": sorted(ANCHOR_TYPES),
+        "contract": SIGNED_EVIDENCE_CONTRACT,
+        "example_count": 4,
+        "key_states": sorted(KEY_STATES),
+        "sha256": _sha(entries),
+        "verification_positions": sorted(VERIFICATION_POSITIONS),
+    }
+
+
 def compute() -> dict[str, dict[str, object]]:
     return {
         "public_api": _public_api(),
@@ -189,6 +229,7 @@ def compute() -> dict[str, dict[str, object]]:
         "intake_adapters": _intake_adapters(),
         "exposure_context": _exposure_context(),
         "portfolio_assurance": _portfolio_assurance(),
+        "signed_evidence": _signed_evidence(),
     }
 
 
@@ -348,6 +389,82 @@ def _verify_portfolio_example() -> None:
         raise SystemExit("portfolio totals must not introduce percentages or scores")
 
 
+def _verify_signed_evidence_examples() -> None:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops import (
+        AnchorReceipt,
+        BuildProvenance,
+        SignedEvidenceEnvelope,
+        VerificationKey,
+        validate_document,
+        verify_signed_evidence,
+    )
+
+    provenance_document = _json(BUILD_PROVENANCE_EXAMPLE)
+    key_document = _json(VERIFICATION_KEY_EXAMPLE)
+    envelope_document = _json(SIGNED_ENVELOPE_EXAMPLE)
+    receipt_document = _json(ANCHOR_RECEIPT_EXAMPLE)
+    for schema_name, document in (
+        ("build-provenance.schema.json", provenance_document),
+        ("verification-key.schema.json", key_document),
+        ("signed-evidence-envelope.schema.json", envelope_document),
+        ("anchor-receipt.schema.json", receipt_document),
+    ):
+        validate_document(SCHEMA_DIR / schema_name, document)
+
+    provenance = BuildProvenance.from_dict(provenance_document)
+    key = VerificationKey.from_dict(key_document)
+    envelope = SignedEvidenceEnvelope.from_dict(envelope_document)
+    receipt = AnchorReceipt.from_dict(receipt_document)
+    if envelope.payload_document() != provenance.to_dict():
+        raise SystemExit("signed reference payload differs from exact build provenance")
+    verification = verify_signed_evidence(
+        envelope,
+        key,
+        verified_at="2026-01-20T00:05:00Z",
+        anchor_receipts=(receipt,),
+    ).to_dict()
+    validate_document(SCHEMA_DIR / "signature-verification.schema.json", verification)
+    if verification["verification_position"] != "cryptographically_valid":
+        raise SystemExit("reference envelope must be cryptographically valid")
+    if verification["gaps"]:
+        raise SystemExit("reference signed-evidence chain must have no local verification gaps")
+    if not verification["signature_valid"] or not verification["payload_digest_valid"]:
+        raise SystemExit("reference signature and payload digest must verify")
+    if verification["key_state"] != "current":
+        raise SystemExit("reference key must be current at the claimed signing time")
+    if verification["envelope_key_id"] != verification["verification_key_id"]:
+        raise SystemExit("reference envelope and verification key IDs must match")
+    if verification["verification_key_sha256"] != key.public_key_sha256:
+        raise SystemExit("reference verification result must bind the exact public-key digest")
+    if verification["signed_at"] != envelope.signed_at:
+        raise SystemExit("reference verification result must preserve the claimed signing time")
+    anchor = verification["anchor_receipts"][0]
+    if anchor["binding_state"] != "bound" or anchor["temporal_state"] != "current":
+        raise SystemExit("reference anchor must be locally bound and temporally current")
+    if anchor["external_validation_performed"] is not False:
+        raise SystemExit("external anchor validation must remain explicit false")
+    if any(verification["non_claims"].values()):
+        raise SystemExit("signed-evidence non-claims must remain explicit false values")
+    if not all(
+        document.get("synthetic") is True
+        for document in (provenance_document, key_document, receipt_document)
+    ):
+        raise SystemExit("committed provenance, key and anchor examples must be synthetic")
+    example_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            BUILD_PROVENANCE_EXAMPLE,
+            VERIFICATION_KEY_EXAMPLE,
+            SIGNED_ENVELOPE_EXAMPLE,
+            ANCHOR_RECEIPT_EXAMPLE,
+        )
+    )
+    if "PRIVATE KEY" in example_text or "private_key" in example_text:
+        raise SystemExit("committed signed-evidence examples must not contain private keys")
+
+
 def verify() -> dict[str, dict[str, object]]:
     manifest = _json(MANIFEST)
     computed = compute()
@@ -357,14 +474,16 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "0.4.0":
-        raise SystemExit("package and release-contract versions must equal 0.4.0")
+    ) != "0.5.0":
+        raise SystemExit("package and release-contract versions must equal 0.5.0")
     if manifest.get("release_stage") != "alpha-reference":
-        raise SystemExit("v0.4 release stage must remain alpha-reference")
+        raise SystemExit("v0.5 release stage must remain alpha-reference")
     if "Development Status :: 3 - Alpha" not in project.get("classifiers", []):
-        raise SystemExit("v0.4 package classifier must remain Alpha")
+        raise SystemExit("v0.5 package classifier must remain Alpha")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v0.4 contract")
+        raise SystemExit("console-script surface differs from the v0.5 contract")
+    if project.get("dependencies") != ["cryptography>=44,<47", "jsonschema>=4.23,<5"]:
+        raise SystemExit("runtime dependency surface differs from the v0.5 contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
@@ -372,7 +491,7 @@ def verify() -> dict[str, dict[str, object]]:
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
     if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v0.4 source promotion boundary was removed")
+        raise SystemExit("v0.5 source promotion boundary was removed")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -397,6 +516,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "docs" / "ROADMAP.md",
         ROOT / "docs" / "RELEASE_PROCESS.md",
         ROOT / "docs" / "SECURITY_BOUNDARY.md",
+        ROOT / "docs" / "SIGNED_EVIDENCE.md",
         ROOT / "docs" / "THREAT_MODEL.md",
     ]
     missing = [
@@ -406,7 +526,7 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*0\.4\.0\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*0\.5\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()
@@ -414,6 +534,7 @@ def verify() -> dict[str, dict[str, object]]:
     _verify_intake_examples()
     _verify_exposure_example()
     _verify_portfolio_example()
+    _verify_signed_evidence_examples()
     return computed
 
 
