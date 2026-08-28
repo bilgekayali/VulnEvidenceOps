@@ -2,7 +2,14 @@
 
 All notable source releases are documented here.
 
-## 0.6.0 - Unreleased
+## 1.0.0rc1 - Unreleased
+
+- Froze the intended v1 Python API, CLI, runtime-dependency and public-schema surfaces.
+- Added a byte-exact compatibility gate and a dedicated stable-candidate workflow.
+- Added deterministic candidate evidence and a fail-closed independent-review record.
+- Kept final `1.0.0`, tagging, GitHub Release creation and publication as separate decisions.
+
+## 0.6.0 - 2026-08-28 (source promotion)
 
 - Added four digest-bound integration profiles for DataGovOps, DORAOps, ModelRiskOps and the AI
   threat-detection evaluation framework.

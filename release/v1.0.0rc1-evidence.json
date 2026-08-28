@@ -1,0 +1,19 @@
+{
+  "schema_version": "vulnevidenceops.release-evidence.v1",
+  "candidate_version": "1.0.0rc1",
+  "target_stable_version": "1.0.0",
+  "source_commit": null,
+  "source_commit_binding_stage": "post-merge",
+  "required_workflow_names": ["CI", "CodeQL", "Reference Gate", "Stable Candidate"],
+  "python_matrix": ["3.11", "3.12", "3.13"],
+  "wheel_build_required": true,
+  "clean_wheel_smoke_required": true,
+  "compatibility_baseline_required": true,
+  "independent_review_completed": false,
+  "human_release_decision_required": true,
+  "tag_created": false,
+  "github_release_created": false,
+  "package_published": false,
+  "deployment_completed": false,
+  "publication_completed": false
+}

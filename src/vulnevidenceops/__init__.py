@@ -1,4 +1,4 @@
-"""Intentional public surface for VulnEvidenceOps v0.6."""
+"""Frozen public surface for the VulnEvidenceOps v1 stable candidate."""
 
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case

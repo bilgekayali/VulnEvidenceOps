@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.6.0 — Alpha Integration Contracts Reference**.
+Current package boundary: **VulnEvidenceOps v1.0.0rc1 — Stable Reference Candidate**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.6.0 — Alpha Integration Contrac
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.6 scope
+## v1 candidate scope
 
 The initial boundary provides:
 
@@ -78,6 +78,10 @@ The v0.6 integration-contract boundary adds:
 - public peer-contract, handoff and verification schemas plus exact public contract snapshots;
 - explicit non-claims for cross-system identity, authority, delivery, consumer acceptance,
   semantic compatibility, payload truth and production interoperability.
+
+The v1 candidate additionally freezes the Python API, CLI, runtime-dependency and byte-exact
+public-schema surfaces. Independent human review is still pending, so this candidate is not a
+final stable release and cannot pass the final-promotion gate.
 
 ## Portfolio boundary
 
@@ -192,6 +196,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)
+- [v1 stable candidate](docs/V1_STABLE_CANDIDATE.md)
 - [Compatibility](COMPATIBILITY.md)
 - [Roadmap](docs/ROADMAP.md)
 

@@ -1,7 +1,7 @@
 # Release process
 
-The committed `0.6.0` version is an alpha source boundary. It does not imply a Git tag, GitHub
-Release, package publication or deployment.
+The committed `1.0.0rc1` version is a stable-reference candidate source boundary. It does not
+imply final `1.0.0`, a Git tag, GitHub Release, package publication or deployment.
 
 A release candidate must pass on the exact candidate SHA:
 
@@ -17,6 +17,11 @@ A release candidate must pass on the exact candidate SHA:
 8. exact Git-blob verification of every committed peer-contract snapshot and all four reference
    handoffs;
 9. human review of the explicit non-claims and synthetic-data boundary.
+10. `python tools/stable_candidate.py --emit --verify` against the frozen v1 baseline.
+
+Final stable promotion must additionally pass
+`python tools/stable_candidate.py --require-final-review`. The candidate intentionally fails that
+command until an identified independent reviewer and linked review evidence are recorded.
 
 Tagging and GitHub Release creation require a separate human decision after the exact merged
-`main` SHA has passed the same gates. Package publication and deployment are not part of v0.6.
+`main` SHA has passed the same gates. Package publication and deployment are separate decisions.
