@@ -1,0 +1,53 @@
+{
+  "schema_version": "vulnevidenceops.compatibility-baseline.v1",
+  "target_stable_version": "1.0.0",
+  "python_api_symbols": [
+    "AnchorReceipt", "AssuranceDossier", "BuildProvenance", "BusinessCriticality",
+    "DocumentValidationError", "EvidenceReference", "ExploitIntelligence",
+    "ExposureContextAssessment", "ExposureContextBundle", "IntakeBatch", "IntakeMapping",
+    "IntegrationHandoff", "IntegrationVerification", "PACKAGE_VERSION", "PeerContractIdentity",
+    "PortfolioAssuranceView", "PortfolioBundle", "RemediationRecord", "RiskAcceptance",
+    "SignatureVerification", "SignedEvidenceEnvelope", "TriageDecision", "VerificationKey",
+    "VerificationRecord", "VulnerabilityCase", "VulnerabilityFinding", "VulnerabilityPolicy",
+    "adapt_cyclonedx", "adapt_sarif", "assess_case", "assess_exposure_context",
+    "assess_portfolio", "build_integration_handoff", "canonical_json_bytes", "git_blob_id",
+    "sha256_digest", "sign_evidence", "validate_document", "verify_integration_handoff",
+    "verify_signed_evidence"
+  ],
+  "cli_commands": [
+    "assess", "digest-json", "exposure", "intake", "integration-handoff", "portfolio",
+    "schema", "sign-evidence", "verify-evidence", "verify-integration"
+  ],
+  "console_scripts": {"vulnevidenceops": "vulnevidenceops.cli:main"},
+  "runtime_dependencies": ["cryptography>=44,<47", "jsonschema>=4.23,<5"],
+  "requires_python": ">=3.11",
+  "supported_python": ["3.11", "3.12", "3.13"],
+  "schemas": [
+    {"path": "schemas/anchor-receipt.schema.json", "sha256": "89519a8a0754a0eea4c14f9909d424df14aa960e63a9d6684157e849a5395ab3"},
+    {"path": "schemas/assurance-dossier.schema.json", "sha256": "f4c495bd02ca6df3251ba7328c0ac3e2c337a0eea0df94a960116fbaec3a33a5"},
+    {"path": "schemas/build-provenance.schema.json", "sha256": "15f1d4a10901827b17de3831b66931b15aa8e651813579b6a16f3277e4410831"},
+    {"path": "schemas/business-criticality.schema.json", "sha256": "d7c3a34b7aca802d909bb9aa62ee03ddfae6616c6ca70cdf06dba46728188a6d"},
+    {"path": "schemas/case-bundle.schema.json", "sha256": "2c1e75d6a7722d01715c1ecc1b070fa2fff0a0a3e1a04b8e97ba2e3de958a831"},
+    {"path": "schemas/control-evidence-matrix.schema.json", "sha256": "b1133667a023dcba6b50c4d8ef938e627e552c5349e7c1ef40275a7507b9132d"},
+    {"path": "schemas/evidence-reference.schema.json", "sha256": "ff42a1e055c1a75292d7e9b293b095f93c2a0503f70b58211f4a0ac7187c1726"},
+    {"path": "schemas/exploit-intelligence.schema.json", "sha256": "5be868542118bc98f7191a2f2c6ff1afc6a0015b830a3cff769b01f306254ced"},
+    {"path": "schemas/exposure-context-assessment.schema.json", "sha256": "6c000fd0c175b86f53666e30accb638f9355f4f9bc5444ee2027ba7aa6983851"},
+    {"path": "schemas/exposure-context-bundle.schema.json", "sha256": "8e063242f99b69f5af07fa06105008345d29ad5db2d17e9c9d3a34c8a0d342b4"},
+    {"path": "schemas/intake-batch.schema.json", "sha256": "8ae408eee93a65b4b385212308a55ae8c95e6efcb482b1c4ed338b5f6a982e4a"},
+    {"path": "schemas/intake-mapping.schema.json", "sha256": "3733f166660512ec73b5ad6a89115e853f1855f8280dc5d9384d579926512816"},
+    {"path": "schemas/integration-handoff.schema.json", "sha256": "f117b82357fd07970a23b703128ed3938a91fcf901002a4892f9e570c8589676"},
+    {"path": "schemas/integration-verification.schema.json", "sha256": "7b733494330568586558d1d919e7907c30a40cbc2dedb0103506bb80204573f2"},
+    {"path": "schemas/peer-contract-identity.schema.json", "sha256": "813b9d0499f53ed808da1e677a81964160232e774fec3dccdebd2c1ed5cbc156"},
+    {"path": "schemas/portfolio-assurance-view.schema.json", "sha256": "c427cadecd58e0c36423c806915836563c62204e5ca44ab0fcf37ca6fb2ccc5e"},
+    {"path": "schemas/portfolio-bundle.schema.json", "sha256": "c0e49c10b0623771d96a83ce87c698cc57c5196615be538f9f4fefe7ffbcefda"},
+    {"path": "schemas/remediation-record.schema.json", "sha256": "9f51477b2ba9730290192acca04f955820dc6bb6e70eb7357575724fcf9b8b5c"},
+    {"path": "schemas/risk-acceptance.schema.json", "sha256": "1a5583e90d1843f94ec52657bbf6e2563eaec2b3430b1268f661a0fe69892ebe"},
+    {"path": "schemas/signature-verification.schema.json", "sha256": "8e6779c5e5a04a39e336687585b3a4c09dd096ae99fc26bbe78fe4a95719b5c9"},
+    {"path": "schemas/signed-evidence-envelope.schema.json", "sha256": "9ad32a00cdfab0b4afa6f782279c4536e22f1adf2e78dffd70adf7aa2ff868cc"},
+    {"path": "schemas/triage-decision.schema.json", "sha256": "017c854681ef3bc54755899678ee53717a6837eaf1b589833d72cbc3dfbc9ba3"},
+    {"path": "schemas/verification-key.schema.json", "sha256": "2e0e65e4cc6b0bd0b3af9c5dd65de1a0c09bcc4a14e70d3cdc01fb4c77884b1a"},
+    {"path": "schemas/verification-record.schema.json", "sha256": "39a7281b3ac174e8e423fd1759ed341f4c841d0ff591e66495846f29f4be73c8"},
+    {"path": "schemas/vulnerability-finding.schema.json", "sha256": "ef6e3030b2f722407e21f795eba174d40c32c5f23a752e0f4378278bdf936704"},
+    {"path": "schemas/vulnerability-policy.schema.json", "sha256": "a5a1fe01e42cff74614e7997fac1e75bc69aae6e1bf5e7127ec7860af179fb93"}
+  ]
+}

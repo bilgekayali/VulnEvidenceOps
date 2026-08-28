@@ -1,10 +1,10 @@
 # Compatibility policy
 
-VulnEvidenceOps `0.x` releases are alpha references. Minor releases may deliberately change the
-Python API, CLI or JSON Schemas when accompanied by a changelog entry and a release-contract
-update.
+VulnEvidenceOps `1.0.0rc1` is the stable-reference candidate. Its intended v1 Python API, CLI,
+runtime dependencies and JSON Schemas are frozen byte-for-byte in
+`compatibility/v1-stable-baseline.json` and checked by `tools/stable_candidate.py`.
 
-The following are intentional v0.6 public surfaces:
+The following are intentional v1 candidate public surfaces:
 
 - symbols listed in `vulnevidenceops.__all__`;
 - the `vulnevidenceops` CLI commands `digest-json`, `schema`, `intake`, `assess`, `exposure`,
@@ -20,8 +20,10 @@ The following are intentional v0.6 public surfaces:
 - the integration contract `vulnevidenceops.integration-contract.v1`, its four frozen peer
   profiles and three public schemas.
 
-Patch releases must remain backward compatible with the v0.6 contract. A future v1.0 release will
-freeze exact API and schema fingerprints and adopt Semantic Versioning compatibility guarantees.
+Final v1.0 patch releases must remain backward compatible with this baseline. Additive changes
+require an explicit compatibility review; removals or incompatible schema changes require a new
+major version. Independent review was not performed; its prerequisite was explicitly waived by the
+repository owner and that waiver must not be described as review completion.
 
 No package version implies a Git tag, GitHub Release, package publication, deployment, security
 assessment, compliance decision or production-readiness attestation.

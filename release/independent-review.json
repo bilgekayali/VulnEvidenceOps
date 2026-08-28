@@ -1,0 +1,21 @@
+{
+  "schema_version": "vulnevidenceops.independent-review.v1",
+  "candidate_version": "1.0.0rc1",
+  "review_scope": [
+    "public Python API and CLI compatibility surface",
+    "public JSON Schema compatibility surface",
+    "security and non-claim boundaries",
+    "clean-wheel release evidence"
+  ],
+  "review_completed": false,
+  "reviewer": null,
+  "reviewed_at": null,
+  "evidence_refs": [],
+  "requirement_status": "waived-by-owner",
+  "waiver": {
+    "approved_by": "Bilge Kayalı",
+    "approved_at": "2026-08-28",
+    "reason": "Repository owner explicitly authorized bypassing the independent-review prerequisite before merging PR #7."
+  },
+  "blockers": []
+}

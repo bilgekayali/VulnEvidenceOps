@@ -35,9 +35,13 @@ for bounded DataGovOps, DORAOps, ModelRiskOps and ai-threat-detection-framework 
 verification does not establish cross-system identity, delivery, authority, semantic compatibility
 or consumer acceptance.
 
-## Candidate later boundaries
+## v1.0.0rc1 — Stable-reference candidate
 
-- **v1.0 — Stable reference:** frozen API/schema fingerprints, independent review and clean-wheel
-  release evidence.
+- Frozen Python API, CLI, dependency and byte-exact schema baseline.
+- Deterministic clean-wheel release evidence and a dedicated compatibility gate.
+- Independent human review was not performed; its prerequisite was explicitly waived by the owner.
 
-Later boundaries are proposals, not current capabilities.
+## Candidate later boundary
+
+- **v1.0.0 — Stable reference:** exact post-merge commit binding and a separate human release
+  decision; the owner waiver must remain visible if no independent review is later performed.

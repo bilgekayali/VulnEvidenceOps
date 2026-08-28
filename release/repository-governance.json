@@ -6,7 +6,7 @@
   "conversation_resolution_required": true,
   "force_pushes_allowed": false,
   "branch_deletion_allowed": false,
-  "required_workflow_names": ["CI", "CodeQL", "Reference Gate"],
+  "required_workflow_names": ["CI", "CodeQL", "Reference Gate", "Stable Candidate"],
   "enforcement_verified": false,
   "verification_note": "Committed policy is design evidence only; live GitHub enforcement must be verified separately."
 }
