@@ -9,10 +9,11 @@
 - deterministic dossier reproduction.
 - signed-payload and verification-key binding;
 - exact build-provenance representation.
+- integration payload and peer-contract identity binding.
 
 ## Primary threats
 
-| Threat | v0.5 response | Residual boundary |
+| Threat | v0.6 response | Residual boundary |
 |---|---|---|
 | Evidence substitution | Exact SHA-256 artifact digest and opaque evidence ID | External artifact authenticity and custody |
 | Finding relabelling | Immutable finding, asset and source references | External inventory correctness |
@@ -41,6 +42,12 @@
 | Anchor receipt substitution | Exact envelope binding, receipt digest and temporal state | External receipt authenticity and provider trust |
 | Build metadata treated as build trust | Exact subject, Git object, invocation and material identities plus explicit false non-claims | Builder security, reproducibility and artifact safety |
 | Private key committed with examples | Only a synthetic public key and signed outputs are committed; release gate rejects private-key fields/PEM markers | Contributor practices outside committed examples |
+| Integration payload substitution | Canonical payload SHA-256 is verified against the handoff | External custody and payload truth |
+| Peer contract drift hidden | Exact repository, commit, tree, path and Git blob are frozen per profile | Repository authenticity and future peer versions |
+| Profile repurposed silently | Direction, relationship, media type and peer identity are checked as one binding | Downstream business semantics |
+| Expired handoff treated as current | Created/valid-until states and exact temporal gaps | Trusted time and renewal governance |
+| Local verification presented as delivery | Delivery and consumer acceptance remain explicit false non-claims | Transport receipts and peer acknowledgement |
+| Git blob identity presented as trust | Git SHA-1 is used only to reproduce exact blob identity | Repository authenticity and collision policy |
 
 ## Trust assumptions
 

@@ -105,3 +105,16 @@ jobs:
           vulnevidenceops schema \
             schemas/signature-verification.schema.json \
             /tmp/vulnevidenceops-signature-verification.json
+          vulnevidenceops schema \
+            schemas/integration-handoff.schema.json \
+            examples/synthetic-datagovops-control-evidence-handoff.json
+          vulnevidenceops verify-integration \
+            examples/synthetic-datagovops-control-evidence-handoff.json \
+            examples/synthetic-assurance-dossier.json \
+            --peer-contract \
+              examples/peer-contracts/datagovops-control-evidence-reference.schema.json \
+            --as-of 2026-01-20T00:15:00Z \
+            --output /tmp/vulnevidenceops-integration-verification.json
+          vulnevidenceops schema \
+            schemas/integration-verification.schema.json \
+            /tmp/vulnevidenceops-integration-verification.json

@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v0.5 release contract."""
+"""Emit and verify the VulnEvidenceOps v0.6 release contract."""
 
 from __future__ import annotations
 
@@ -31,6 +31,28 @@ INTAKE_MODULE = ROOT / "src" / "vulnevidenceops" / "intake.py"
 EXPOSURE_MODULE = ROOT / "src" / "vulnevidenceops" / "exposure.py"
 PORTFOLIO_MODULE = ROOT / "src" / "vulnevidenceops" / "portfolio.py"
 SIGNED_EVIDENCE_MODULE = ROOT / "src" / "vulnevidenceops" / "signed_evidence.py"
+INTEGRATION_MODULE = ROOT / "src" / "vulnevidenceops" / "integration.py"
+ASSURANCE_DOSSIER_EXAMPLE = ROOT / "examples" / "synthetic-assurance-dossier.json"
+AI_THREAT_REPORT_EXAMPLE = ROOT / "examples" / "synthetic-ai-threat-evaluation-report.json"
+PEER_CONTRACT_DIR = ROOT / "examples" / "peer-contracts"
+INTEGRATION_EXAMPLES = {
+    "ai-threat-evaluation": {
+        "payload": AI_THREAT_REPORT_EXAMPLE,
+        "peer": PEER_CONTRACT_DIR / "ai-threat-evaluation-report.schema.json",
+    },
+    "datagovops-control-evidence": {
+        "payload": ASSURANCE_DOSSIER_EXAMPLE,
+        "peer": PEER_CONTRACT_DIR / "datagovops-control-evidence-reference.schema.json",
+    },
+    "doraops-operational-control-evidence": {
+        "payload": ASSURANCE_DOSSIER_EXAMPLE,
+        "peer": PEER_CONTRACT_DIR / "doraops-operational-control-evidence.schema.json",
+    },
+    "modelriskops-assurance-evidence": {
+        "payload": ASSURANCE_DOSSIER_EXAMPLE,
+        "peer": PEER_CONTRACT_DIR / "modelriskops-assurance-evidence-reference.schema.json",
+    },
+}
 WORKFLOWS = ROOT / ".github" / "workflows"
 _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 _USES = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
@@ -220,6 +242,44 @@ def _signed_evidence() -> dict[str, object]:
     }
 
 
+def _integration_contracts() -> dict[str, object]:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops.integration import (
+        INTEGRATION_CONTRACT,
+        INTEGRATION_POSITIONS,
+        INTEGRATION_PROFILES,
+        INTEGRATION_SYSTEMS,
+    )
+
+    example_paths = []
+    for profile, paths in sorted(INTEGRATION_EXAMPLES.items()):
+        example_paths.extend(
+            (
+                paths["payload"],
+                paths["peer"],
+                ROOT / "examples" / f"synthetic-{profile}-handoff.json",
+                ROOT / "examples" / f"synthetic-{profile}-verification.json",
+            )
+        )
+    entries = [
+        {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in (INTEGRATION_MODULE, *dict.fromkeys(example_paths))
+    ]
+    return {
+        "contract": INTEGRATION_CONTRACT,
+        "example_count": len(INTEGRATION_EXAMPLES),
+        "peer_contract_count": len(INTEGRATION_EXAMPLES),
+        "profiles": sorted(INTEGRATION_PROFILES),
+        "systems": sorted(INTEGRATION_SYSTEMS),
+        "verification_positions": sorted(INTEGRATION_POSITIONS),
+        "sha256": _sha(entries),
+    }
+
+
 def compute() -> dict[str, dict[str, object]]:
     return {
         "public_api": _public_api(),
@@ -230,6 +290,7 @@ def compute() -> dict[str, dict[str, object]]:
         "exposure_context": _exposure_context(),
         "portfolio_assurance": _portfolio_assurance(),
         "signed_evidence": _signed_evidence(),
+        "integration_contracts": _integration_contracts(),
     }
 
 
@@ -465,6 +526,67 @@ def _verify_signed_evidence_examples() -> None:
         raise SystemExit("committed signed-evidence examples must not contain private keys")
 
 
+def _verify_integration_examples() -> None:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops import (
+        IntegrationHandoff,
+        VulnerabilityCase,
+        VulnerabilityPolicy,
+        assess_case,
+        git_blob_id,
+        validate_document,
+        verify_integration_handoff,
+    )
+
+    generated_dossier = assess_case(
+        VulnerabilityCase.from_dict(_json(EXAMPLE)),
+        policy=VulnerabilityPolicy.from_dict(_json(POLICY)),
+        assessed_at="2026-01-20T00:00:00Z",
+    ).to_dict()
+    committed_dossier = _json(ASSURANCE_DOSSIER_EXAMPLE)
+    if committed_dossier != generated_dossier:
+        raise SystemExit("committed integration dossier differs from deterministic assessment")
+    validate_document(SCHEMA_DIR / "assurance-dossier.schema.json", committed_dossier)
+    validate_document(
+        INTEGRATION_EXAMPLES["ai-threat-evaluation"]["peer"],
+        _json(AI_THREAT_REPORT_EXAMPLE),
+    )
+
+    for profile, paths in sorted(INTEGRATION_EXAMPLES.items()):
+        handoff_path = ROOT / "examples" / f"synthetic-{profile}-handoff.json"
+        verification_path = ROOT / "examples" / f"synthetic-{profile}-verification.json"
+        handoff_document = _json(handoff_path)
+        verification_document = _json(verification_path)
+        validate_document(SCHEMA_DIR / "integration-handoff.schema.json", handoff_document)
+        validate_document(
+            SCHEMA_DIR / "peer-contract-identity.schema.json",
+            handoff_document["peer_contract"],
+        )
+        handoff = IntegrationHandoff.from_dict(handoff_document)
+        peer_bytes = paths["peer"].read_bytes()
+        if git_blob_id(peer_bytes) != handoff.peer_contract.blob:
+            raise SystemExit(f"{profile} peer snapshot differs from its exact Git blob")
+        verification = verify_integration_handoff(
+            handoff,
+            _json(paths["payload"]),
+            peer_bytes,
+            verified_at="2026-01-20T00:15:00Z",
+        ).to_dict()
+        if verification != verification_document:
+            raise SystemExit(f"{profile} verification differs from the reference output")
+        validate_document(
+            SCHEMA_DIR / "integration-verification.schema.json",
+            verification,
+        )
+        if verification["integration_position"] != "verified" or verification["gaps"]:
+            raise SystemExit(f"{profile} reference handoff must verify without local gaps")
+        if any(verification["non_claims"].values()):
+            raise SystemExit(f"{profile} non-claims must remain explicit false values")
+        if handoff.synthetic is not True:
+            raise SystemExit(f"{profile} committed handoff must be explicitly synthetic")
+
+
 def verify() -> dict[str, dict[str, object]]:
     manifest = _json(MANIFEST)
     computed = compute()
@@ -474,16 +596,16 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "0.5.0":
-        raise SystemExit("package and release-contract versions must equal 0.5.0")
+    ) != "0.6.0":
+        raise SystemExit("package and release-contract versions must equal 0.6.0")
     if manifest.get("release_stage") != "alpha-reference":
-        raise SystemExit("v0.5 release stage must remain alpha-reference")
+        raise SystemExit("v0.6 release stage must remain alpha-reference")
     if "Development Status :: 3 - Alpha" not in project.get("classifiers", []):
-        raise SystemExit("v0.5 package classifier must remain Alpha")
+        raise SystemExit("v0.6 package classifier must remain Alpha")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v0.5 contract")
+        raise SystemExit("console-script surface differs from the v0.6 contract")
     if project.get("dependencies") != ["cryptography>=44,<47", "jsonschema>=4.23,<5"]:
-        raise SystemExit("runtime dependency surface differs from the v0.5 contract")
+        raise SystemExit("runtime dependency surface differs from the v0.6 contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
@@ -491,7 +613,7 @@ def verify() -> dict[str, dict[str, object]]:
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
     if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v0.5 source promotion boundary was removed")
+        raise SystemExit("v0.6 source promotion boundary was removed")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -512,6 +634,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "docs" / "CONTROL_EVIDENCE_MATRIX.md",
         ROOT / "docs" / "EXPOSURE_CONTEXT.md",
         ROOT / "docs" / "INTAKE_ADAPTERS.md",
+        ROOT / "docs" / "INTEGRATION_CONTRACTS.md",
         ROOT / "docs" / "PORTFOLIO_ASSURANCE.md",
         ROOT / "docs" / "ROADMAP.md",
         ROOT / "docs" / "RELEASE_PROCESS.md",
@@ -526,7 +649,7 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*0\.5\.0\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*0\.6\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()
@@ -535,6 +658,7 @@ def verify() -> dict[str, dict[str, object]]:
     _verify_exposure_example()
     _verify_portfolio_example()
     _verify_signed_evidence_examples()
+    _verify_integration_examples()
     return computed
 
 

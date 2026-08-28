@@ -1,0 +1,37 @@
+{
+  "consumer_system": "modelriskops",
+  "created_at": "2026-01-20T00:10:00Z",
+  "handoff_id": "HANDOFF-SYNTH-MODELRISKOPS-001",
+  "non_claims": {
+    "artifact_safety_established": false,
+    "consumer_acceptance_established": false,
+    "cross_system_identity_established": false,
+    "delivery_established": false,
+    "payload_schema_conformance_established": false,
+    "payload_truth_established": false,
+    "peer_contract_semantic_compatibility_established": false,
+    "peer_repository_authenticity_established": false,
+    "producer_authority_established": false,
+    "production_interoperability_established": false,
+    "regulatory_compliance_established": false
+  },
+  "payload_sha256": "61ffc29994da6c1f82511dfd0e1b100c21e95115ae78fab87b5a79ca27a86cf7",
+  "payload_type": "application/vnd.vulnevidenceops.assurance-dossier.v1+json",
+  "peer_contract": {
+    "blob": "c132e9531ab5263b2d741bccdf6167d60ae87f1e",
+    "commit": "a4c35ff28d2a157b49f0d72958c84629ccd32e1a",
+    "contract_role": "consumer",
+    "path": "schemas/assurance-evidence-reference.schema.json",
+    "repository": "https://github.com/bilgekayali/ModelRiskOps",
+    "schema_version": "vulnevidenceops.peer-contract-identity.v1",
+    "system": "modelriskops",
+    "tree": "b29ea0dc3cbdb2d93ed9d31dd80dee1728af2aae"
+  },
+  "producer_system": "vulnevidenceops",
+  "profile": "modelriskops-assurance-evidence",
+  "relationship": "model_security_assurance_evidence",
+  "schema_version": "vulnevidenceops.integration-handoff.v1",
+  "subject_ref": "synthetic-case:CASE-SYNTH-001",
+  "synthetic": true,
+  "valid_until": "2027-01-20T00:10:00Z"
+}

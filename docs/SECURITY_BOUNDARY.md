@@ -16,6 +16,9 @@
 - local signature, payload-digest and public-key lifecycle verification;
 - local binding and time-state checks for caller-supplied opaque anchor receipts;
 - exact caller-supplied build subject, Git object, invocation and material identities.
+- canonical integration-payload digesting and frozen peer repository/commit/tree/path/blob
+  representation;
+- local profile, payload, Git-blob and validity-window verification.
 
 ## Out of scope
 
@@ -34,15 +37,20 @@
 - network access to RFC 3161 services, transparency logs, ledgers or other anchor providers;
 - external receipt authenticity, trusted-time, build reproducibility, source trust or artifact-
   safety verification.
+- peer repository authenticity, network delivery, cross-system identity, producer authority,
+  payload truth, semantic compatibility, consumer acceptance or production interoperability.
 
 ## Evidence handling
 
-The v0.5 contract stores normalized metadata, source locators, artifact/record digests, public keys,
-signatures and opaque anchor receipt metadata. It never serializes private-key material.
+The v0.6 contract stores normalized metadata, source locators, artifact/record digests, public keys,
+signatures, opaque anchor receipt metadata and public peer Git identities. It never serializes
+private-key material.
 `artifact_ref` is an opaque locator. Intake reads a source artifact locally but does not copy its
 raw body into the output batch.
 Callers are responsible for private-key security, verification-key distribution, access control,
 retention, encryption, authenticity and availability of referenced artifacts and receipts.
+Exact peer-contract snapshots are public, immutable test fixtures. They are not network clients,
+trusted roots or evidence that a peer system accepted a handoff.
 
 Repository examples are synthetic. Contributors must not commit real hostnames, IP addresses,
 credentials, customer identifiers, proprietary scanner exports or exploit material.

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/integration-verification.schema.json",
+  "title": "Local integration handoff verification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "handoff_id", "handoff_sha256", "profile", "verified_at", "profile_binding_valid", "payload_digest_valid", "peer_contract_blob_valid", "temporal_state", "integration_position", "gaps", "non_claims"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.integration-verification.v1"},
+    "handoff_id": {"type": "string", "minLength": 1},
+    "handoff_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "profile": {"enum": ["ai-threat-evaluation", "datagovops-control-evidence", "doraops-operational-control-evidence", "modelriskops-assurance-evidence"]},
+    "verified_at": {"type": "string", "format": "date-time"},
+    "profile_binding_valid": {"type": "boolean"},
+    "payload_digest_valid": {"type": "boolean"},
+    "peer_contract_blob_valid": {"type": "boolean"},
+    "temporal_state": {"enum": ["current", "expired", "future"]},
+    "integration_position": {"enum": ["invalid", "verified", "with_gaps"]},
+    "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "non_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_safety_established", "consumer_acceptance_established", "cross_system_identity_established", "delivery_established", "payload_schema_conformance_established", "payload_truth_established", "peer_contract_semantic_compatibility_established", "peer_repository_authenticity_established", "producer_authority_established", "production_interoperability_established", "regulatory_compliance_established"],
+      "properties": {
+        "artifact_safety_established": {"const": false},
+        "consumer_acceptance_established": {"const": false},
+        "cross_system_identity_established": {"const": false},
+        "delivery_established": {"const": false},
+        "payload_schema_conformance_established": {"const": false},
+        "payload_truth_established": {"const": false},
+        "peer_contract_semantic_compatibility_established": {"const": false},
+        "peer_repository_authenticity_established": {"const": false},
+        "producer_authority_established": {"const": false},
+        "production_interoperability_established": {"const": false},
+        "regulatory_compliance_established": {"const": false}
+      }
+    }
+  }
+}

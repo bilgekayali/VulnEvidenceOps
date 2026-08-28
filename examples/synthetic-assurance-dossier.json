@@ -1,0 +1,103 @@
+{
+  "assessed_at": "2026-01-20T00:00:00Z",
+  "assurance_position": "current",
+  "case_id": "CASE-SYNTH-001",
+  "control_evidence": [
+    {
+      "control_id": "VEO-ACC-001",
+      "evidence_refs": [],
+      "reason": "risk-acceptance path not selected",
+      "status": "not_applicable"
+    },
+    {
+      "control_id": "VEO-CLS-001",
+      "evidence_refs": [
+        "EVD-SYNTH-VER-001"
+      ],
+      "reason": "closure is supported by governed evidence",
+      "status": "represented"
+    },
+    {
+      "control_id": "VEO-INV-001",
+      "evidence_refs": [
+        "EVD-SYNTH-OBS-001"
+      ],
+      "reason": "finding evidence is digest-bound and linked",
+      "status": "represented"
+    },
+    {
+      "control_id": "VEO-REM-001",
+      "evidence_refs": [
+        "EVD-SYNTH-REM-001"
+      ],
+      "reason": "remediation is owned, planned and evidence-linked",
+      "status": "represented"
+    },
+    {
+      "control_id": "VEO-TRI-001",
+      "evidence_refs": [
+        "EVD-SYNTH-TRI-001"
+      ],
+      "reason": "triage is accountable and evidence-linked",
+      "status": "represented"
+    },
+    {
+      "control_id": "VEO-VER-001",
+      "evidence_refs": [
+        "EVD-SYNTH-VER-001"
+      ],
+      "reason": "remediation has effective independent verification",
+      "status": "represented"
+    }
+  ],
+  "evidence_inventory": [
+    {
+      "artifact_ref": "synthetic://scanner/observation-001.json",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "collected_at": "2026-01-01T00:00:00Z",
+      "evidence_id": "EVD-SYNTH-OBS-001",
+      "source_identity": "synthetic-scanner:reference-v1",
+      "synthetic": true
+    },
+    {
+      "artifact_ref": "synthetic://change/change-001.json",
+      "artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "collected_at": "2026-01-03T00:00:00Z",
+      "evidence_id": "EVD-SYNTH-REM-001",
+      "source_identity": "synthetic-change:reference-v1",
+      "synthetic": true
+    },
+    {
+      "artifact_ref": "synthetic://ticket/triage-001.json",
+      "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "collected_at": "2026-01-02T00:00:00Z",
+      "evidence_id": "EVD-SYNTH-TRI-001",
+      "source_identity": "synthetic-ticket:reference-v1",
+      "synthetic": true
+    },
+    {
+      "artifact_ref": "synthetic://scanner/retest-001.json",
+      "artifact_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "collected_at": "2026-01-16T00:00:00Z",
+      "evidence_id": "EVD-SYNTH-VER-001",
+      "source_identity": "synthetic-scanner:reference-v1",
+      "synthetic": true
+    }
+  ],
+  "finding_id": "FIND-SYNTH-001",
+  "gaps": [],
+  "input_sha256": "5c2dff2215605a95f15c7ba031ee72c5bd8a5a2454fc54657667be7aea932c71",
+  "lifecycle_state": "closed_verified",
+  "non_claims": {
+    "asset_inventory_completeness_established": false,
+    "production_remediation_established": false,
+    "regulatory_compliance_established": false,
+    "residual_risk_acceptability_established": false,
+    "scanner_completeness_established": false,
+    "vulnerability_absence_established": false
+  },
+  "overdue": false,
+  "policy_sha256": "b011852fec0a4c730489650e0d35f0c1325d44daab55cb19010d38cfc70bfedf",
+  "remediation_due_at": "2026-01-31T00:00:00Z",
+  "schema_version": "vulnevidenceops.assurance-dossier.v1"
+}

@@ -1,0 +1,37 @@
+{
+  "consumer_system": "vulnevidenceops",
+  "created_at": "2026-01-20T00:10:00Z",
+  "handoff_id": "HANDOFF-SYNTH-AI-THREAT-001",
+  "non_claims": {
+    "artifact_safety_established": false,
+    "consumer_acceptance_established": false,
+    "cross_system_identity_established": false,
+    "delivery_established": false,
+    "payload_schema_conformance_established": false,
+    "payload_truth_established": false,
+    "peer_contract_semantic_compatibility_established": false,
+    "peer_repository_authenticity_established": false,
+    "producer_authority_established": false,
+    "production_interoperability_established": false,
+    "regulatory_compliance_established": false
+  },
+  "payload_sha256": "bb0eb30182068b5f8575a31c6db76e7e05f4077693b99695a1221db230d05b99",
+  "payload_type": "application/vnd.ai-threat-detection.evaluation-report.v1+json",
+  "peer_contract": {
+    "blob": "4a05d6bb24ef8b08c71240a1f22e0f830a81f4c1",
+    "commit": "3c268ebfbd57a4ce7885cc1901ceb34d852f7191",
+    "contract_role": "producer",
+    "path": "schemas/evaluation-report.schema.json",
+    "repository": "https://github.com/bilgekayali/ai-threat-detection-framework",
+    "schema_version": "vulnevidenceops.peer-contract-identity.v1",
+    "system": "ai-threat-detection-framework",
+    "tree": "89e69bb5b8ac0fad2d988a1b3086b549c5ce46d1"
+  },
+  "producer_system": "ai-threat-detection-framework",
+  "profile": "ai-threat-evaluation",
+  "relationship": "alert_evaluation_evidence",
+  "schema_version": "vulnevidenceops.integration-handoff.v1",
+  "subject_ref": "synthetic-evaluation:ai-threat-v1",
+  "synthetic": true,
+  "valid_until": "2027-01-20T00:10:00Z"
+}
