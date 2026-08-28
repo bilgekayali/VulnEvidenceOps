@@ -1,6 +1,6 @@
 {
   "schema_version": "vulnevidenceops.independent-review.v1",
-  "candidate_version": "1.0.0rc1",
+  "release_version": "1.0.0",
   "review_scope": [
     "public Python API and CLI compatibility surface",
     "public JSON Schema compatibility surface",

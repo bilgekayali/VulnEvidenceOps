@@ -41,7 +41,9 @@ or consumer acceptance.
 - Deterministic clean-wheel release evidence and a dedicated compatibility gate.
 - Independent human review was not performed; its prerequisite was explicitly waived by the owner.
 
-## Candidate later boundary
+## v1.0.0 — Stable reference
 
-- **v1.0.0 — Stable reference:** exact post-merge commit binding and a separate human release
-  decision; the owner waiver must remain visible if no independent review is later performed.
+- Frozen compatibility contract, clean-wheel evidence and exact-SHA release gates promoted to the
+  stable source boundary. The owner waiver remains visible because no independent review was
+  performed. Git tagging and GitHub Release creation bind the release to the exact green `main`
+  commit; package publication and deployment remain separate decisions.

@@ -1,10 +1,10 @@
 # Compatibility policy
 
-VulnEvidenceOps `1.0.0rc1` is the stable-reference candidate. Its intended v1 Python API, CLI,
+VulnEvidenceOps `1.0.0` is the stable reference. Its v1 Python API, CLI,
 runtime dependencies and JSON Schemas are frozen byte-for-byte in
 `compatibility/v1-stable-baseline.json` and checked by `tools/stable_candidate.py`.
 
-The following are intentional v1 candidate public surfaces:
+The following are intentional v1 stable public surfaces:
 
 - symbols listed in `vulnevidenceops.__all__`;
 - the `vulnevidenceops` CLI commands `digest-json`, `schema`, `intake`, `assess`, `exposure`,

@@ -9,7 +9,7 @@ def test_sbom_binds_package_and_direct_dependencies():
     assert DIRECT_RUNTIME_DEPENDENCIES == ("cryptography", "jsonschema")
     assert sbom["bomFormat"] == "CycloneDX"
     assert sbom["specVersion"] == "1.5"
-    assert sbom["metadata"]["component"]["version"] == "1.0.0rc1"
+    assert sbom["metadata"]["component"]["version"] == "1.0.0"
     assert [item["name"] for item in sbom["components"]] == list(DIRECT_RUNTIME_DEPENDENCIES)
 
 

@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v1.0.0rc1 release contract."""
+"""Emit and verify the VulnEvidenceOps v1.0.0 stable-reference contract."""
 
 from __future__ import annotations
 
@@ -596,30 +596,38 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "1.0.0rc1":
-        raise SystemExit("package and release-contract versions must equal 1.0.0rc1")
+    ) != "1.0.0":
+        raise SystemExit("package and release-contract versions must equal 1.0.0")
     if manifest.get("target_stable_version") != "1.0.0":
         raise SystemExit("stable target must remain 1.0.0")
-    if manifest.get("release_stage") != "stable-candidate":
-        raise SystemExit("v1 release stage must remain stable-candidate")
+    if manifest.get("release_stage") != "stable-reference":
+        raise SystemExit("v1 release stage must remain stable-reference")
     if manifest.get("independent_review_completed") is not False:
-        raise SystemExit("candidate must not imply completed independent review")
+        raise SystemExit("release must not imply completed independent review")
     if manifest.get("independent_review_requirement") != "waived-by-owner":
-        raise SystemExit("candidate must preserve the explicit owner waiver")
-    if "Development Status :: 4 - Beta" not in project.get("classifiers", []):
-        raise SystemExit("v1 candidate package classifier must remain Beta")
+        raise SystemExit("release must preserve the explicit owner waiver")
+    if "Development Status :: 5 - Production/Stable" not in project.get("classifiers", []):
+        raise SystemExit("v1 package classifier must remain Production/Stable")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v1 candidate contract")
+        raise SystemExit("console-script surface differs from the v1 stable contract")
     if project.get("dependencies") != ["cryptography>=44,<47", "jsonschema>=4.23,<5"]:
-        raise SystemExit("runtime dependency surface differs from the v1 candidate contract")
+        raise SystemExit("runtime dependency surface differs from the v1 stable contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
         raise SystemExit("CLI command surface differs from the release contract")
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
-    if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v1 candidate source-promotion boundary was removed")
+    if manifest.get("human_release_decision_recorded") is not True:
+        raise SystemExit("v1 release requires a recorded human decision")
+    if manifest.get("source_promotion_only") is not False:
+        raise SystemExit("v1 final release must not remain source-promotion-only")
+    if manifest.get("git_tag_and_github_release_authorized") is not True:
+        raise SystemExit("v1 tag and GitHub Release authorization is missing")
+    if manifest.get("package_publication_authorized") is not False:
+        raise SystemExit("package publication must remain unauthorized")
+    if manifest.get("deployment_authorized") is not False:
+        raise SystemExit("deployment must remain unauthorized")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -632,9 +640,9 @@ def verify() -> dict[str, dict[str, object]]:
         "CI",
         "CodeQL",
         "Reference Gate",
-        "Stable Candidate",
+        "Stable Release",
     ]:
-        raise SystemExit("repository governance workflow set differs from the candidate contract")
+        raise SystemExit("repository governance workflow set differs from the stable contract")
 
     required_docs = [
         ROOT / "CHANGELOG.md",
@@ -652,7 +660,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "docs" / "SECURITY_BOUNDARY.md",
         ROOT / "docs" / "SIGNED_EVIDENCE.md",
         ROOT / "docs" / "THREAT_MODEL.md",
-        ROOT / "docs" / "V1_STABLE_CANDIDATE.md",
+        ROOT / "docs" / "V1_STABLE_REFERENCE.md",
     ]
     missing = [
         path.relative_to(ROOT).as_posix() for path in required_docs if not path.is_file()
@@ -661,7 +669,7 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*1\.0\.0rc1\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*1\.0\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()

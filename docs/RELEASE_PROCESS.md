@@ -1,7 +1,7 @@
 # Release process
 
-The committed `1.0.0rc1` version is a stable-reference candidate source boundary. It does not
-imply final `1.0.0`, a Git tag, GitHub Release, package publication or deployment.
+The committed `1.0.0` version is the stable-reference source boundary. Source promotion does not
+by itself imply a Git tag, GitHub Release, package publication or deployment.
 
 A release candidate must pass on the exact candidate SHA:
 

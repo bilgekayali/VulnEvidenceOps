@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v1.0.0rc1 — Stable Reference Candidate**.
+Current package boundary: **VulnEvidenceOps v1.0.0 — Stable Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v1.0.0rc1 — Stable Reference Candi
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v1 candidate scope
+## v1 stable-reference scope
 
 The initial boundary provides:
 
@@ -79,9 +79,10 @@ The v0.6 integration-contract boundary adds:
 - explicit non-claims for cross-system identity, authority, delivery, consumer acceptance,
   semantic compatibility, payload truth and production interoperability.
 
-The v1 candidate additionally freezes the Python API, CLI, runtime-dependency and byte-exact
+The v1 stable reference freezes the Python API, CLI, runtime-dependency and byte-exact
 public-schema surfaces. Independent human review was not performed; the repository owner explicitly
-waived that prerequisite. This candidate is still not a final stable release.
+waived that prerequisite. “Stable” describes the package and compatibility contract, not a
+production-safety, compliance or effectiveness attestation.
 
 ## Portfolio boundary
 
@@ -196,7 +197,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)
-- [v1 stable candidate](docs/V1_STABLE_CANDIDATE.md)
+- [v1 stable reference](docs/V1_STABLE_REFERENCE.md)
 - [Compatibility](COMPATIBILITY.md)
 - [Roadmap](docs/ROADMAP.md)
 
