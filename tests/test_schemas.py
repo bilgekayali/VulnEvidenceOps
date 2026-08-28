@@ -11,6 +11,7 @@ from vulnevidenceops import (
     adapt_sarif,
     assess_case,
     assess_exposure_context,
+    assess_portfolio,
     validate_document,
 )
 
@@ -22,12 +23,14 @@ from .helpers import (
     exposure_document,
     policy,
     policy_document,
+    portfolio_bundle,
+    portfolio_document,
 )
 
 
 def test_every_public_schema_is_draft_2020_12_and_well_formed():
     schemas = sorted((ROOT / "schemas").glob("*.schema.json"))
-    assert len(schemas) == 16
+    assert len(schemas) == 18
     for path in schemas:
         schema = json.loads(path.read_text(encoding="utf-8"))
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -113,4 +116,20 @@ def test_exposure_example_and_generated_assessment_validate():
     validate_document(
         ROOT / "schemas" / "exposure-context-assessment.schema.json",
         assessment.to_dict(),
+    )
+
+
+def test_portfolio_example_and_generated_view_validate():
+    document = portfolio_document()
+    validate_document(
+        ROOT / "schemas" / "portfolio-bundle.schema.json",
+        document,
+    )
+    view = assess_portfolio(
+        portfolio_bundle(),
+        assessed_at="2026-01-20T00:00:00Z",
+    )
+    validate_document(
+        ROOT / "schemas" / "portfolio-assurance-view.schema.json",
+        view.to_dict(),
     )

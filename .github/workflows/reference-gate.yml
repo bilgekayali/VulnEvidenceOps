@@ -62,6 +62,11 @@ jobs:
             examples/synthetic-exposure-context.json \
             --as-of 2026-01-20T00:00:00Z \
             --output /tmp/vulnevidenceops-clean-exposure-assessment.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops portfolio \
+            examples/synthetic-portfolio.json \
+            --as-of 2026-01-20T00:00:00Z \
+            --output /tmp/vulnevidenceops-clean-portfolio-view.json
           test -s /tmp/vulnevidenceops-clean-sarif-intake.json
           test -s /tmp/vulnevidenceops-clean-cyclonedx-intake.json
           test -s /tmp/vulnevidenceops-clean-exposure-assessment.json
+          test -s /tmp/vulnevidenceops-clean-portfolio-view.json

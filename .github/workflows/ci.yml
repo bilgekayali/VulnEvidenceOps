@@ -75,3 +75,12 @@ jobs:
           vulnevidenceops schema \
             schemas/exposure-context-assessment.schema.json \
             /tmp/vulnevidenceops-exposure-assessment.json
+          vulnevidenceops schema \
+            schemas/portfolio-bundle.schema.json \
+            examples/synthetic-portfolio.json
+          vulnevidenceops portfolio examples/synthetic-portfolio.json \
+            --as-of 2026-01-20T00:00:00Z \
+            --output /tmp/vulnevidenceops-portfolio-view.json
+          vulnevidenceops schema \
+            schemas/portfolio-assurance-view.schema.json \
+            /tmp/vulnevidenceops-portfolio-view.json

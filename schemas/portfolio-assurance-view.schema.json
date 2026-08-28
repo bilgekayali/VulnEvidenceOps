@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/portfolio-assurance-view.schema.json",
+  "title": "Vulnerability portfolio assurance view",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "portfolio_id", "scope_ref", "accountable_role", "assessed_at", "input_sha256", "policy_sha256", "portfolio_position", "totals", "case_summaries", "deduplication_decisions", "sla_cohorts", "exception_ageing", "accountability_view", "gaps", "non_claims"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.portfolio-assurance-view.v1"},
+    "portfolio_id": {"type": "string", "minLength": 1},
+    "scope_ref": {"type": "string", "minLength": 1},
+    "accountable_role": {"type": "string", "minLength": 1},
+    "assessed_at": {"type": "string", "format": "date-time"},
+    "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portfolio_position": {"enum": ["attention_required", "current", "unavailable", "with_gaps"]},
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_count", "closed_case_count", "deduplication_decision_count", "exception_count", "finding_count", "open_case_count", "portfolio_gap_count"],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 0},
+        "closed_case_count": {"type": "integer", "minimum": 0},
+        "deduplication_decision_count": {"type": "integer", "minimum": 0},
+        "exception_count": {"type": "integer", "minimum": 0},
+        "finding_count": {"type": "integer", "minimum": 0},
+        "open_case_count": {"type": "integer", "minimum": 0},
+        "portfolio_gap_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "case_summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "finding_id", "asset_ref", "severity", "lifecycle_state", "assurance_position", "remediation_due_at", "overdue", "input_sha256", "dossier_sha256", "gaps"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "finding_id": {"type": "string", "minLength": 1},
+          "asset_ref": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["critical", "high", "informational", "low", "medium"]},
+          "lifecycle_state": {"enum": ["closed_dispositioned", "closed_verified", "detected", "revalidation_required", "risk_accepted", "triaged", "verification_pending"]},
+          "assurance_position": {"enum": ["current", "overdue", "revalidation_required", "with_gaps"]},
+          "remediation_due_at": {"type": "string", "format": "date-time"},
+          "overdue": {"type": "boolean"},
+          "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "dossier_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "deduplication_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision_id", "duplicate_finding_id", "target_finding_id", "decided_at", "accountable_role", "rationale", "decision_currentness", "target_state", "evidence_state", "evidence_refs"],
+        "properties": {
+          "decision_id": {"type": "string", "minLength": 1},
+          "duplicate_finding_id": {"type": "string", "minLength": 1},
+          "target_finding_id": {"type": "string", "minLength": 1},
+          "decided_at": {"type": "string", "format": "date-time"},
+          "accountable_role": {"type": "string", "minLength": 1},
+          "rationale": {"type": "string", "minLength": 1},
+          "decision_currentness": {"enum": ["current", "future"]},
+          "target_state": {"enum": ["linked", "target_is_duplicate", "target_out_of_scope"]},
+          "evidence_state": {"enum": ["future", "linked", "missing", "unlinked"]},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "sla_cohorts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cohort", "severity", "case_count", "case_ids", "finding_ids"],
+        "properties": {
+          "cohort": {"enum": ["accepted_exception", "closed", "due_later", "due_today", "due_within_30_days", "due_within_7_days", "overdue", "revalidation_required"]},
+          "severity": {"enum": ["critical", "high", "informational", "low", "medium"]},
+          "case_count": {"type": "integer", "minimum": 1},
+          "case_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "finding_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "exception_ageing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision_id", "case_id", "finding_id", "accepted_at", "expires_at", "risk_owner_role", "approver_role", "rationale", "exception_state", "age_band", "age_days", "days_until_expiry", "policy_state", "evidence_state", "compensating_control_refs", "evidence_refs"],
+        "properties": {
+          "decision_id": {"type": "string", "minLength": 1},
+          "case_id": {"type": "string", "minLength": 1},
+          "finding_id": {"type": "string", "minLength": 1},
+          "accepted_at": {"type": "string", "format": "date-time"},
+          "expires_at": {"type": "string", "format": "date-time"},
+          "risk_owner_role": {"type": "string", "minLength": 1},
+          "approver_role": {"type": "string", "minLength": 1},
+          "rationale": {"type": "string", "minLength": 1},
+          "exception_state": {"enum": ["current", "expired", "future"]},
+          "age_band": {"enum": ["0_30_days", "31_60_days", "61_90_days", "91_plus_days", "future"]},
+          "age_days": {"type": ["integer", "null"], "minimum": 0},
+          "days_until_expiry": {"type": "integer"},
+          "policy_state": {"enum": ["exceeds_policy", "within_policy"]},
+          "evidence_state": {"enum": ["future", "linked", "missing", "unlinked"]},
+          "compensating_control_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "accountability_view": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["accountable_role", "responsibilities", "case_count", "case_ids", "finding_ids"],
+        "properties": {
+          "accountable_role": {"type": "string", "minLength": 1},
+          "responsibilities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["portfolio_oversight", "remediation", "risk_approval", "risk_ownership", "triage_decision", "verification"]}},
+          "case_count": {"type": "integer", "minimum": 1},
+          "case_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "finding_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "non_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_inventory_completeness_established", "automatic_deduplication_established", "compliance_percentage_established", "cross_system_identity_established", "executive_approval_established", "portfolio_risk_rank_established", "remediation_priority_established", "risk_acceptance_validity_established", "sla_compliance_established"],
+      "properties": {
+        "asset_inventory_completeness_established": {"const": false},
+        "automatic_deduplication_established": {"const": false},
+        "compliance_percentage_established": {"const": false},
+        "cross_system_identity_established": {"const": false},
+        "executive_approval_established": {"const": false},
+        "portfolio_risk_rank_established": {"const": false},
+        "remediation_priority_established": {"const": false},
+        "risk_acceptance_validity_established": {"const": false},
+        "sla_compliance_established": {"const": false}
+      }
+    }
+  }
+}

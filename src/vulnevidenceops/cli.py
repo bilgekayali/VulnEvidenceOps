@@ -14,9 +14,17 @@ from .canonical import sha256_digest
 from .exposure import ExposureContextBundle, assess_exposure_context
 from .intake import adapt_cyclonedx, adapt_sarif
 from .models import VulnerabilityCase, VulnerabilityPolicy
+from .portfolio import PortfolioBundle, assess_portfolio
 from .schema import DocumentValidationError, validate_document
 
-STABLE_CLI_COMMANDS = ("assess", "digest-json", "exposure", "intake", "schema")
+STABLE_CLI_COMMANDS = (
+    "assess",
+    "digest-json",
+    "exposure",
+    "intake",
+    "portfolio",
+    "schema",
+)
 
 
 def _read_json(path: Path) -> Any:
@@ -81,6 +89,14 @@ def _parser() -> argparse.ArgumentParser:
     exposure.add_argument("bundle", type=Path)
     exposure.add_argument("--as-of", required=True)
     exposure.add_argument("--output", type=Path)
+
+    portfolio = commands.add_parser(
+        "portfolio",
+        help="Build raw SLA, exception and accountability portfolio views.",
+    )
+    portfolio.add_argument("bundle", type=Path)
+    portfolio.add_argument("--as-of", required=True)
+    portfolio.add_argument("--output", type=Path)
     return parser
 
 
@@ -137,6 +153,11 @@ def main(argv: list[str] | None = None) -> int:
             bundle = ExposureContextBundle.from_dict(_read_json(args.bundle))
             assessment = assess_exposure_context(bundle, assessed_at=args.as_of)
             _write_json(assessment.to_dict(), args.output)
+            return 0
+        if args.command == "portfolio":
+            bundle = PortfolioBundle.from_dict(_read_json(args.bundle))
+            view = assess_portfolio(bundle, assessed_at=args.as_of)
+            _write_json(view.to_dict(), args.output)
             return 0
     except (DocumentValidationError, KeyError, TypeError, ValueError) as exc:
         raise SystemExit(str(exc)) from exc

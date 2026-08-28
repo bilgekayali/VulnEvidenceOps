@@ -13,7 +13,7 @@ def test_cli_version_and_digest(capsys):
     with pytest.raises(SystemExit) as captured:
         main(["--version"])
     assert captured.value.code == 0
-    assert capsys.readouterr().out.strip() == "0.3.0"
+    assert capsys.readouterr().out.strip() == "0.4.0"
 
     assert main(["digest-json", str(ROOT / "examples" / "synthetic-policy.json")]) == 0
     assert len(capsys.readouterr().out.strip()) == 64
@@ -78,6 +78,28 @@ def test_cli_assesses_exposure_context_to_file(tmp_path):
     assert assessment["context_position"] == "current"
     assert assessment["gaps"] == []
     assert all(value is False for value in assessment["non_claims"].values())
+
+
+def test_cli_builds_portfolio_assurance_view(tmp_path):
+    output = tmp_path / "portfolio-view.json"
+    assert (
+        main(
+            [
+                "portfolio",
+                str(ROOT / "examples" / "synthetic-portfolio.json"),
+                "--as-of",
+                "2026-01-20T00:00:00Z",
+                "--output",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    view = json.loads(output.read_text(encoding="utf-8"))
+    assert view["portfolio_position"] == "current"
+    assert view["totals"]["case_count"] == 3
+    assert "compliance_percentage" not in view["totals"]
+    assert all(value is False for value in view["non_claims"].values())
 
 
 def test_cli_fails_cleanly_for_invalid_case(tmp_path):

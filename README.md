@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.3.0 — Alpha Exposure Context Reference**.
+Current package boundary: **VulnEvidenceOps v0.4.0 — Alpha Portfolio Assurance Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.3.0 — Alpha Exposure Context Re
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.3 scope
+## v0.4 scope
 
 The initial boundary provides:
 
@@ -47,6 +47,15 @@ The v0.3 exposure-context boundary adds:
 - deterministic currentness states for missing, unlinked, mismatched, future or expired evidence;
 - distinct `current`, `partial`, `stale`, `unavailable` and `with_gaps` context positions;
 - visible conflict gaps without selecting a preferred source or computing a risk score.
+
+The v0.4 portfolio-assurance boundary adds:
+
+- cross-case representation of explicit human deduplication decisions without similarity inference;
+- raw SLA cohorts derived from the committed policy and an explicit assessment time;
+- time, policy and evidence states for risk-acceptance exceptions plus transparent age bands;
+- accountable role views spanning triage, remediation, approval, ownership and verification;
+- digest-bound case summaries and raw counts without percentages, weighted scores or rankings;
+- explicit portfolio gaps for future, unlinked, out-of-scope or chained decisions.
 
 ## Portfolio boundary
 
@@ -94,6 +103,9 @@ vulnevidenceops intake sarif examples/synthetic-sarif.json \
 
 vulnevidenceops exposure examples/synthetic-exposure-context.json \
   --as-of 2026-01-20T00:00:00Z
+
+vulnevidenceops portfolio examples/synthetic-portfolio.json \
+  --as-of 2026-01-20T00:00:00Z
 ```
 
 ## Standards posture
@@ -112,6 +124,8 @@ VulnEvidenceOps does **not** by itself establish:
 - source severity, asset identity or finding validity merely because an adapter mapped it;
 - exploitability, business impact, source truth, remediation priority or an SLA merely because
   an exposure-context assertion is current;
+- automatic deduplication, SLA compliance, executive approval, portfolio risk rank or a
+  compliance percentage merely because a portfolio view is valid;
 - successful patching, mitigation or production verification;
 - acceptable residual risk or valid accountable authority;
 - ISO, NIST, DORA or other legal/regulatory compliance;
@@ -125,6 +139,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Control/evidence matrix](docs/CONTROL_EVIDENCE_MATRIX.md)
 - [Intake adapters](docs/INTAKE_ADAPTERS.md)
 - [Exposure context](docs/EXPOSURE_CONTEXT.md)
+- [Portfolio assurance](docs/PORTFOLIO_ASSURANCE.md)
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)

@@ -4,7 +4,12 @@ import copy
 import json
 from pathlib import Path
 
-from vulnevidenceops import ExposureContextBundle, VulnerabilityCase, VulnerabilityPolicy
+from vulnevidenceops import (
+    ExposureContextBundle,
+    PortfolioBundle,
+    VulnerabilityCase,
+    VulnerabilityPolicy,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,6 +36,16 @@ def exposure_document() -> dict:
     )
 
 
+def portfolio_document() -> dict:
+    return copy.deepcopy(
+        json.loads(
+            (ROOT / "examples" / "synthetic-portfolio.json").read_text(
+                encoding="utf-8"
+            )
+        )
+    )
+
+
 def case() -> VulnerabilityCase:
     return VulnerabilityCase.from_dict(case_document())
 
@@ -41,3 +56,7 @@ def policy() -> VulnerabilityPolicy:
 
 def exposure_bundle() -> ExposureContextBundle:
     return ExposureContextBundle.from_dict(exposure_document())
+
+
+def portfolio_bundle() -> PortfolioBundle:
+    return PortfolioBundle.from_dict(portfolio_document())

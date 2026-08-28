@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vulnevidenceops"
-version = "0.3.0"
-description = "Evidence-backed vulnerability exposure, decision, remediation, and verification governance"
+version = "0.4.0"
+description = "Evidence-backed vulnerability exposure, decisions and portfolio assurance"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Bilge Kayalı" }]

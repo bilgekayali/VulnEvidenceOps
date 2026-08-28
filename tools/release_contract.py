@@ -1,4 +1,4 @@
-"""Emit and verify the VulnEvidenceOps v0.3 release contract."""
+"""Emit and verify the VulnEvidenceOps v0.4 release contract."""
 
 from __future__ import annotations
 
@@ -22,8 +22,10 @@ POLICY = ROOT / "examples" / "synthetic-policy.json"
 SARIF_EXAMPLE = ROOT / "examples" / "synthetic-sarif.json"
 CYCLONEDX_EXAMPLE = ROOT / "examples" / "synthetic-cyclonedx.json"
 EXPOSURE_EXAMPLE = ROOT / "examples" / "synthetic-exposure-context.json"
+PORTFOLIO_EXAMPLE = ROOT / "examples" / "synthetic-portfolio.json"
 INTAKE_MODULE = ROOT / "src" / "vulnevidenceops" / "intake.py"
 EXPOSURE_MODULE = ROOT / "src" / "vulnevidenceops" / "exposure.py"
+PORTFOLIO_MODULE = ROOT / "src" / "vulnevidenceops" / "portfolio.py"
 WORKFLOWS = ROOT / ".github" / "workflows"
 _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 _USES = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
@@ -151,6 +153,33 @@ def _exposure_context() -> dict[str, object]:
     }
 
 
+def _portfolio_assurance() -> dict[str, object]:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops.portfolio import (
+        EXCEPTION_AGE_BANDS,
+        PORTFOLIO_ASSURANCE_CONTRACT,
+        PORTFOLIO_POSITIONS,
+        SLA_COHORTS,
+    )
+
+    entries = [
+        {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in (PORTFOLIO_MODULE, PORTFOLIO_EXAMPLE)
+    ]
+    return {
+        "age_bands": sorted(EXCEPTION_AGE_BANDS),
+        "contract": PORTFOLIO_ASSURANCE_CONTRACT,
+        "example_case_count": 3,
+        "portfolio_positions": sorted(PORTFOLIO_POSITIONS),
+        "sha256": _sha(entries),
+        "sla_cohorts": sorted(SLA_COHORTS),
+    }
+
+
 def compute() -> dict[str, dict[str, object]]:
     return {
         "public_api": _public_api(),
@@ -159,6 +188,7 @@ def compute() -> dict[str, dict[str, object]]:
         "synthetic_example": _synthetic_example(),
         "intake_adapters": _intake_adapters(),
         "exposure_context": _exposure_context(),
+        "portfolio_assurance": _portfolio_assurance(),
     }
 
 
@@ -280,6 +310,44 @@ def _verify_exposure_example() -> None:
         raise SystemExit("committed exposure evidence must be explicitly synthetic")
 
 
+def _verify_portfolio_example() -> None:
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from vulnevidenceops import PortfolioBundle, assess_portfolio, validate_document
+
+    example = _json(PORTFOLIO_EXAMPLE)
+    validate_document(SCHEMA_DIR / "portfolio-bundle.schema.json", example)
+    view = assess_portfolio(
+        PortfolioBundle.from_dict(example),
+        assessed_at="2026-01-20T00:00:00Z",
+    ).to_dict()
+    validate_document(SCHEMA_DIR / "portfolio-assurance-view.schema.json", view)
+    if view["portfolio_position"] != "current" or view["gaps"]:
+        raise SystemExit("synthetic portfolio must be current with no gaps")
+    expected_totals = {
+        "case_count": 3,
+        "closed_case_count": 2,
+        "deduplication_decision_count": 1,
+        "exception_count": 1,
+        "finding_count": 3,
+        "open_case_count": 1,
+        "portfolio_gap_count": 0,
+    }
+    if view["totals"] != expected_totals:
+        raise SystemExit("synthetic portfolio totals differ from the v0.4 reference")
+    if any(view["non_claims"].values()):
+        raise SystemExit("portfolio non-claims must remain explicit false values")
+    if any(
+        evidence.get("synthetic") is not True
+        for case in example["cases"]
+        for evidence in case["evidence_catalog"]
+    ):
+        raise SystemExit("committed portfolio evidence must be explicitly synthetic")
+    forbidden_metrics = {"compliance_percentage", "priority_score", "risk_score"}
+    if forbidden_metrics.intersection(view["totals"]):
+        raise SystemExit("portfolio totals must not introduce percentages or scores")
+
+
 def verify() -> dict[str, dict[str, object]]:
     manifest = _json(MANIFEST)
     computed = compute()
@@ -289,14 +357,14 @@ def verify() -> dict[str, dict[str, object]]:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if project.get("version") != manifest.get("current_release_version") or project.get(
         "version"
-    ) != "0.3.0":
-        raise SystemExit("package and release-contract versions must equal 0.3.0")
+    ) != "0.4.0":
+        raise SystemExit("package and release-contract versions must equal 0.4.0")
     if manifest.get("release_stage") != "alpha-reference":
-        raise SystemExit("v0.3 release stage must remain alpha-reference")
+        raise SystemExit("v0.4 release stage must remain alpha-reference")
     if "Development Status :: 3 - Alpha" not in project.get("classifiers", []):
-        raise SystemExit("v0.3 package classifier must remain Alpha")
+        raise SystemExit("v0.4 package classifier must remain Alpha")
     if sorted(project.get("scripts", {})) != ["vulnevidenceops"]:
-        raise SystemExit("console-script surface differs from the v0.3 contract")
+        raise SystemExit("console-script surface differs from the v0.4 contract")
     from vulnevidenceops.cli import STABLE_CLI_COMMANDS
 
     if list(STABLE_CLI_COMMANDS) != manifest.get("stable_cli_commands"):
@@ -304,7 +372,7 @@ def verify() -> dict[str, dict[str, object]]:
     if manifest.get("requires_human_release_decision") is not True:
         raise SystemExit("tagging and publication must remain human decisions")
     if manifest.get("source_promotion_only") is not True:
-        raise SystemExit("v0.3 source promotion boundary was removed")
+        raise SystemExit("v0.4 source promotion boundary was removed")
     if any(manifest.get("non_claims", {}).values()):
         raise SystemExit("release non-claims must remain explicit false values")
 
@@ -325,6 +393,7 @@ def verify() -> dict[str, dict[str, object]]:
         ROOT / "docs" / "CONTROL_EVIDENCE_MATRIX.md",
         ROOT / "docs" / "EXPOSURE_CONTEXT.md",
         ROOT / "docs" / "INTAKE_ADAPTERS.md",
+        ROOT / "docs" / "PORTFOLIO_ASSURANCE.md",
         ROOT / "docs" / "ROADMAP.md",
         ROOT / "docs" / "RELEASE_PROCESS.md",
         ROOT / "docs" / "SECURITY_BOUNDARY.md",
@@ -337,13 +406,14 @@ def verify() -> dict[str, dict[str, object]]:
         raise SystemExit("required documentation is missing: " + ", ".join(missing))
 
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    if not re.search(r"^version:\s*0\.3\.0\s*$", citation, re.MULTILINE):
+    if not re.search(r"^version:\s*0\.4\.0\s*$", citation, re.MULTILINE):
         raise SystemExit("CITATION.cff version differs from the package version")
 
     _verify_action_pins()
     _verify_examples()
     _verify_intake_examples()
     _verify_exposure_example()
+    _verify_portfolio_example()
     return computed
 
 

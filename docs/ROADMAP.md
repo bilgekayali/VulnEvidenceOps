@@ -16,10 +16,14 @@ Exploit-intelligence and business-criticality assertions with source identity, t
 validity, evidence currentness and visible conflict gaps. No autonomous prioritization, risk
 score, business-impact conclusion or remediation SLA is produced.
 
+## v0.4 — Portfolio assurance
+
+Explicit cross-case deduplication decisions, raw SLA cohorts, exception ageing and role-based
+accountability views. No compliance percentage, severity-weighted rank or inferred priority is
+produced.
+
 ## Candidate later boundaries
 
-- **v0.4 — Portfolio assurance:** deduplication decisions, SLA cohorts, exception ageing and
-  accountable executive views without compliance percentages.
 - **v0.5 — Signed evidence:** verification keys, signed envelopes, external timestamp/anchor
   receipts and exact build provenance.
 - **v0.6 — Integration contracts:** bounded links to DataGovOps, DORAOps, ModelRiskOps and

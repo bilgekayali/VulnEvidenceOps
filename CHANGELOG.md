@@ -2,7 +2,15 @@
 
 All notable source releases are documented here.
 
-## 0.3.0 - Unreleased
+## 0.4.0 - Unreleased
+
+- Added deterministic portfolio views across explicit case bundles and one committed policy.
+- Added accountable, evidence-aware representation of human deduplication decisions.
+- Added raw SLA cohorts and time-bounded exception ageing without percentages or risk scores.
+- Added role-based accountability records, public schemas, CLI support and release gates.
+- Preserved explicit non-claims for completeness, compliance, ranking and executive approval.
+
+## 0.3.0 - 2026-08-27 (source promotion)
 
 - Added evidence-backed, time-bounded exploit-intelligence assertions.
 - Added accountable asset-to-business-service criticality assertions.
