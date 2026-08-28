@@ -1,3 +1,3 @@
 """Package release identity."""
 
-PACKAGE_VERSION = "0.4.0"
+PACKAGE_VERSION = "0.5.0"

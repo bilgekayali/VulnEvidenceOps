@@ -45,6 +45,17 @@ case bundles + policy + portfolio scope -> per-case dossiers
 It retains explicit human duplicate decisions and raw counts. It does not infer similarity,
 calculate compliance percentages or rank findings.
 
+The v0.5 signed-evidence path is orthogonal to domain assessment:
+
+```text
+canonical JSON payload + Ed25519 private-key operation -> signed envelope
+signed envelope + public key + optional anchor receipts -> local verification result
+```
+
+Only the signing operation receives an externally managed private-key object or file. The package
+does not generate, retain, publish or rotate private keys. Verification separates payload digest,
+signature, key lifecycle, claimed time and anchor binding instead of collapsing them into trust.
+
 All links use immutable identifiers or SHA-256 digests. Mutable labels, ticket state and scanner
 dashboards are not treated as evidence by themselves.
 
@@ -56,8 +67,11 @@ dashboards are not treated as evidence by themselves.
 - `intake.py` provides strict SARIF and CycloneDX adapters plus source-mapping records.
 - `exposure.py` binds time-bounded external assertions to evidence and assesses currentness.
 - `portfolio.py` composes case dossiers into raw cohorts, exception ages and accountable views.
+- `signed_evidence.py` binds canonical payloads to Ed25519 signatures, public keys, anchor metadata
+  and exact build provenance while preserving explicit trust non-claims.
 - `schema.py` validates documents against explicit Draft 2020-12 contracts.
-- `cli.py` exposes local digest, schema, intake, lifecycle and exposure-context operations.
+- `cli.py` exposes local digest, schema, intake, lifecycle, context, portfolio and signed-evidence
+  operations.
 
 ## Integration posture
 
@@ -77,3 +91,6 @@ identities, findings and mapping records. Identical exposure bundles and assessm
 identical context positions, gaps, inventories and input digests. Identical portfolio bundles and
 assessment times produce identical case summaries, cohorts, exception records and accountability
 views.
+Identical payload, key, claimed signing time and Ed25519 private key produce identical envelopes.
+Identical envelope, verification key, receipts and verification time produce identical local
+verification results.

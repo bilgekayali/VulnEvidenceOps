@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.4.0 — Alpha Portfolio Assurance Reference**.
+Current package boundary: **VulnEvidenceOps v0.5.0 — Alpha Signed Evidence Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.4.0 — Alpha Portfolio Assurance
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.4 scope
+## v0.5 scope
 
 The initial boundary provides:
 
@@ -56,6 +56,16 @@ The v0.4 portfolio-assurance boundary adds:
 - accountable role views spanning triage, remediation, approval, ownership and verification;
 - digest-bound case summaries and raw counts without percentages, weighted scores or rankings;
 - explicit portfolio gaps for future, unlinked, out-of-scope or chained decisions.
+
+The v0.5 signed-evidence boundary adds:
+
+- strict canonical JSON envelopes with context-bound Ed25519 signatures;
+- digest-bound public verification keys with explicit validity and revocation metadata;
+- local separation of signature, payload-digest and key-lifecycle results;
+- opaque external anchor receipts with visible binding and temporal states;
+- exact build subject, Git object, builder, invocation and material provenance;
+- explicit non-claims for identity, authority, trusted time, external anchor authenticity,
+  reproducibility, non-repudiation and artifact safety.
 
 ## Portfolio boundary
 
@@ -106,6 +116,11 @@ vulnevidenceops exposure examples/synthetic-exposure-context.json \
 
 vulnevidenceops portfolio examples/synthetic-portfolio.json \
   --as-of 2026-01-20T00:00:00Z
+
+vulnevidenceops verify-evidence examples/synthetic-signed-evidence-envelope.json \
+  --key examples/synthetic-verification-key.json \
+  --receipt examples/synthetic-anchor-receipt.json \
+  --as-of 2026-01-20T00:05:00Z
 ```
 
 ## Standards posture
@@ -126,6 +141,9 @@ VulnEvidenceOps does **not** by itself establish:
   an exposure-context assertion is current;
 - automatic deduplication, SLA compliance, executive approval, portfolio risk rank or a
   compliance percentage merely because a portfolio view is valid;
+- signer identity, signing authority, trusted signing time, external-anchor authenticity,
+  verification-key authenticity, payload-schema conformance, non-repudiation, build
+  reproducibility or artifact safety merely because a signature verifies;
 - successful patching, mitigation or production verification;
 - acceptable residual risk or valid accountable authority;
 - ISO, NIST, DORA or other legal/regulatory compliance;
@@ -140,6 +158,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Intake adapters](docs/INTAKE_ADAPTERS.md)
 - [Exposure context](docs/EXPOSURE_CONTEXT.md)
 - [Portfolio assurance](docs/PORTFOLIO_ASSURANCE.md)
+- [Signed evidence](docs/SIGNED_EVIDENCE.md)
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)

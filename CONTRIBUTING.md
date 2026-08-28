@@ -12,7 +12,9 @@ Contributions must preserve the repository's evidence-only, non-operating bounda
    must not introduce autonomous scores, priorities or SLA decisions.
 8. Portfolio changes must retain raw counts and accountable records; do not introduce compliance
    percentages, severity-weighted rankings or inferred deduplication.
+9. Signed-evidence changes must use reviewed cryptographic libraries, preserve canonical payload
+   binding and keep identity, authority, trusted-time and external-anchor claims explicitly false.
 
 Do not commit real hostnames, IP addresses, credentials, customer identifiers, proprietary scanner
-exports, exploit payloads or confidential vulnerability evidence. Framework mappings must remain
-non-certifying and must not produce compliance percentages.
+exports, exploit payloads, private keys or confidential vulnerability evidence. Framework mappings
+must remain non-certifying and must not produce compliance percentages.

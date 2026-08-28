@@ -1,0 +1,26 @@
+{
+  "schema_version": "vulnevidenceops.build-provenance.v1",
+  "provenance_id": "PROV-SYNTH-001",
+  "subject_name": "vulnevidenceops-0.5.0-py3-none-any.whl",
+  "subject_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "source_repository": "https://example.invalid/synthetic/VulnEvidenceOps",
+  "source_commit": "1111111111111111111111111111111111111111",
+  "source_tree": "2222222222222222222222222222222222222222",
+  "source_ref": "refs/heads/synthetic-reference",
+  "builder_identity": "synthetic-builder:github-actions-reference",
+  "build_type": "https://example.invalid/build-types/python-wheel/v1",
+  "invocation_id": "synthetic-run:0001",
+  "started_at": "2026-01-20T00:00:00Z",
+  "finished_at": "2026-01-20T00:02:00Z",
+  "materials": [
+    {
+      "uri": "synthetic://source/repository-tree.tar",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    {
+      "uri": "synthetic://build/direct-dependencies.json",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "synthetic": true
+}

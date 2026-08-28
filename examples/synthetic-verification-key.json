@@ -1,0 +1,12 @@
+{
+  "algorithm": "ed25519",
+  "issuer_identity": "synthetic-issuer:reference-only",
+  "key_id": "KEY-SYNTH-ED25519-001",
+  "public_key_base64": "rFP5tBbhiHYMQdLhsjMyA3XMtX5onN2VhKPxCfdSeeM=",
+  "public_key_sha256": "861c0e49e0968827d83084c2d57ee5834b0ff245939941764e215dd862214c74",
+  "revoked_at": null,
+  "schema_version": "vulnevidenceops.verification-key.v1",
+  "synthetic": true,
+  "valid_from": "2026-01-01T00:00:00Z",
+  "valid_until": "2026-12-31T00:00:00Z"
+}

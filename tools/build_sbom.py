@@ -9,7 +9,7 @@ from pathlib import Path
 
 from vulnevidenceops import PACKAGE_VERSION
 
-DIRECT_RUNTIME_DEPENDENCIES = ("jsonschema",)
+DIRECT_RUNTIME_DEPENDENCIES = ("cryptography", "jsonschema")
 ROOT_REF = f"pkg:pypi/vulnevidenceops@{PACKAGE_VERSION}"
 
 

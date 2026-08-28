@@ -12,6 +12,10 @@
 - evidence-linked currentness and conflict assessment for caller-supplied exploit and business
   context assertions.
 - deterministic composition of supplied cases into raw SLA, exception and accountability views.
+- canonical JSON digesting and Ed25519 signing with caller-managed private-key input;
+- local signature, payload-digest and public-key lifecycle verification;
+- local binding and time-state checks for caller-supplied opaque anchor receipts;
+- exact caller-supplied build subject, Git object, invocation and material identities.
 
 ## Out of scope
 
@@ -25,14 +29,20 @@
 - general SARIF/CycloneDX conformance validation or vendor-specific extension interpretation;
 - patch deployment, containment, ticket mutation or autonomous risk acceptance;
 - production identity, authorization, database isolation, encryption or retention enforcement.
+- private-key generation, custody, storage, rotation, recovery or revocation publication;
+- certificate-chain, signer-identity, delegated-authority or non-repudiation decisions;
+- network access to RFC 3161 services, transparency logs, ledgers or other anchor providers;
+- external receipt authenticity, trusted-time, build reproducibility, source trust or artifact-
+  safety verification.
 
 ## Evidence handling
 
-The v0.4 contract stores normalized metadata, source locators and artifact/record digests only.
+The v0.5 contract stores normalized metadata, source locators, artifact/record digests, public keys,
+signatures and opaque anchor receipt metadata. It never serializes private-key material.
 `artifact_ref` is an opaque locator. Intake reads a source artifact locally but does not copy its
 raw body into the output batch.
-Callers are responsible for access control, retention, encryption, authenticity and availability
-of the referenced artifact.
+Callers are responsible for private-key security, verification-key distribution, access control,
+retention, encryption, authenticity and availability of referenced artifacts and receipts.
 
 Repository examples are synthetic. Contributors must not commit real hostnames, IP addresses,
 credentials, customer identifiers, proprietary scanner exports or exploit material.

@@ -22,10 +22,14 @@ Explicit cross-case deduplication decisions, raw SLA cohorts, exception ageing a
 accountability views. No compliance percentage, severity-weighted rank or inferred priority is
 produced.
 
+## v0.5 — Signed evidence
+
+Ed25519 verification keys, canonical signed envelopes, opaque external anchor receipts and exact
+build provenance. Cryptographic validity remains separate from identity, authority, trusted time,
+external receipt authenticity, reproducibility and artifact-safety conclusions.
+
 ## Candidate later boundaries
 
-- **v0.5 — Signed evidence:** verification keys, signed envelopes, external timestamp/anchor
-  receipts and exact build provenance.
 - **v0.6 — Integration contracts:** bounded links to DataGovOps, DORAOps, ModelRiskOps and
   ai-threat-detection-framework dossiers.
 - **v1.0 — Stable reference:** frozen API/schema fingerprints, independent review and clean-wheel

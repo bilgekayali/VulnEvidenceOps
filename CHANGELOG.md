@@ -2,7 +2,16 @@
 
 All notable source releases are documented here.
 
-## 0.4.0 - Unreleased
+## 0.5.0 - Unreleased
+
+- Added strict canonical JSON envelopes with Ed25519 signing and verification.
+- Added digest-bound public-key lifecycle records and fail-closed negative verification paths.
+- Added opaque external anchor receipts with separate binding and temporal states.
+- Added exact synthetic build provenance, five public schemas, CLI operations and release gates.
+- Preserved explicit non-claims for identity, authority, trusted time, external authenticity,
+  reproducibility, non-repudiation and artifact safety.
+
+## 0.4.0 - 2026-08-28 (source promotion)
 
 - Added deterministic portfolio views across explicit case bundles and one committed policy.
 - Added accountable, evidence-aware representation of human deduplication decisions.

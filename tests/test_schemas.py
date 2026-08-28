@@ -6,13 +6,18 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from vulnevidenceops import (
+    AnchorReceipt,
+    BuildProvenance,
     DocumentValidationError,
+    SignedEvidenceEnvelope,
+    VerificationKey,
     adapt_cyclonedx,
     adapt_sarif,
     assess_case,
     assess_exposure_context,
     assess_portfolio,
     validate_document,
+    verify_signed_evidence,
 )
 
 from .helpers import (
@@ -30,7 +35,7 @@ from .helpers import (
 
 def test_every_public_schema_is_draft_2020_12_and_well_formed():
     schemas = sorted((ROOT / "schemas").glob("*.schema.json"))
-    assert len(schemas) == 18
+    assert len(schemas) == 23
     for path in schemas:
         schema = json.loads(path.read_text(encoding="utf-8"))
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -132,4 +137,45 @@ def test_portfolio_example_and_generated_view_validate():
     validate_document(
         ROOT / "schemas" / "portfolio-assurance-view.schema.json",
         view.to_dict(),
+    )
+
+
+def test_signed_evidence_examples_and_generated_verification_validate():
+    def example(name: str) -> dict:
+        return json.loads((ROOT / "examples" / name).read_text(encoding="utf-8"))
+
+    provenance_document = example("synthetic-build-provenance.json")
+    key_document = example("synthetic-verification-key.json")
+    envelope_document = example("synthetic-signed-evidence-envelope.json")
+    receipt_document = example("synthetic-anchor-receipt.json")
+    validate_document(
+        ROOT / "schemas" / "build-provenance.schema.json",
+        provenance_document,
+    )
+    validate_document(
+        ROOT / "schemas" / "verification-key.schema.json",
+        key_document,
+    )
+    validate_document(
+        ROOT / "schemas" / "signed-evidence-envelope.schema.json",
+        envelope_document,
+    )
+    validate_document(
+        ROOT / "schemas" / "anchor-receipt.schema.json",
+        receipt_document,
+    )
+    provenance = BuildProvenance.from_dict(provenance_document)
+    key = VerificationKey.from_dict(key_document)
+    envelope = SignedEvidenceEnvelope.from_dict(envelope_document)
+    receipt = AnchorReceipt.from_dict(receipt_document)
+    assert envelope.payload_document() == provenance.to_dict()
+    verification = verify_signed_evidence(
+        envelope,
+        key,
+        verified_at="2026-01-20T00:05:00Z",
+        anchor_receipts=(receipt,),
+    )
+    validate_document(
+        ROOT / "schemas" / "signature-verification.schema.json",
+        verification.to_dict(),
     )

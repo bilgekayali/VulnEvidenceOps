@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/signature-verification.schema.json",
+  "title": "Signed evidence verification result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "envelope_sha256", "payload_type", "payload_sha256", "envelope_key_id", "algorithm", "verification_key_id", "verification_key_sha256", "signed_at", "verified_at", "signature_valid", "payload_digest_valid", "key_state", "anchor_receipts", "verification_position", "gaps", "non_claims"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.signature-verification.v1"},
+    "envelope_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "payload_type": {"type": "string", "minLength": 1},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "envelope_key_id": {"type": "string", "minLength": 1},
+    "algorithm": {"const": "ed25519"},
+    "verification_key_id": {"type": "string", "minLength": 1},
+    "verification_key_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signed_at": {"type": "string", "format": "date-time"},
+    "verified_at": {"type": "string", "format": "date-time"},
+    "signature_valid": {"type": "boolean"},
+    "payload_digest_valid": {"type": "boolean"},
+    "key_state": {"enum": ["current", "expired", "future", "revoked"]},
+    "anchor_receipts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["receipt_id", "provider_identity", "anchor_type", "anchored_at", "artifact_ref", "artifact_sha256", "receipt_sha256", "binding_state", "temporal_state", "external_validation_performed", "synthetic"],
+        "properties": {
+          "receipt_id": {"type": "string", "minLength": 1},
+          "provider_identity": {"type": "string", "minLength": 1},
+          "anchor_type": {"enum": ["ledger", "other", "rfc3161", "transparency_log"]},
+          "anchored_at": {"type": "string", "format": "date-time"},
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "binding_state": {"enum": ["bound", "unbound"]},
+          "temporal_state": {"enum": ["before_signing", "current", "future"]},
+          "external_validation_performed": {"const": false},
+          "synthetic": {"type": "boolean"}
+        }
+      }
+    },
+    "verification_position": {"enum": ["cryptographically_valid", "invalid", "with_gaps"]},
+    "gaps": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "non_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_safety_established", "build_reproducibility_established", "external_anchor_authenticity_established", "non_repudiation_established", "payload_schema_conformance_established", "signer_identity_established", "signing_authority_established", "source_material_trust_established", "trusted_signing_time_established", "verification_key_authenticity_established"],
+      "properties": {
+        "artifact_safety_established": {"const": false},
+        "build_reproducibility_established": {"const": false},
+        "external_anchor_authenticity_established": {"const": false},
+        "non_repudiation_established": {"const": false},
+        "payload_schema_conformance_established": {"const": false},
+        "signer_identity_established": {"const": false},
+        "signing_authority_established": {"const": false},
+        "source_material_trust_established": {"const": false},
+        "trusted_signing_time_established": {"const": false},
+        "verification_key_authenticity_established": {"const": false}
+      }
+    }
+  }
+}

@@ -8,6 +8,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
 from .canonical import sha256_digest
@@ -16,6 +19,13 @@ from .intake import adapt_cyclonedx, adapt_sarif
 from .models import VulnerabilityCase, VulnerabilityPolicy
 from .portfolio import PortfolioBundle, assess_portfolio
 from .schema import DocumentValidationError, validate_document
+from .signed_evidence import (
+    AnchorReceipt,
+    SignedEvidenceEnvelope,
+    VerificationKey,
+    sign_evidence,
+    verify_signed_evidence,
+)
 
 STABLE_CLI_COMMANDS = (
     "assess",
@@ -24,6 +34,8 @@ STABLE_CLI_COMMANDS = (
     "intake",
     "portfolio",
     "schema",
+    "sign-evidence",
+    "verify-evidence",
 )
 
 
@@ -43,6 +55,13 @@ def _write_json(document: Any, output: Path | None) -> None:
     else:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(rendered, encoding="utf-8")
+
+
+def _read_ed25519_private_key(path: Path) -> Ed25519PrivateKey:
+    private_key = serialization.load_pem_private_key(path.read_bytes(), password=None)
+    if not isinstance(private_key, Ed25519PrivateKey):
+        raise ValueError("--private-key must contain an unencrypted Ed25519 PKCS#8 PEM key")
+    return private_key
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -97,6 +116,27 @@ def _parser() -> argparse.ArgumentParser:
     portfolio.add_argument("bundle", type=Path)
     portfolio.add_argument("--as-of", required=True)
     portfolio.add_argument("--output", type=Path)
+
+    sign = commands.add_parser(
+        "sign-evidence",
+        help="Sign canonical JSON using an externally managed Ed25519 private key.",
+    )
+    sign.add_argument("payload", type=Path)
+    sign.add_argument("--payload-type", required=True)
+    sign.add_argument("--key-id", required=True)
+    sign.add_argument("--private-key", required=True, type=Path)
+    sign.add_argument("--signed-at", required=True)
+    sign.add_argument("--output", type=Path)
+
+    verify = commands.add_parser(
+        "verify-evidence",
+        help="Verify local signature, digest, key-time and anchor-binding facts.",
+    )
+    verify.add_argument("envelope", type=Path)
+    verify.add_argument("--key", required=True, type=Path)
+    verify.add_argument("--receipt", action="append", default=[], type=Path)
+    verify.add_argument("--as-of", required=True)
+    verify.add_argument("--output", type=Path)
     return parser
 
 
@@ -158,6 +198,30 @@ def main(argv: list[str] | None = None) -> int:
             bundle = PortfolioBundle.from_dict(_read_json(args.bundle))
             view = assess_portfolio(bundle, assessed_at=args.as_of)
             _write_json(view.to_dict(), args.output)
+            return 0
+        if args.command == "sign-evidence":
+            envelope = sign_evidence(
+                _read_json(args.payload),
+                payload_type=args.payload_type,
+                key_id=args.key_id,
+                private_key=_read_ed25519_private_key(args.private_key),
+                signed_at=args.signed_at,
+            )
+            _write_json(envelope.to_dict(), args.output)
+            return 0
+        if args.command == "verify-evidence":
+            envelope = SignedEvidenceEnvelope.from_dict(_read_json(args.envelope))
+            key = VerificationKey.from_dict(_read_json(args.key))
+            receipts = tuple(
+                AnchorReceipt.from_dict(_read_json(path)) for path in args.receipt
+            )
+            verification = verify_signed_evidence(
+                envelope,
+                key,
+                verified_at=args.as_of,
+                anchor_receipts=receipts,
+            )
+            _write_json(verification.to_dict(), args.output)
             return 0
     except (DocumentValidationError, KeyError, TypeError, ValueError) as exc:
         raise SystemExit(str(exc)) from exc

@@ -32,6 +32,19 @@ jobs:
           python -m venv /tmp/vulnevidenceops-clean
           /tmp/vulnevidenceops-clean/bin/python -m pip install dist/*.whl
           /tmp/vulnevidenceops-clean/bin/vulnevidenceops --version
+          openssl genpkey -algorithm ED25519 \
+            -out /tmp/vulnevidenceops-clean-signing-key.pem
+          chmod 600 /tmp/vulnevidenceops-clean-signing-key.pem
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops sign-evidence \
+            examples/synthetic-build-provenance.json \
+            --payload-type application/vnd.vulnevidenceops.build-provenance.v1+json \
+            --key-id KEY-CLEAN-WHEEL-SMOKE \
+            --private-key /tmp/vulnevidenceops-clean-signing-key.pem \
+            --signed-at 2026-01-20T00:03:00Z \
+            --output /tmp/vulnevidenceops-clean-signed-envelope.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops schema \
+            schemas/signed-evidence-envelope.schema.json \
+            /tmp/vulnevidenceops-clean-signed-envelope.json
           /tmp/vulnevidenceops-clean/bin/vulnevidenceops assess \
             examples/synthetic-case.json \
             --policy examples/synthetic-policy.json \
@@ -66,7 +79,15 @@ jobs:
             examples/synthetic-portfolio.json \
             --as-of 2026-01-20T00:00:00Z \
             --output /tmp/vulnevidenceops-clean-portfolio-view.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops verify-evidence \
+            examples/synthetic-signed-evidence-envelope.json \
+            --key examples/synthetic-verification-key.json \
+            --receipt examples/synthetic-anchor-receipt.json \
+            --as-of 2026-01-20T00:05:00Z \
+            --output /tmp/vulnevidenceops-clean-signature-verification.json
           test -s /tmp/vulnevidenceops-clean-sarif-intake.json
           test -s /tmp/vulnevidenceops-clean-cyclonedx-intake.json
           test -s /tmp/vulnevidenceops-clean-exposure-assessment.json
           test -s /tmp/vulnevidenceops-clean-portfolio-view.json
+          test -s /tmp/vulnevidenceops-clean-signature-verification.json
+          test -s /tmp/vulnevidenceops-clean-signed-envelope.json
