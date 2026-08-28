@@ -1,0 +1,26 @@
+{
+  "gaps": [],
+  "handoff_id": "HANDOFF-SYNTH-MODELRISKOPS-001",
+  "handoff_sha256": "8a54fd82c40d294fdbcb2446126c5f426b05a4e7b8accbbb524cc3ee05c9bf95",
+  "integration_position": "verified",
+  "non_claims": {
+    "artifact_safety_established": false,
+    "consumer_acceptance_established": false,
+    "cross_system_identity_established": false,
+    "delivery_established": false,
+    "payload_schema_conformance_established": false,
+    "payload_truth_established": false,
+    "peer_contract_semantic_compatibility_established": false,
+    "peer_repository_authenticity_established": false,
+    "producer_authority_established": false,
+    "production_interoperability_established": false,
+    "regulatory_compliance_established": false
+  },
+  "payload_digest_valid": true,
+  "peer_contract_blob_valid": true,
+  "profile": "modelriskops-assurance-evidence",
+  "profile_binding_valid": true,
+  "schema_version": "vulnevidenceops.integration-verification.v1",
+  "temporal_state": "current",
+  "verified_at": "2026-01-20T00:15:00Z"
+}

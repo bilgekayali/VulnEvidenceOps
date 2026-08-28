@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modelriskops.dev/schemas/assurance-evidence-reference.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidence_id","institution_id","scope_digest","subject_artifact_digest","artifact_type","source_component","evidence_basis","registered_at"],
+  "properties": {
+    "evidence_id": {"type":"string","minLength":1},
+    "institution_id": {"type":"string","minLength":1},
+    "scope_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "subject_artifact_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "artifact_type": {"type":"string","minLength":1},
+    "source_component": {"type":"string","minLength":1},
+    "evidence_basis": {"type":"string","minLength":1},
+    "registered_at": {"type":"integer","minimum":0}
+  }
+}

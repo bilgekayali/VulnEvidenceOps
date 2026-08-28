@@ -7,7 +7,7 @@ VulnEvidenceOps is an open-source reference architecture for representing the go
 lifecycle around vulnerability findings without operating scanners, patch systems, ticketing
 platforms or production infrastructure.
 
-Current package boundary: **VulnEvidenceOps v0.5.0 — Alpha Signed Evidence Reference**.
+Current package boundary: **VulnEvidenceOps v0.6.0 — Alpha Integration Contracts Reference**.
 
 > [!IMPORTANT]
 > A valid VulnEvidenceOps dossier proves only that the supplied metadata satisfies this
@@ -15,7 +15,7 @@ Current package boundary: **VulnEvidenceOps v0.5.0 — Alpha Signed Evidence Ref
 > production remediation, acceptable residual risk, regulatory compliance or production
 > readiness.
 
-## v0.5 scope
+## v0.6 scope
 
 The initial boundary provides:
 
@@ -66,6 +66,18 @@ The v0.5 signed-evidence boundary adds:
 - exact build subject, Git object, builder, invocation and material provenance;
 - explicit non-claims for identity, authority, trusted time, external anchor authenticity,
   reproducibility, non-repudiation and artifact safety.
+
+The v0.6 integration-contract boundary adds:
+
+- four frozen handoff profiles for DataGovOps, DORAOps, ModelRiskOps and
+  ai-threat-detection-framework;
+- canonical producer-payload SHA-256 identity and exact peer repository, commit, tree, path and
+  Git-blob identity;
+- deterministic local checks for profile binding, payload digest, peer-contract bytes and the
+  handoff validity window;
+- public peer-contract, handoff and verification schemas plus exact public contract snapshots;
+- explicit non-claims for cross-system identity, authority, delivery, consumer acceptance,
+  semantic compatibility, payload truth and production interoperability.
 
 ## Portfolio boundary
 
@@ -121,6 +133,20 @@ vulnevidenceops verify-evidence examples/synthetic-signed-evidence-envelope.json
   --key examples/synthetic-verification-key.json \
   --receipt examples/synthetic-anchor-receipt.json \
   --as-of 2026-01-20T00:05:00Z
+
+vulnevidenceops integration-handoff examples/synthetic-assurance-dossier.json \
+  --profile datagovops-control-evidence \
+  --handoff-id HANDOFF-LOCAL-001 \
+  --subject-ref synthetic-case:CASE-SYNTH-001 \
+  --created-at 2026-01-20T00:10:00Z \
+  --valid-until 2027-01-20T00:10:00Z \
+  --synthetic \
+  --output /tmp/datagovops-handoff.json
+
+vulnevidenceops verify-integration /tmp/datagovops-handoff.json \
+  examples/synthetic-assurance-dossier.json \
+  --peer-contract examples/peer-contracts/datagovops-control-evidence-reference.schema.json \
+  --as-of 2026-01-20T00:15:00Z
 ```
 
 ## Standards posture
@@ -144,6 +170,9 @@ VulnEvidenceOps does **not** by itself establish:
 - signer identity, signing authority, trusted signing time, external-anchor authenticity,
   verification-key authenticity, payload-schema conformance, non-repudiation, build
   reproducibility or artifact safety merely because a signature verifies;
+- peer-repository authenticity, cross-system identity, producer authority, payload truth,
+  payload-schema conformance, semantic compatibility, delivery, consumer acceptance or production
+  interoperability merely because an integration handoff verifies;
 - successful patching, mitigation or production verification;
 - acceptable residual risk or valid accountable authority;
 - ISO, NIST, DORA or other legal/regulatory compliance;
@@ -159,6 +188,7 @@ VulnEvidenceOps does **not** by itself establish:
 - [Exposure context](docs/EXPOSURE_CONTEXT.md)
 - [Portfolio assurance](docs/PORTFOLIO_ASSURANCE.md)
 - [Signed evidence](docs/SIGNED_EVIDENCE.md)
+- [Integration contracts](docs/INTEGRATION_CONTRACTS.md)
 - [Security boundary](docs/SECURITY_BOUNDARY.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Release process](docs/RELEASE_PROCESS.md)

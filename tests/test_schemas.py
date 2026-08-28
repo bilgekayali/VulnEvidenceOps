@@ -9,6 +9,7 @@ from vulnevidenceops import (
     AnchorReceipt,
     BuildProvenance,
     DocumentValidationError,
+    IntegrationHandoff,
     SignedEvidenceEnvelope,
     VerificationKey,
     adapt_cyclonedx,
@@ -17,6 +18,7 @@ from vulnevidenceops import (
     assess_exposure_context,
     assess_portfolio,
     validate_document,
+    verify_integration_handoff,
     verify_signed_evidence,
 )
 
@@ -35,7 +37,7 @@ from .helpers import (
 
 def test_every_public_schema_is_draft_2020_12_and_well_formed():
     schemas = sorted((ROOT / "schemas").glob("*.schema.json"))
-    assert len(schemas) == 23
+    assert len(schemas) == 26
     for path in schemas:
         schema = json.loads(path.read_text(encoding="utf-8"))
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -179,3 +181,53 @@ def test_signed_evidence_examples_and_generated_verification_validate():
         ROOT / "schemas" / "signature-verification.schema.json",
         verification.to_dict(),
     )
+
+
+def test_integration_examples_and_generated_verifications_validate():
+    profiles = {
+        "ai-threat-evaluation": (
+            "synthetic-ai-threat-evaluation-report.json",
+            "ai-threat-evaluation-report.schema.json",
+        ),
+        "datagovops-control-evidence": (
+            "synthetic-assurance-dossier.json",
+            "datagovops-control-evidence-reference.schema.json",
+        ),
+        "doraops-operational-control-evidence": (
+            "synthetic-assurance-dossier.json",
+            "doraops-operational-control-evidence.schema.json",
+        ),
+        "modelriskops-assurance-evidence": (
+            "synthetic-assurance-dossier.json",
+            "modelriskops-assurance-evidence-reference.schema.json",
+        ),
+    }
+    for profile, (payload_name, peer_name) in profiles.items():
+        handoff_document = json.loads(
+            (
+                ROOT / "examples" / f"synthetic-{profile}-handoff.json"
+            ).read_text(encoding="utf-8")
+        )
+        validate_document(
+            ROOT / "schemas" / "integration-handoff.schema.json",
+            handoff_document,
+        )
+        validate_document(
+            ROOT / "schemas" / "peer-contract-identity.schema.json",
+            handoff_document["peer_contract"],
+        )
+        payload = json.loads(
+            (ROOT / "examples" / payload_name).read_text(encoding="utf-8")
+        )
+        peer = (ROOT / "examples" / "peer-contracts" / peer_name).read_bytes()
+        handoff = IntegrationHandoff.from_dict(handoff_document)
+        verification = verify_integration_handoff(
+            handoff,
+            payload,
+            peer,
+            verified_at="2026-01-20T00:15:00Z",
+        )
+        validate_document(
+            ROOT / "schemas" / "integration-verification.schema.json",
+            verification.to_dict(),
+        )

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DataGovOps Control Evidence Reference v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "institution_id",
+    "evidence_id",
+    "control_digest",
+    "evidence_type",
+    "source_boundary",
+    "artifact_type",
+    "source_artifact_digest",
+    "source_snapshot_digest",
+    "observed_at",
+    "revalidate_after",
+    "verifier_id",
+    "verification_evidence_digest",
+    "evidence_effectiveness_determined",
+    "legal_compliance_determined",
+    "schema_version"
+  ],
+  "properties": {
+    "institution_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "evidence_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "control_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence_type": {"type": "string", "minLength": 1, "maxLength": 512},
+    "source_boundary": {
+      "enum": [
+        "bcbs239",
+        "access_retention_privacy",
+        "security",
+        "recovery",
+        "deployment",
+        "release_evidence",
+        "governance_dossier",
+        "external"
+      ]
+    },
+    "artifact_type": {"type": "string", "minLength": 1, "maxLength": 512},
+    "source_artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_snapshot_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observed_at": {"type": "integer", "minimum": 0},
+    "revalidate_after": {"type": "integer", "minimum": 0},
+    "verifier_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "verification_evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence_effectiveness_determined": {"const": false},
+    "legal_compliance_determined": {"const": false},
+    "schema_version": {"const": "datagovops.control-evidence-reference.v1"}
+  }
+}

@@ -16,6 +16,12 @@ from .assurance import assess_case
 from .canonical import sha256_digest
 from .exposure import ExposureContextBundle, assess_exposure_context
 from .intake import adapt_cyclonedx, adapt_sarif
+from .integration import (
+    INTEGRATION_PROFILES,
+    IntegrationHandoff,
+    build_integration_handoff,
+    verify_integration_handoff,
+)
 from .models import VulnerabilityCase, VulnerabilityPolicy
 from .portfolio import PortfolioBundle, assess_portfolio
 from .schema import DocumentValidationError, validate_document
@@ -32,10 +38,12 @@ STABLE_CLI_COMMANDS = (
     "digest-json",
     "exposure",
     "intake",
+    "integration-handoff",
     "portfolio",
     "schema",
     "sign-evidence",
     "verify-evidence",
+    "verify-integration",
 )
 
 
@@ -137,6 +145,33 @@ def _parser() -> argparse.ArgumentParser:
     verify.add_argument("--receipt", action="append", default=[], type=Path)
     verify.add_argument("--as-of", required=True)
     verify.add_argument("--output", type=Path)
+
+    integration = commands.add_parser(
+        "integration-handoff",
+        help="Bind canonical evidence to one frozen peer-contract profile.",
+    )
+    integration.add_argument("payload", type=Path)
+    integration.add_argument(
+        "--profile",
+        required=True,
+        choices=tuple(sorted(INTEGRATION_PROFILES)),
+    )
+    integration.add_argument("--handoff-id", required=True)
+    integration.add_argument("--subject-ref", required=True)
+    integration.add_argument("--created-at", required=True)
+    integration.add_argument("--valid-until")
+    integration.add_argument("--synthetic", action="store_true")
+    integration.add_argument("--output", type=Path)
+
+    verify_integration = commands.add_parser(
+        "verify-integration",
+        help="Verify payload, peer-contract blob, profile and time bindings.",
+    )
+    verify_integration.add_argument("handoff", type=Path)
+    verify_integration.add_argument("payload", type=Path)
+    verify_integration.add_argument("--peer-contract", required=True, type=Path)
+    verify_integration.add_argument("--as-of", required=True)
+    verify_integration.add_argument("--output", type=Path)
     return parser
 
 
@@ -220,6 +255,28 @@ def main(argv: list[str] | None = None) -> int:
                 key,
                 verified_at=args.as_of,
                 anchor_receipts=receipts,
+            )
+            _write_json(verification.to_dict(), args.output)
+            return 0
+        if args.command == "integration-handoff":
+            handoff = build_integration_handoff(
+                _read_json(args.payload),
+                handoff_id=args.handoff_id,
+                profile=args.profile,
+                subject_ref=args.subject_ref,
+                created_at=args.created_at,
+                valid_until=args.valid_until,
+                synthetic=args.synthetic,
+            )
+            _write_json(handoff.to_dict(), args.output)
+            return 0
+        if args.command == "verify-integration":
+            handoff = IntegrationHandoff.from_dict(_read_json(args.handoff))
+            verification = verify_integration_handoff(
+                handoff,
+                _read_json(args.payload),
+                args.peer_contract.read_bytes(),
+                verified_at=args.as_of,
             )
             _write_json(verification.to_dict(), args.output)
             return 0

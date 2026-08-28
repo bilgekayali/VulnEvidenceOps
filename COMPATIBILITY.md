@@ -4,11 +4,12 @@ VulnEvidenceOps `0.x` releases are alpha references. Minor releases may delibera
 Python API, CLI or JSON Schemas when accompanied by a changelog entry and a release-contract
 update.
 
-The following are intentional v0.5 public surfaces:
+The following are intentional v0.6 public surfaces:
 
 - symbols listed in `vulnevidenceops.__all__`;
 - the `vulnevidenceops` CLI commands `digest-json`, `schema`, `intake`, `assess`, `exposure`,
-  `portfolio`, `sign-evidence` and `verify-evidence`;
+  `portfolio`, `sign-evidence`, `verify-evidence`, `integration-handoff` and
+  `verify-integration`;
 - files matching `schemas/*.schema.json`;
 - the internal control identities in `configs/control-evidence-matrix.json`;
 - the adapter contract `vulnevidenceops.intake.v1` for SARIF 2.1.0 and CycloneDX 1.5/1.6.
@@ -16,8 +17,10 @@ The following are intentional v0.5 public surfaces:
 - the portfolio contract `vulnevidenceops.portfolio-assurance.v1` and its two public schemas.
 - the signed-evidence contract `vulnevidenceops.signed-evidence.v1`, Ed25519 profile and its five
   public schemas.
+- the integration contract `vulnevidenceops.integration-contract.v1`, its four frozen peer
+  profiles and three public schemas.
 
-Patch releases must remain backward compatible with the v0.5 contract. A future v1.0 release will
+Patch releases must remain backward compatible with the v0.6 contract. A future v1.0 release will
 freeze exact API and schema fingerprints and adopt Semantic Versioning compatibility guarantees.
 
 No package version implies a Git tag, GitHub Release, package publication, deployment, security

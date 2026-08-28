@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/peer-contract-identity.schema.json",
+  "title": "Immutable peer contract identity",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "system", "contract_role", "repository", "commit", "tree", "path", "blob"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.peer-contract-identity.v1"},
+    "system": {"enum": ["ai-threat-detection-framework", "datagovops", "doraops", "modelriskops"]},
+    "contract_role": {"enum": ["consumer", "producer"]},
+    "repository": {"type": "string", "pattern": "^https://github\\.com/[^/]+/[^/]+$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "tree": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^[^/].*$"},
+    "blob": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+  }
+}

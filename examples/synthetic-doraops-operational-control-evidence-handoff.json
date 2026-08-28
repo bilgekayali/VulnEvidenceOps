@@ -1,0 +1,37 @@
+{
+  "consumer_system": "doraops",
+  "created_at": "2026-01-20T00:10:00Z",
+  "handoff_id": "HANDOFF-SYNTH-DORAOPS-001",
+  "non_claims": {
+    "artifact_safety_established": false,
+    "consumer_acceptance_established": false,
+    "cross_system_identity_established": false,
+    "delivery_established": false,
+    "payload_schema_conformance_established": false,
+    "payload_truth_established": false,
+    "peer_contract_semantic_compatibility_established": false,
+    "peer_repository_authenticity_established": false,
+    "producer_authority_established": false,
+    "production_interoperability_established": false,
+    "regulatory_compliance_established": false
+  },
+  "payload_sha256": "61ffc29994da6c1f82511dfd0e1b100c21e95115ae78fab87b5a79ca27a86cf7",
+  "payload_type": "application/vnd.vulnevidenceops.assurance-dossier.v1+json",
+  "peer_contract": {
+    "blob": "1b0e8338a002560baffba9eb49e1e1f84303ee9b",
+    "commit": "c4a565f425084f64018ec91e5aec91ba9084f4fa",
+    "contract_role": "consumer",
+    "path": "schemas/operational-control-evidence.schema.json",
+    "repository": "https://github.com/bilgekayali/DORAOps",
+    "schema_version": "vulnevidenceops.peer-contract-identity.v1",
+    "system": "doraops",
+    "tree": "8271b9cafe8912ce67ed9a58d089bb63b9371ac5"
+  },
+  "producer_system": "vulnevidenceops",
+  "profile": "doraops-operational-control-evidence",
+  "relationship": "operational_control_evidence",
+  "schema_version": "vulnevidenceops.integration-handoff.v1",
+  "subject_ref": "synthetic-case:CASE-SYNTH-001",
+  "synthetic": true,
+  "valid_until": "2027-01-20T00:10:00Z"
+}

@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use VulnEvidenceOps, please cite this software."
 title: "VulnEvidenceOps"
 type: software
-version: 0.5.0
+version: 0.6.0
 authors:
   - family-names: "Kayalı"
     given-names: "Bilge"

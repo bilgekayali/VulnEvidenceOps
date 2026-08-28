@@ -1,0 +1,108 @@
+{
+  "dataset": {
+    "first_event_utc": "2025-09-28T14:28:33+00:00",
+    "last_event_utc": "2025-10-29T19:43:33+00:00",
+    "positive_rate": 0.311,
+    "rows": 1000,
+    "source_sha256": "7794e260b4f6358e47b8f03c9a6b50486a892e41c0ca6858a114a3a90b5f50eb"
+  },
+  "evaluation": {
+    "blend": {
+      "model_weight": 0.6,
+      "rule_weight": 0.4
+    },
+    "features": [
+      "anomaly_score",
+      "off_hours",
+      "failed_logins_24h",
+      "geo_distance_km",
+      "proc_injection_flag",
+      "event_type"
+    ],
+    "model": {
+      "algorithm": "RandomForestClassifier",
+      "class_weight": "balanced",
+      "estimators": 300,
+      "min_samples_leaf": 3
+    },
+    "random_seed": 42,
+    "split_strategy": "chronological_holdout",
+    "test_rows": 250,
+    "test_size": 0.25,
+    "training_rows": 750
+  },
+  "holdout_metrics": {
+    "blended_score": {
+      "average_precision": 0.275483,
+      "brier_score": 0.201669,
+      "confusion_matrix": {
+        "false_negative": 59,
+        "false_positive": 10,
+        "true_negative": 176,
+        "true_positive": 5
+      },
+      "decision_threshold": 0.5,
+      "f1": 0.126582,
+      "precision": 0.333333,
+      "recall": 0.078125,
+      "roc_auc": 0.521589
+    },
+    "rule_baseline": {
+      "average_precision": 0.319956,
+      "brier_score": 0.194711,
+      "confusion_matrix": {
+        "false_negative": 63,
+        "false_positive": 0,
+        "true_negative": 186,
+        "true_positive": 1
+      },
+      "decision_threshold": 0.5,
+      "f1": 0.030769,
+      "precision": 1.0,
+      "recall": 0.015625,
+      "roc_auc": 0.554856
+    },
+    "supervised_model": {
+      "average_precision": 0.251897,
+      "brier_score": 0.232049,
+      "confusion_matrix": {
+        "false_negative": 50,
+        "false_positive": 44,
+        "true_negative": 142,
+        "true_positive": 14
+      },
+      "decision_threshold": 0.5,
+      "f1": 0.229508,
+      "precision": 0.241379,
+      "recall": 0.21875,
+      "roc_auc": 0.492356
+    }
+  },
+  "input_schema_version": "ai-threat-detection.alert-input.v1",
+  "limitations": [
+    "All telemetry and labels are synthetic.",
+    "Holdout metrics do not establish production detection performance.",
+    "Scores support analyst triage and must not trigger autonomous containment.",
+    "Thresholds require validation against each organisation's risk appetite."
+  ],
+  "non_claims": {
+    "autonomous_containment_authorised": false,
+    "production_detection_performance_determined": false,
+    "production_readiness_determined": false,
+    "regulatory_compliance_determined": false
+  },
+  "package_version": "1.0.0",
+  "risk_bands": {
+    "high": "score >= 0.7",
+    "low": "score < 0.45",
+    "medium": "0.45 <= score < 0.7"
+  },
+  "runtime": {
+    "ai_threat_detection_framework": "1.0.0",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "python": "3.12.13",
+    "scikit_learn": "1.8.0"
+  },
+  "schema_version": "ai-threat-detection.evaluation-report.v1"
+}

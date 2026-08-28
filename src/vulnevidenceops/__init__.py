@@ -1,4 +1,4 @@
-"""Intentional public surface for VulnEvidenceOps v0.5."""
+"""Intentional public surface for VulnEvidenceOps v0.6."""
 
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
@@ -11,6 +11,14 @@ from .exposure import (
     assess_exposure_context,
 )
 from .intake import IntakeBatch, IntakeMapping, adapt_cyclonedx, adapt_sarif
+from .integration import (
+    IntegrationHandoff,
+    IntegrationVerification,
+    PeerContractIdentity,
+    build_integration_handoff,
+    git_blob_id,
+    verify_integration_handoff,
+)
 from .models import (
     AssuranceDossier,
     EvidenceReference,
@@ -48,9 +56,12 @@ __all__ = [
     "ExposureContextBundle",
     "IntakeBatch",
     "IntakeMapping",
+    "IntegrationHandoff",
+    "IntegrationVerification",
     "PACKAGE_VERSION",
     "PortfolioAssuranceView",
     "PortfolioBundle",
+    "PeerContractIdentity",
     "RemediationRecord",
     "RiskAcceptance",
     "SignatureVerification",
@@ -66,9 +77,12 @@ __all__ = [
     "assess_portfolio",
     "adapt_cyclonedx",
     "adapt_sarif",
+    "build_integration_handoff",
     "canonical_json_bytes",
+    "git_blob_id",
     "sha256_digest",
     "sign_evidence",
     "validate_document",
+    "verify_integration_handoff",
     "verify_signed_evidence",
 ]

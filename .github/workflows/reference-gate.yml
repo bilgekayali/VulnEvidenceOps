@@ -85,9 +85,30 @@ jobs:
             --receipt examples/synthetic-anchor-receipt.json \
             --as-of 2026-01-20T00:05:00Z \
             --output /tmp/vulnevidenceops-clean-signature-verification.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops integration-handoff \
+            /tmp/vulnevidenceops-clean-dossier.json \
+            --profile datagovops-control-evidence \
+            --handoff-id HANDOFF-CLEAN-WHEEL-SMOKE \
+            --subject-ref synthetic-case:CASE-SYNTH-001 \
+            --created-at 2026-01-20T00:10:00Z \
+            --valid-until 2027-01-20T00:10:00Z \
+            --synthetic \
+            --output /tmp/vulnevidenceops-clean-integration-handoff.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops verify-integration \
+            /tmp/vulnevidenceops-clean-integration-handoff.json \
+            /tmp/vulnevidenceops-clean-dossier.json \
+            --peer-contract \
+              examples/peer-contracts/datagovops-control-evidence-reference.schema.json \
+            --as-of 2026-01-20T00:15:00Z \
+            --output /tmp/vulnevidenceops-clean-integration-verification.json
+          /tmp/vulnevidenceops-clean/bin/vulnevidenceops schema \
+            schemas/integration-verification.schema.json \
+            /tmp/vulnevidenceops-clean-integration-verification.json
           test -s /tmp/vulnevidenceops-clean-sarif-intake.json
           test -s /tmp/vulnevidenceops-clean-cyclonedx-intake.json
           test -s /tmp/vulnevidenceops-clean-exposure-assessment.json
           test -s /tmp/vulnevidenceops-clean-portfolio-view.json
           test -s /tmp/vulnevidenceops-clean-signature-verification.json
           test -s /tmp/vulnevidenceops-clean-signed-envelope.json
+          test -s /tmp/vulnevidenceops-clean-integration-handoff.json
+          test -s /tmp/vulnevidenceops-clean-integration-verification.json

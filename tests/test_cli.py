@@ -13,7 +13,7 @@ def test_cli_version_and_digest(capsys):
     with pytest.raises(SystemExit) as captured:
         main(["--version"])
     assert captured.value.code == 0
-    assert capsys.readouterr().out.strip() == "0.5.0"
+    assert capsys.readouterr().out.strip() == "0.6.0"
 
     assert main(["digest-json", str(ROOT / "examples" / "synthetic-policy.json")]) == 0
     assert len(capsys.readouterr().out.strip()) == 64

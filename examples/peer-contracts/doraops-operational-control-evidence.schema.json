@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doraops.dev/schemas/operational-control-evidence.schema.json",
+  "title": "DORAOps Operational Control Evidence Document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidence", "evidence_digest"],
+  "properties": {
+    "evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity_id", "environment_id", "deployment_profile_digest", "collected_at", "controls",
+        "production_environment", "raw_endpoints_included", "secrets_included",
+        "production_effectiveness_determined", "dora_compliance_determined",
+        "supervisory_acceptance_determined", "requires_human_review", "schema_version"
+      ],
+      "properties": {
+        "entity_id": {"type": "string", "minLength": 1},
+        "environment_id": {"type": "string", "minLength": 1},
+        "deployment_profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "collected_at": {"type": "integer", "minimum": 0},
+        "controls": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["control_id", "artifact_digest", "validator_id", "negative_path_verified"],
+            "properties": {
+              "control_id": {
+                "enum": [
+                  "immutable_deployment",
+                  "workload_runtime_security",
+                  "network_egress_default_deny",
+                  "external_secret_injection",
+                  "external_key_management",
+                  "backup_restore_evidence",
+                  "observability_secret_free"
+                ]
+              },
+              "artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "validator_id": {"type": "string", "minLength": 1},
+              "negative_path_verified": {"const": true}
+            }
+          }
+        },
+        "production_environment": {"type": "boolean"},
+        "raw_endpoints_included": {"const": false},
+        "secrets_included": {"const": false},
+        "production_effectiveness_determined": {"const": false},
+        "dora_compliance_determined": {"const": false},
+        "supervisory_acceptance_determined": {"const": false},
+        "requires_human_review": {"const": true},
+        "schema_version": {"const": "doraops-operational-control-evidence.v1"}
+      }
+    }
+  }
+}

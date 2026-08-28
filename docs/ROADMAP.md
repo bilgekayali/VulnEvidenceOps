@@ -28,10 +28,15 @@ Ed25519 verification keys, canonical signed envelopes, opaque external anchor re
 build provenance. Cryptographic validity remains separate from identity, authority, trusted time,
 external receipt authenticity, reproducibility and artifact-safety conclusions.
 
+## v0.6 — Integration contracts
+
+Canonical payload digests and exact peer repository, commit, tree, path and Git-blob identities
+for bounded DataGovOps, DORAOps, ModelRiskOps and ai-threat-detection-framework handoffs. Local
+verification does not establish cross-system identity, delivery, authority, semantic compatibility
+or consumer acceptance.
+
 ## Candidate later boundaries
 
-- **v0.6 — Integration contracts:** bounded links to DataGovOps, DORAOps, ModelRiskOps and
-  ai-threat-detection-framework dossiers.
 - **v1.0 — Stable reference:** frozen API/schema fingerprints, independent review and clean-wheel
   release evidence.
 

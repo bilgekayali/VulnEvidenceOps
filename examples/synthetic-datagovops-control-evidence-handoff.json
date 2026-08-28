@@ -1,0 +1,37 @@
+{
+  "consumer_system": "datagovops",
+  "created_at": "2026-01-20T00:10:00Z",
+  "handoff_id": "HANDOFF-SYNTH-DATAGOVOPS-001",
+  "non_claims": {
+    "artifact_safety_established": false,
+    "consumer_acceptance_established": false,
+    "cross_system_identity_established": false,
+    "delivery_established": false,
+    "payload_schema_conformance_established": false,
+    "payload_truth_established": false,
+    "peer_contract_semantic_compatibility_established": false,
+    "peer_repository_authenticity_established": false,
+    "producer_authority_established": false,
+    "production_interoperability_established": false,
+    "regulatory_compliance_established": false
+  },
+  "payload_sha256": "61ffc29994da6c1f82511dfd0e1b100c21e95115ae78fab87b5a79ca27a86cf7",
+  "payload_type": "application/vnd.vulnevidenceops.assurance-dossier.v1+json",
+  "peer_contract": {
+    "blob": "0c5fa5ac54aca4d482079fed5c8300609ef4439d",
+    "commit": "8bfd1b9558ae996e15f4c3d21158e8688d657f16",
+    "contract_role": "consumer",
+    "path": "schemas/control-evidence-reference.schema.json",
+    "repository": "https://github.com/bilgekayali/DataGovOps",
+    "schema_version": "vulnevidenceops.peer-contract-identity.v1",
+    "system": "datagovops",
+    "tree": "d9230e35735f75988a9018333ece9ee4399fa1bf"
+  },
+  "producer_system": "vulnevidenceops",
+  "profile": "datagovops-control-evidence",
+  "relationship": "control_evidence",
+  "schema_version": "vulnevidenceops.integration-handoff.v1",
+  "subject_ref": "synthetic-case:CASE-SYNTH-001",
+  "synthetic": true,
+  "valid_until": "2027-01-20T00:10:00Z"
+}

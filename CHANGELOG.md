@@ -2,7 +2,17 @@
 
 All notable source releases are documented here.
 
-## 0.5.0 - Unreleased
+## 0.6.0 - Unreleased
+
+- Added four digest-bound integration profiles for DataGovOps, DORAOps, ModelRiskOps and the AI
+  threat-detection evaluation framework.
+- Added exact peer repository, commit, tree, path and Git-blob contract identities.
+- Added deterministic payload, profile, peer-contract and validity-window verification.
+- Added exact public peer-contract snapshots, three public schemas, two CLI operations and gates.
+- Preserved explicit non-claims for identity, authority, delivery, acceptance, semantic
+  compatibility, payload truth and production interoperability.
+
+## 0.5.0 - 2026-08-28 (source promotion)
 
 - Added strict canonical JSON envelopes with Ed25519 signing and verification.
 - Added digest-bound public-key lifecycle records and fail-closed negative verification paths.
