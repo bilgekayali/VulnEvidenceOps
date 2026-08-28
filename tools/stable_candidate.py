@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "compatibility" / "v1-stable-baseline.json"
 REVIEW = ROOT / "release" / "independent-review.json"
-EVIDENCE = ROOT / "release" / "v1.0.0rc1-evidence.json"
+EVIDENCE = ROOT / "release" / "v1.0.0-evidence.json"
 
 
 def _json(path: Path) -> dict:
@@ -88,19 +88,19 @@ def verify(*, require_final_review: bool = False) -> dict[str, object]:
         raise SystemExit("final stable promotion is blocked: independent human review pending")
 
     evidence = _json(EVIDENCE)
-    required_gates = ["CI", "CodeQL", "Reference Gate", "Stable Candidate"]
-    if evidence.get("candidate_version") != "1.0.0rc1":
-        raise SystemExit("candidate evidence version differs")
+    required_gates = ["CI", "CodeQL", "Reference Gate", "Stable Release"]
+    if evidence.get("release_version") != "1.0.0":
+        raise SystemExit("release evidence version differs")
     if evidence.get("required_workflow_names") != required_gates:
-        raise SystemExit("candidate evidence workflow set differs")
+        raise SystemExit("release evidence workflow set differs")
     if evidence.get("source_commit") is not None:
-        raise SystemExit("pre-merge candidate evidence must not invent an exact source commit")
+        raise SystemExit("source evidence must not invent a self-referential commit")
     if evidence.get("publication_completed") is not False:
-        raise SystemExit("candidate evidence must not imply publication")
+        raise SystemExit("source evidence must not imply completed publication")
     if evidence.get("independent_review_completed") is not completed:
-        raise SystemExit("candidate evidence and review status differ")
+        raise SystemExit("release evidence and review status differ")
     if evidence.get("independent_review_requirement") != requirement_status:
-        raise SystemExit("candidate evidence and review requirement differ")
+        raise SystemExit("release evidence and review requirement differ")
     return computed
 
 

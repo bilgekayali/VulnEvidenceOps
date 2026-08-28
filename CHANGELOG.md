@@ -2,7 +2,13 @@
 
 All notable source releases are documented here.
 
-## 1.0.0rc1 - Unreleased
+## 1.0.0 - 2026-08-28
+
+- Promoted the frozen v1 API, CLI, dependency and schema contract to Stable Reference.
+- Preserved the accountable repository-owner waiver without claiming independent review.
+- Added the exact-SHA Stable Release gate and clean-wheel release boundary.
+
+## 1.0.0rc1 - 2026-08-28 (source promotion)
 
 - Froze the intended v1 Python API, CLI, runtime-dependency and public-schema surfaces.
 - Added a byte-exact compatibility gate and a dedicated stable-candidate workflow.
