@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/v1/portfolio-bundle.schema.json",
+  "title": "Vulnerability portfolio bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "portfolio_id", "scope_ref", "accountable_role", "cases", "policy"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.portfolio-bundle.v1"},
+    "portfolio_id": {"type": "string", "minLength": 1},
+    "scope_ref": {"type": "string", "minLength": 1},
+    "accountable_role": {"type": "string", "minLength": 1},
+    "cases": {
+      "type": "array",
+      "items": {"$ref": "https://schemas.vulnevidenceops.dev/v1/case-bundle.schema.json"}
+    },
+    "policy": {"$ref": "https://schemas.vulnevidenceops.dev/v1/vulnerability-policy.schema.json"}
+  }
+}

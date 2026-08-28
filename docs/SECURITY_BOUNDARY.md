@@ -11,6 +11,7 @@
 - raw-artifact, canonical-document and per-record digest binding.
 - evidence-linked currentness and conflict assessment for caller-supplied exploit and business
   context assertions.
+- deterministic composition of supplied cases into raw SLA, exception and accountability views.
 
 ## Out of scope
 
@@ -19,13 +20,15 @@
 - CVSS calculation, exploitability prediction or vulnerability discovery;
 - intelligence-feed access, assertion truth verification, business-impact calculation, scoring,
   prioritization or remediation-SLA assignment;
+- automatic deduplication, compliance calculation, severity weighting, executive approval or
+  cross-system identity resolution;
 - general SARIF/CycloneDX conformance validation or vendor-specific extension interpretation;
 - patch deployment, containment, ticket mutation or autonomous risk acceptance;
 - production identity, authorization, database isolation, encryption or retention enforcement.
 
 ## Evidence handling
 
-The v0.3 contract stores normalized metadata, source locators and artifact/record digests only.
+The v0.4 contract stores normalized metadata, source locators and artifact/record digests only.
 `artifact_ref` is an opaque locator. Intake reads a source artifact locally but does not copy its
 raw body into the output batch.
 Callers are responsible for access control, retention, encryption, authenticity and availability

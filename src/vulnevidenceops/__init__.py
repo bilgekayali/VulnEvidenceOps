@@ -1,4 +1,4 @@
-"""Intentional public surface for VulnEvidenceOps v0.3."""
+"""Intentional public surface for VulnEvidenceOps v0.4."""
 
 from ._version import PACKAGE_VERSION
 from .assurance import assess_case
@@ -22,6 +22,7 @@ from .models import (
     VulnerabilityFinding,
     VulnerabilityPolicy,
 )
+from .portfolio import PortfolioAssuranceView, PortfolioBundle, assess_portfolio
 from .schema import DocumentValidationError, validate_document
 
 __version__ = PACKAGE_VERSION
@@ -37,6 +38,8 @@ __all__ = [
     "IntakeBatch",
     "IntakeMapping",
     "PACKAGE_VERSION",
+    "PortfolioAssuranceView",
+    "PortfolioBundle",
     "RemediationRecord",
     "RiskAcceptance",
     "TriageDecision",
@@ -46,6 +49,7 @@ __all__ = [
     "VulnerabilityPolicy",
     "assess_case",
     "assess_exposure_context",
+    "assess_portfolio",
     "adapt_cyclonedx",
     "adapt_sarif",
     "canonical_json_bytes",

@@ -1,0 +1,225 @@
+{
+  "schema_version": "vulnevidenceops.portfolio-bundle.v1",
+  "portfolio_id": "PORT-SYNTH-001",
+  "scope_ref": "synthetic-scope:reference-portfolio",
+  "accountable_role": "synthetic-cyber-risk-lead",
+  "cases": [
+    {
+      "schema_version": "vulnevidenceops.case-bundle.v1",
+      "case_id": "CASE-SYNTH-001",
+      "finding": {
+        "schema_version": "vulnevidenceops.vulnerability-finding.v1",
+        "finding_id": "FIND-SYNTH-001",
+        "asset_ref": "synthetic-asset:web-001",
+        "source_ref": "synthetic-scanner:reference-v1",
+        "title": "Synthetic input-validation weakness",
+        "severity": "high",
+        "first_observed_at": "2026-01-01T00:00:00Z",
+        "technical_identifiers": ["CVE-2099-0001", "CWE-79"],
+        "evidence_refs": ["EVD-SYNTH-OBS-001"]
+      },
+      "evidence_catalog": [
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-OBS-001",
+          "artifact_ref": "synthetic://scanner/observation-001.json",
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "media_type": "application/json",
+          "collected_at": "2026-01-01T00:00:00Z",
+          "source_identity": "synthetic-scanner:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-TRI-001",
+          "artifact_ref": "synthetic://ticket/triage-001.json",
+          "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json",
+          "collected_at": "2026-01-02T00:00:00Z",
+          "source_identity": "synthetic-ticket:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-REM-001",
+          "artifact_ref": "synthetic://change/change-001.json",
+          "artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "media_type": "application/json",
+          "collected_at": "2026-01-03T00:00:00Z",
+          "source_identity": "synthetic-change:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-VER-001",
+          "artifact_ref": "synthetic://scanner/retest-001.json",
+          "artifact_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "media_type": "application/json",
+          "collected_at": "2026-01-16T00:00:00Z",
+          "source_identity": "synthetic-scanner:reference-v1",
+          "synthetic": true
+        }
+      ],
+      "triage": {
+        "schema_version": "vulnevidenceops.triage-decision.v1",
+        "decision_id": "TRI-SYNTH-001",
+        "finding_id": "FIND-SYNTH-001",
+        "decided_at": "2026-01-02T00:00:00Z",
+        "accountable_role": "synthetic-vulnerability-owner",
+        "disposition": "confirmed",
+        "rationale": "Synthetic evidence confirms the reference finding.",
+        "evidence_refs": ["EVD-SYNTH-TRI-001"]
+      },
+      "remediation": {
+        "schema_version": "vulnevidenceops.remediation-record.v1",
+        "remediation_id": "REM-SYNTH-001",
+        "finding_id": "FIND-SYNTH-001",
+        "owner_role": "synthetic-service-owner",
+        "planned_at": "2026-01-03T00:00:00Z",
+        "due_at": "2026-01-15T00:00:00Z",
+        "action": "Apply the synthetic input-validation remediation.",
+        "change_ref": "synthetic-change:CHG-001",
+        "evidence_refs": ["EVD-SYNTH-REM-001"]
+      },
+      "verification": {
+        "schema_version": "vulnevidenceops.verification-record.v1",
+        "verification_id": "VER-SYNTH-001",
+        "finding_id": "FIND-SYNTH-001",
+        "performed_at": "2026-01-16T00:00:00Z",
+        "verifier_role": "synthetic-independent-assurance",
+        "outcome": "effective",
+        "method": "Repeat the synthetic scanner observation and compare the expected result.",
+        "evidence_refs": ["EVD-SYNTH-VER-001"]
+      }
+    },
+    {
+      "schema_version": "vulnevidenceops.case-bundle.v1",
+      "case_id": "CASE-SYNTH-DUP-002",
+      "finding": {
+        "schema_version": "vulnevidenceops.vulnerability-finding.v1",
+        "finding_id": "FIND-SYNTH-002",
+        "asset_ref": "synthetic-asset:web-001",
+        "source_ref": "synthetic-scanner:reference-v1",
+        "title": "Synthetic duplicate observation",
+        "severity": "medium",
+        "first_observed_at": "2026-01-04T00:00:00Z",
+        "technical_identifiers": ["CVE-2099-0001"],
+        "evidence_refs": ["EVD-SYNTH-OBS-002"]
+      },
+      "evidence_catalog": [
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-OBS-002",
+          "artifact_ref": "synthetic://scanner/observation-002.json",
+          "artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "media_type": "application/json",
+          "collected_at": "2026-01-04T00:00:00Z",
+          "source_identity": "synthetic-scanner:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-DUP-002",
+          "artifact_ref": "synthetic://ticket/deduplication-002.json",
+          "artifact_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+          "media_type": "application/json",
+          "collected_at": "2026-01-06T00:00:00Z",
+          "source_identity": "synthetic-ticket:reference-v1",
+          "synthetic": true
+        }
+      ],
+      "triage": {
+        "schema_version": "vulnevidenceops.triage-decision.v1",
+        "decision_id": "TRI-SYNTH-002",
+        "finding_id": "FIND-SYNTH-002",
+        "decided_at": "2026-01-06T00:00:00Z",
+        "accountable_role": "synthetic-vulnerability-owner",
+        "disposition": "duplicate",
+        "rationale": "Synthetic review links the repeated observation to the canonical finding.",
+        "evidence_refs": ["EVD-SYNTH-DUP-002"],
+        "duplicate_of": "FIND-SYNTH-001"
+      }
+    },
+    {
+      "schema_version": "vulnevidenceops.case-bundle.v1",
+      "case_id": "CASE-SYNTH-ACC-003",
+      "finding": {
+        "schema_version": "vulnevidenceops.vulnerability-finding.v1",
+        "finding_id": "FIND-SYNTH-003",
+        "asset_ref": "synthetic-asset:api-003",
+        "source_ref": "synthetic-scanner:reference-v1",
+        "title": "Synthetic critical dependency weakness",
+        "severity": "critical",
+        "first_observed_at": "2026-01-10T00:00:00Z",
+        "technical_identifiers": ["CVE-2099-0003"],
+        "evidence_refs": ["EVD-SYNTH-OBS-003"]
+      },
+      "evidence_catalog": [
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-OBS-003",
+          "artifact_ref": "synthetic://scanner/observation-003.json",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "media_type": "application/json",
+          "collected_at": "2026-01-10T00:00:00Z",
+          "source_identity": "synthetic-scanner:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-TRI-003",
+          "artifact_ref": "synthetic://ticket/triage-003.json",
+          "artifact_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "media_type": "application/json",
+          "collected_at": "2026-01-11T00:00:00Z",
+          "source_identity": "synthetic-ticket:reference-v1",
+          "synthetic": true
+        },
+        {
+          "schema_version": "vulnevidenceops.evidence-reference.v1",
+          "evidence_id": "EVD-SYNTH-ACC-003",
+          "artifact_ref": "synthetic://approval/acceptance-003.json",
+          "artifact_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "media_type": "application/json",
+          "collected_at": "2026-01-12T00:00:00Z",
+          "source_identity": "synthetic-approval:reference-v1",
+          "synthetic": true
+        }
+      ],
+      "triage": {
+        "schema_version": "vulnevidenceops.triage-decision.v1",
+        "decision_id": "TRI-SYNTH-003",
+        "finding_id": "FIND-SYNTH-003",
+        "decided_at": "2026-01-11T00:00:00Z",
+        "accountable_role": "synthetic-vulnerability-owner",
+        "disposition": "confirmed",
+        "rationale": "Synthetic review confirms the dependency finding.",
+        "evidence_refs": ["EVD-SYNTH-TRI-003"]
+      },
+      "risk_acceptance": {
+        "schema_version": "vulnevidenceops.risk-acceptance.v1",
+        "decision_id": "RA-SYNTH-003",
+        "finding_id": "FIND-SYNTH-003",
+        "accepted_at": "2026-01-12T00:00:00Z",
+        "expires_at": "2026-03-12T00:00:00Z",
+        "risk_owner_role": "synthetic-service-owner",
+        "approver_role": "synthetic-risk-approver",
+        "rationale": "Synthetic time-bounded exception while remediation is prepared.",
+        "compensating_control_refs": ["synthetic-control:WAF-001"],
+        "evidence_refs": ["EVD-SYNTH-ACC-003"]
+      }
+    }
+  ],
+  "policy": {
+    "schema_version": "vulnevidenceops.vulnerability-policy.v1",
+    "severity_sla_days": {
+      "critical": 7,
+      "high": 30,
+      "medium": 90,
+      "low": 180,
+      "informational": 365
+    },
+    "max_risk_acceptance_days": 90,
+    "independent_verification_required": true
+  }
+}

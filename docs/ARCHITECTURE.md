@@ -35,6 +35,16 @@ finding + exploit assertions + business-service classifications + evidence catal
 The assessment reports only supplied context and gaps. It does not feed an implicit score,
 priority, SLA or remediation decision into the governance lifecycle.
 
+The v0.4 portfolio path composes existing case assessments:
+
+```text
+case bundles + policy + portfolio scope -> per-case dossiers
+                                        -> cohorts + exceptions + accountability view
+```
+
+It retains explicit human duplicate decisions and raw counts. It does not infer similarity,
+calculate compliance percentages or rank findings.
+
 All links use immutable identifiers or SHA-256 digests. Mutable labels, ticket state and scanner
 dashboards are not treated as evidence by themselves.
 
@@ -45,6 +55,7 @@ dashboards are not treated as evidence by themselves.
 - `canonical.py` provides deterministic JSON serialization and SHA-256 identity.
 - `intake.py` provides strict SARIF and CycloneDX adapters plus source-mapping records.
 - `exposure.py` binds time-bounded external assertions to evidence and assesses currentness.
+- `portfolio.py` composes case dossiers into raw cohorts, exception ages and accountable views.
 - `schema.py` validates documents against explicit Draft 2020-12 contracts.
 - `cli.py` exposes local digest, schema, intake, lifecycle and exposure-context operations.
 
@@ -63,4 +74,6 @@ The caller supplies `assessed_at`. Canonical input bytes are sorted and compact 
 case, policy and assessment time inputs therefore produce identical dossier content and digest.
 Identical intake document bytes, canonical content and mapping context produce identical intake
 identities, findings and mapping records. Identical exposure bundles and assessment times produce
-identical context positions, gaps, inventories and input digests.
+identical context positions, gaps, inventories and input digests. Identical portfolio bundles and
+assessment times produce identical case summaries, cohorts, exception records and accountability
+views.
