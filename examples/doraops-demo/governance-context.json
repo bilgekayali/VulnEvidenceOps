@@ -1,0 +1,38 @@
+{
+  "schema_version": "vulnevidenceops.doraops-demo-governance-context.v1",
+  "scope": "local-synthetic-demo",
+  "entity_id": "synthetic-entity:dora-demo",
+  "legal_name": "Synthetic resilience demonstration entity",
+  "country_code": "ZZ",
+  "business_function_id": "synthetic-function:reference",
+  "business_function_classification": "critical_or_important",
+  "service_id": "synthetic-service:web",
+  "asset_mapping": {
+    "synthetic-asset:web-001": {
+      "entity_id": "synthetic-entity:dora-demo",
+      "kind": "ict_asset",
+      "node_id": "synthetic-asset:web-001"
+    }
+  },
+  "risk_owner_id": "synthetic-risk-owner",
+  "risk_likelihood": 3,
+  "risk_impact": 3,
+  "risk_judgment_basis": "Explicit fictional consumer scenario; not inferred from CVSS, VEO severity or a represented control.",
+  "risk_policy_id": "synthetic-dora-risk-policy",
+  "risk_policy_version": "1",
+  "medium_threshold": 5,
+  "high_threshold": 9,
+  "critical_threshold": 13,
+  "max_control_credit": 0,
+  "treatment": "mitigate",
+  "test_id": "synthetic-vulnerability-assessment-001",
+  "test_owner_id": "synthetic-resilience-test-owner",
+  "independent_reviewer_id": "synthetic-independent-assurance",
+  "planned_at": "2026-01-01T00:00:00Z",
+  "executed_at": "2026-01-01T00:00:00Z",
+  "executor_id": "synthetic-assessment-executor",
+  "execution_basis": "Explicit fictional vulnerability-assessment event; the demo does not execute a scanner or infer a test from a discovery timestamp.",
+  "human_judgment_is_synthetic": true,
+  "incident_classification_performed": false,
+  "regulatory_applicability_determined": false
+}

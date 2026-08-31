@@ -1,0 +1,14 @@
+{
+  "schema_version": "vulnevidenceops.doraops-demo-change-completion.v1",
+  "synthetic": true,
+  "evidence_id": "EVD-SYNTH-COMPLETED-001",
+  "artifact_ref": "synthetic://change/completed-001.json",
+  "finding_id": "FIND-SYNTH-001",
+  "remediation_id": "REM-SYNTH-001",
+  "change_ref": "synthetic-change:CHG-001",
+  "owner_role": "synthetic-service-owner",
+  "completed_at": "2026-01-15T00:00:00Z",
+  "collected_at": "2026-01-15T00:00:00Z",
+  "outcome": "applied",
+  "statement": "Additional fictional completion evidence. The VEO remediation record is a plan, not proof of completion."
+}
