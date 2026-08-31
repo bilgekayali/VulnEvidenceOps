@@ -51,11 +51,16 @@ That existing public profile remains unchanged and is **not used** for this demo
 
 Instead, the repository example defines:
 
-- `doraops-risk-remediation-input.v1`: exact input members and syntactic constraints;
+- `doraops-risk-remediation-input.v2`: exact input members and a required separate signature;
 - `doraops-risk-remediation-handoff.v1`: identity, exact peer/context/input digests and time window;
-- `doraops-risk-remediation-demo-contract.v1`: exact runtime and ten official DORAOps schema snapshots;
+- `doraops-risk-remediation-demo-contract.v2`: runtime/schema pins and the DORAOps key-policy hash;
 - `doraops-demo-governance-context.v1`: consumer-owned, explicitly fictional inventory/risk/test decisions;
 - `doraops-demo-change-completion.v1`: additional synthetic completion evidence, distinct from a plan.
+- `doraops-demo-transcript.v1`: four signed input hashes, audience, purpose, schema and context;
+- `doraops-demo-signing-policy.v1`: pinned public test keys and consumption-time revocation policy.
+
+Input/contract v2 deliberately rejects the earlier unsigned repository-demo input. This
+is a demo-only compatibility change; no frozen public package schema is changed.
 
 The new profile is `doraops-risk-remediation-demo`, with boundary
 `ict-risk-and-resilience-testing`. These are repository-example interfaces, not additions
@@ -75,14 +80,19 @@ The fictional entity uses country code `ZZ`, not a claim about a regulated insti
 3. It repeats **actual DataGovOps consumption** and compares the complete receipt.
    A supplied `accepted:true` flag or a rehashed forged receipt is not an acceptance signal.
    DataGovOps currentness/signature policy is also checked at the later DORAOps consumption time.
-4. The adapter registers a fictional function → service → asset graph in an actual
+4. It independently verifies the separate DORAOps Ed25519 transcript under its own
+   pinned audience/purpose/key policy. All four inputs, including completion, are signed.
+   This does not reuse DataGovOps' verifier result or accept packet-supplied trust keys.
+5. The adapter registers a fictional function → service → asset graph in an actual
    DORAOps `InventoryRegistry`, assesses ICT risk and checks the decision's current snapshot.
-5. The actual resilience APIs create a vulnerability-assessment plan/execution/finding,
+6. The actual resilience APIs create a vulnerability-assessment plan/execution/finding,
    separately register completion, apply the configured synthetic reviewer rule, and
    calculate finding resolution at each phase. All official output schemas are checked.
 
 The DataGovOps receipt is at `2026-01-20T00:05:00Z`; the DORAOps handoff is created no
-earlier than that and consumed at `00:10:00Z`. Its exclusive expiry is
+earlier than that, signed at `00:06:00Z` and consumed at `00:10:00Z`. The negative
+revoked-key fixture is revoked at `00:08:00Z`: a signature valid before revocation is
+still rejected at consumption. The handoff's exclusive expiry is
 `2026-01-21T00:00:00Z`. These are fixed **fixture times**, not claims of current evidence
 on the wall-clock CI date. The underlying synthetic finding/test event is January 1,
 the remediation plan January 3, additional completion January 15, and retest January 16.
@@ -124,7 +134,7 @@ demo, a risk-acceptance disposition is unsupported rather than auto-approved.
 
 ## Negative and attention evidence
 
-Seven scenarios always run in separate consumer processes. Each must exit 2 with its
+Fourteen scenarios always run in separate consumer processes. Each must exit 2 with its
 expected reason and leave no consumer output directory or accepted receipt:
 
 | Scenario | Rejection |
@@ -136,8 +146,16 @@ expected reason and leave no consumer output directory or accepted receipt:
 | Plan supplied without a completion timestamp | `schema_incompatible` |
 | Validly signed source with an unconfigured reviewer | Native `doraops_rejected` |
 | Retest before completion | Native `doraops_rejected` |
+| Missing separate DORAOps signature | `doraops_signature_required` |
+| Valid demo signature for another audience | `doraops_signature_context_mismatch` |
+| Wrong private key under the allowed key ID | `doraops_signature_invalid` |
+| Untrusted signing key ID | `doraops_key_not_trusted` |
+| Key revoked after signing but before consumption | `doraops_key_revoked` |
+| Completion, binding hashes and transcript replaced; old signature retained | `doraops_signature_invalid` |
+| DataGovOps signature replayed as DORAOps authority | `doraops_signature_context_mismatch` |
 
-The last two are actual DORAOps validation failures, not schema-only substitutes.
+The reviewer and retest-chronology cases are actual DORAOps validation failures,
+with otherwise valid demo signatures, not schema-only substitutes.
 Two additional attention cases preserve metadata successfully but remain **blocked**:
 missing retest and failed retest. Acceptance of a record is not successful remediation.
 
@@ -145,12 +163,16 @@ The integration suite additionally verifies partial outcomes, evidence-role/type
 mismatches, source revalidation, future/expired handoffs, peer/schema/runtime/context drift,
 exact native digest chains, native entity-scope checks, stale inventory/risk/test plans,
 conflicting latest retest evidence, deterministic bundles and overwrite protection.
+The separate signature suite checks wrong purpose, every signed member, claimed-time
+ordering, expiry, malformed encodings, canonical transcripts, key-policy drift and
+no-output-on-rejection. The consumer never imports the producer runtime or verifier.
 
 ## Evidence to inspect
 
 - `REPORT.md`, `summary.json`, `source-provenance.json`, `execution-environment.json`.
 - `datagovops/`: the complete signed DataGovOps evidence bundle, with its own report/manifest.
-- `doraops/input.json`: the new handoff, original signed source, actual receipt and additional completion.
+- `doraops/input.json`: handoff, signed source, actual receipt, completion and separate signed envelope.
+- `doraops/consumer/signature-verification.json`: independent DORAOps signature/key-policy result.
 - `doraops/consumer/inventory.json`, `governance-context.json`, `risk-*.json`.
 - `doraops/consumer/test-plan.json`, `test-execution.json`, `finding.json`, `remediation.json`, `retest.json`.
 - `doraops/consumer/resolution-*.json` and `receipt.json`.
@@ -182,12 +204,18 @@ All **27** installed Python source files and **10** byte-exact official schema s
 demo contract to preserve even final-newline differences. All `$ref` values are local.
 The [DataGovOps pin and signed-consumer boundary](DATAGOVOPS_E2E_DEMO.md) remain in force.
 
-The existing Ed25519 signature covers the DataGovOps transcript, **not the separate
-DORAOps handoff or additional completion**. DORAOps reconsumes and validates the source,
-but does not inherit production signing authority from a different audience/purpose.
-The DORAOps receipt explicitly keeps `doraops_handoff_signature_verified=false`. Its new
-mapping/completion integrity checks are not independent origin authentication. The RFC
-demo keys are public and forgeable; no real private keys are used.
+Two independent Ed25519 verifications now have distinct audience/purpose scopes. The
+DataGovOps signature still covers its original transcript. A **second DORAOps signature**
+covers the entire new handoff, source packet, actual DataGovOps receipt and additional
+completion, together with exact demo-contract, input-version, context and key-policy
+identities. The DORAOps receipt records `doraops_handoff_signature_verified=true` and
+binds the verification report and envelope digests. Neither signature substitutes for
+schema, semantic, chronology or real native-consumer checks. Unsigned fallback is disabled.
+
+The RFC 8032 test-vector keys are **public and forgeable by anyone**. Separate identifiers
+and audience/purpose binding demonstrate replay rejection, not production key custody or
+sender authentication. No real private keys are used, and no signature establishes that
+a real change was performed. All production-authority non-claims remain false.
 
 All identities, evidence bodies, risk judgments, classifications and dates are synthetic.
 No real review, scanner execution, change execution, remediation effectiveness, key custody,

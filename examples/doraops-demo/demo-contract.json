@@ -1,5 +1,5 @@
 {
-  "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-contract.v1",
+  "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-contract.v2",
   "scope": "local-synthetic-demo",
   "profile": "doraops-risk-remediation-demo",
   "boundary": "ict-risk-and-resilience-testing",
@@ -7,7 +7,8 @@
   "verified_at": "2026-01-20T00:10:00Z",
   "valid_until": "2026-01-21T00:00:00Z",
   "governance_context_sha256": "e7513dd8a915f2d6cf2c6f6741dccceb20528a6c495178e73809de30a362d91d",
-  "input_schema_sha256": "f58cdf5cc186e1c86afc7de62b6ea6ee55f87eadb3fd6cf386ef64176e67a111",
+  "input_schema_sha256": "73daa391e2b66be5eb813ef644bef3e3fe4b29d2b4a5203163ad7e672b3ba4b2",
+  "signing_policy_sha256": "e30b4b2d4e85979770c966e48ada976164a1fcbbd3d967b8354c0e23a7a823fd",
   "consumer": {
     "distribution": "doraops",
     "package": "doraops",

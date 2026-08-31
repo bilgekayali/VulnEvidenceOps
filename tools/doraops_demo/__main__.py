@@ -26,6 +26,7 @@ from tools.datagovops_demo.consumer import consume as consume_datagovops
 from tools.demo_evidence import EvidenceRejected, finalize_bundle, source_identity
 
 from .common import load_context, load_contract
+from .demo_signer import sign_packet, signature_scenarios
 
 
 def make_packet(
@@ -43,8 +44,8 @@ def make_packet(
         else copy.deepcopy(completion)
     )
     case = source["case"]
-    return {
-        "schema_version": "vulnevidenceops.doraops-risk-remediation-input.v1",
+    packet = {
+        "schema_version": "vulnevidenceops.doraops-risk-remediation-input.v2",
         "source_packet": source,
         "datagovops_receipt": receipt,
         "change_completion": completion,
@@ -72,6 +73,8 @@ def make_packet(
             "requires_human_review": True,
         },
     }
+    packet["signed_envelope"] = sign_packet(packet)
+    return packet
 
 
 def variant_packet(*, verification_outcome: str | None = "effective", reviewer: str | None = None):
@@ -114,6 +117,7 @@ def scenarios(packet: dict):
     chronology["change_completion"]["completed_at"] = "2026-01-17T00:00:00Z"
     chronology["change_completion"]["collected_at"] = "2026-01-17T00:00:00Z"
     chronology["handoff"]["change_completion_sha256"] = digest(chronology["change_completion"])
+    chronology["signed_envelope"] = sign_packet(chronology)
     return (
         ("modified-input", corrupted, "input_digest_mismatch"),
         ("incompatible-schema", incompatible, "schema_incompatible"),
@@ -122,6 +126,7 @@ def scenarios(packet: dict):
         ("plan-is-not-completion", plan_only, "schema_incompatible"),
         ("wrong-independent-reviewer", wrong_reviewer, "doraops_rejected"),
         ("retest-before-completion", chronology, "doraops_rejected"),
+        *signature_scenarios(packet),
     )
 
 
@@ -208,11 +213,12 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
             "resolution_state": "blocked",
         }
     summary = {
-        "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-summary.v1",
+        "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-summary.v2",
         "scope": "local-synthetic-demo",
         "positive_case_accepted": True,
         "upstream_datagovops_accepted": upstream_summary["positive_case_accepted"],
         "upstream_signature_verified": upstream_summary["consumer_signature_verified"],
+        "doraops_signature_verified": receipt["doraops_handoff_signature_verified"],
         "consumer_backend": receipt["consumer_backend"],
         "runtime": runtime,
         "finding_phases": states,
@@ -253,12 +259,14 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         f"DORAOps exact pin: `{contract['consumer']['commit']}`.\n\n"
         "| Stage | Actual consumer outcome |\n|---|---|\n"
         "| Signed DataGovOps indexing | Accepted under public RFC demo-key policy |\n"
+        "| Separate DORAOps input signature | All four inputs bound to DORAOps audience/purpose |\n"
         "| DORAOps risk | High, 9 → 9; zero automatic control credit |\n"
         "| Finding before remediation | Open; resolution blocked |\n"
         "| Separate completion evidence | Remediation submitted; still blocked |\n"
         "| Configured synthetic independent retest | Closed; successful_with_findings |\n"
         "| Missing or failed retest | Metadata accepted; finding remains blocked |\n"
-        "| Seven malformed/misbound scenarios | Rejected without an accepted receipt |\n\n"
+        f"| {len(negatives)} malformed/misbound/signature scenarios | "
+        "Rejected without an accepted receipt |\n\n"
         "Inspect [DORAOps receipt](doraops/consumer/receipt.json), "
         "[native risk decision](doraops/consumer/risk-decision.json), "
         "[resolution](doraops/consumer/resolution-final.json), "
@@ -267,8 +275,10 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "Finding closure does not reduce the independently assessed risk "
         "or approve risk acceptance. No vulnerability is classified as an incident, "
         "and no deployment controls are fabricated.\n\n"
-        "The DataGovOps transcript is demo-signed; the separate DORAOps handoff/completion is NOT "
-        "authenticated by that signature. All keys, identities, judgments and dates are synthetic. "
+        "DataGovOps and DORAOps transcripts have separately verified demo signatures. "
+        "The DORAOps signature binds the handoff, source, upstream receipt and completion. "
+        "The RFC test keys are public and forgeable: this does NOT establish production sender "
+        "identity or real change execution. All identities, judgments and dates are synthetic. "
         "No real test execution, reviewer approval, remediation effectiveness, "
         "regulatory compliance "
         "or production integration is established. Human review remains required.\n"

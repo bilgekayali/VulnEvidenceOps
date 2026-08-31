@@ -117,12 +117,14 @@ This runs the signed DataGovOps demo, then reconsumes the source through a separ
 defined **DORAOps ICT risk and resilience-testing** adapter. Actual DORAOps APIs compute
 the risk decision and `open → remediation_submitted → closed` finding lifecycle.
 Completion evidence is separate from the plan; missing/failed retests remain blocked.
+An independently verified DORAOps-scoped signature binds the handoff, source packet,
+DataGovOps receipt and additional completion; upstream signing cannot substitute for it.
 No vulnerability is turned into an incident, no deployment controls are fabricated,
 and finding closure does not automatically lower risk or approve risk acceptance.
 
 See [the three-project walkthrough](docs/DORAOPS_RISK_REMEDIATION_DEMO.md) for the exact
-contract, native outputs, seven rejection scenarios, attention cases and downloadable
-CI evidence. All data and reviewer roles remain synthetic; existing stable APIs/tags
+contract, native outputs, fourteen rejection scenarios, attention cases and downloadable
+CI evidence. All data, keys and reviewer roles remain synthetic; existing stable APIs/tags
 and both peer repositories are unchanged.
 
 ## Portfolio boundary

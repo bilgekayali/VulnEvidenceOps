@@ -117,17 +117,18 @@ class DORAOpsConsumerTests(unittest.TestCase):
             digest(self.packet["change_completion"]),
         )
 
-    def test_no_incident_no_real_review_and_no_transfer_of_signature_scope(self):
+    def test_separate_demo_signature_without_incident_or_real_review_claims(self):
         receipt = self.accepted["receipt.json"]
         self.assertTrue(receipt["requires_human_review"])
         self.assertTrue(receipt["upstream_datagovops_reconsumed"])
+        self.assertTrue(receipt["doraops_handoff_signature_verified"])
         self.assertTrue(all(value is False for value in receipt["non_claims"].values()))
         self.assertFalse(self.packet["handoff"]["incident_created"])
         self.assertNotEqual(
             self.packet["handoff"]["profile"], "doraops-operational-control-evidence"
         )
 
-    def test_seven_negative_scenarios_fail_at_the_expected_boundary(self):
+    def test_all_negative_scenarios_fail_at_the_expected_boundary(self):
         for name, packet, expected in scenarios(self.base):
             with self.subTest(name=name):
                 self.packet = packet
@@ -404,7 +405,8 @@ class DORAOpsConsumerTests(unittest.TestCase):
             summary = run_demo(first)
             self.assertEqual(run_demo(second), summary)
             self.assertTrue(summary["upstream_signature_verified"])
-            self.assertEqual(len(summary["negative_cases"]), 7)
+            self.assertTrue(summary["doraops_signature_verified"])
+            self.assertEqual(len(summary["negative_cases"]), 14)
             self.assertEqual(len(summary["attention_cases"]), 2)
             for directory in (first, second):
                 self.assertTrue(verify_bundle(directory)["verified"])

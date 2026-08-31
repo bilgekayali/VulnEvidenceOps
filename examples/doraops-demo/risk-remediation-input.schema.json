@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.vulnevidenceops.dev/examples/doraops-risk-remediation-input.v1.schema.json",
+  "$id": "https://schemas.vulnevidenceops.dev/examples/doraops-risk-remediation-input.v2.schema.json",
   "title": "Repository-only DORAOps risk/remediation demo input (not a stable public API)",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "handoff", "source_packet", "datagovops_receipt", "change_completion"],
+  "required": ["schema_version", "handoff", "source_packet", "datagovops_receipt", "change_completion", "signed_envelope"],
   "properties": {
-    "schema_version": {"const": "vulnevidenceops.doraops-risk-remediation-input.v1"},
+    "schema_version": {"const": "vulnevidenceops.doraops-risk-remediation-input.v2"},
+    "signed_envelope": {"type": "object", "description": "Required independent DORAOps signature; validated against the pinned public envelope schema and consumer-owned key policy."},
     "source_packet": {"type": "object", "description": "Independently revalidated by the real signed DataGovOps adapter, not trusted from this shallow type check."},
     "datagovops_receipt": {"type": "object", "description": "Must exactly equal a fresh real DataGovOps consumer receipt for this source packet."},
     "handoff": {
