@@ -1,0 +1,14 @@
+{
+  "schema_version": "github-release-policy.v1",
+  "repository": "bilgekayali/VulnEvidenceOps",
+  "authorized": true,
+  "release_version": "1.0.0",
+  "release_title": "VulnEvidenceOps v1.0.0 — Stable Reference",
+  "notes_path": "release/v1.0.0-notes.md",
+  "required_workflows": {
+    ".github/workflows/ci.yml": "CI",
+    ".github/workflows/codeql.yml": "CodeQL",
+    ".github/workflows/reference-gate.yml": "Reference Gate",
+    ".github/workflows/stable-release.yml": "Stable Release"
+  }
+}
