@@ -12,17 +12,33 @@ jobs:
   datagovops-e2e:
     name: DataGovOps consumer / Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    env:
+      DEMO_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: ${{ matrix.python-version }}
       - name: Single-command wheel-installed demo and real-consumer negative tests
         run: python tools/demo_datagovops.py --test --output-dir /tmp/datagovops-e2e-evidence
+      - name: Verify complete evidence and publish readable job summary
+        run: >-
+          python tools/demo_evidence.py /tmp/datagovops-e2e-evidence
+          --expected-source-sha "$DEMO_SOURCE_SHA" --report >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload exact-source evidence bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: datagovops-evidence-${{ env.DEMO_SOURCE_SHA }}-py${{ matrix.python-version }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/datagovops-e2e-evidence/
+          if-no-files-found: error
+          retention-days: 30
   test:
     runs-on: ubuntu-latest
     strategy:

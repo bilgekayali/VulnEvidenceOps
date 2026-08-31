@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import importlib.metadata
 import json
 import platform
@@ -12,6 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tools.demo_evidence import EvidenceRejected, finalize_bundle, source_identity
 from vulnevidenceops import (
     VulnerabilityCase,
     VulnerabilityPolicy,
@@ -93,6 +93,7 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
             "output_exists", "choose a new output directory; prior evidence is retained"
         )
     contract = load_contract()
+    source = source_identity(ROOT)
     producer_runtime = check_runtime(contract["producer"], installed_wheel=installed_wheels)
     consumer_runtime = check_runtime(contract["consumer"], installed_wheel=installed_wheels)
     packet, verification = produce()
@@ -188,21 +189,33 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
             "dependency_wheel_reproducibility_established": False,
         },
     )
-    files = [
-        {
-            "path": path.relative_to(output).as_posix(),
-            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        }
-        for path in sorted(output.rglob("*.json"))
-    ]
-    write_json(
-        output / "manifest.json",
-        {
-            "schema_version": "vulnevidenceops.datagovops-demo-manifest.v1",
-            "demo_contract_sha256": digest(contract),
-            "artifacts": files,
-        },
+    ci = source["github_actions"]
+    report = (
+        "# VulnEvidenceOps → DataGovOps evidence report\n\n"
+        "Result: **PASS — local synthetic consumer acceptance**.\n\n"
+        f"Source commit: `{source['commit_sha']}`\n\n"
+        f"Source tree: `{source['tree_sha']}`; clean worktree: `{source['worktree_clean']}`.\n\n"
+        + (
+            f"CI run: [{ci['run_id']}]({ci['run_url']}), attempt {ci['run_attempt']}.\n\n"
+            if ci
+            else "Local run (not a CI attestation).\n\n"
+        )
+        + f"DataGovOps pin: `{contract['consumer']['commit']}`.\n\n"
+        "| Observation | DataGovOps result |\n|---|---|\n"
+        "| Before registration | 5 gaps |\n"
+        "| After registration | 5 represented controls |\n"
+        "| At expiry | 5 controls require revalidation |\n"
+        "| Non-applicable risk acceptance | 1 explicitly excluded control |\n"
+        "| Modified dossier | Rejected: payload_digest_mismatch |\n"
+        "| Rehashed incompatible schema | Rejected: schema_incompatible |\n\n"
+        "Inspect [receipt](consumer/receipt.json), [summary](summary.json), "
+        "[runtime](execution-environment.json), and [file manifest](manifest.json).\n\n"
+        "The manifest checks file integrity, not origin authentication. A rebuilt manifest "
+        "is not a trusted signature. Compare the exact source SHA and manifest digest with "
+        "the trusted CI run. Human review remains required; no real remediation, sender "
+        "authority, production interoperability or regulatory compliance is established.\n"
     )
+    finalize_bundle(output, source=source, contract_sha256=digest(contract), report=report)
     return summary
 
 
@@ -213,7 +226,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         summary = run_demo(args.output_dir.resolve(), installed_wheels=args.installed_wheels)
-    except (DemoRejected, OSError, subprocess.SubprocessError) as exc:
+    except (DemoRejected, EvidenceRejected, OSError, subprocess.SubprocessError) as exc:
         print(f"Demo failed: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(summary, indent=2, sort_keys=True))

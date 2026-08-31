@@ -38,6 +38,36 @@ Prepared mode is recorded honestly; only the default path claims isolated wheel
 installation. CI runs the default command on Python 3.11, 3.12 and 3.13 inside the
 existing required `CI` workflow, so the publication gate also waits for this demo.
 
+## Download a CI evidence bundle
+
+Open a successful [CI run](https://github.com/bilgekayali/VulnEvidenceOps/actions/workflows/ci.yml)
+and choose its `datagovops-evidence-<exact-SHA>-py<version>-<run>-<attempt>` artifact.
+Each Python matrix job uploads its own complete bundle, retained for 30 days. The job
+summary also contains the readable report and the raw manifest SHA-256. Failed or
+partial demos are not uploaded as successful evidence.
+
+The demo job explicitly checks out the PR head (or push commit), compares the actual
+Git HEAD with the expected full SHA, requires a clean CI checkout, and records its
+tree, run URL, attempt, event, Python/dependencies and installation mode. It does not
+mislabel a synthetic PR merge ref as the PR head. The upload action is exact-SHA pinned
+and the job has read-only repository permissions; checkout credentials are not retained.
+
+After downloading and safely extracting the GitHub artifact, verify it using Python
+stdlib only; no project dependencies or installation are needed:
+
+```bash
+python tools/demo_evidence.py path/to/extracted-evidence \
+  --expected-source-sha FULL_40_CHARACTER_SHA \
+  --expected-manifest-sha256 SHA256_FROM_TRUSTED_JOB_SUMMARY --report
+```
+
+The verifier rejects missing/extra/modified files, duplicate or unsafe paths, symlinks,
+oversized bundles and inconsistent source identities. It does not extract archives.
+The external expected SHA/digest must come from the trusted run, not from a possibly
+modified bundle. Internal consistency alone is **not** origin authentication; an
+attacker could replace both data and an unsigned manifest. Local dirty checkouts are
+explicitly labeled and do not claim exact committed-source evidence.
+
 ## What actually happens
 
 1. The existing synthetic case/policy are loaded without changing the frozen fixtures.
@@ -116,11 +146,14 @@ unknown reference versions and conflicting evidence identities are still rejecte
 - `consumer/matrix-before.json`, `matrix-after.json`, `matrix-at-expiry.json`.
 - `negative/`: corrupted and incompatible packets, exact rejection codes, local-check contrast.
 - `execution-environment.json`: Python/dependency versions and installation mode.
-- `manifest.json`: raw-file SHA-256 for every generated JSON artifact except the manifest itself.
+- `source-provenance.json`: actual checkout commit/tree, cleanliness and optional CI run identity.
+- `REPORT.md`: readable outcome, source identity, matrix transitions and non-claims.
+- `manifest.json`: sorted raw-file SHA-256 and byte size for every generated file except itself.
 
 Canonical payload hashes intentionally ignore JSON whitespace/key order; the manifest
 also hashes exact emitted file bytes. Repeat runs in the same environment produce
-byte-identical artifacts. Environment records can differ across Python/dependency versions.
+byte-identical artifacts for the same source/worktree and CI run identity. Environment
+records can differ across Python/dependency versions and CI runs.
 No reproducible dependency-wheel build is claimed.
 
 ## Pins and honest limits
