@@ -6,6 +6,7 @@
   "valid_until": "2026-01-21T00:00:00Z",
   "institution_id": "synthetic-institution:demo",
   "verifier_id": "synthetic-local-datagovops-consumer",
+  "signing_policy_sha256": "281fa780c945add23cdc2f1ef4b1136b536958acd955a04716c627820117c3d1",
   "producer": {
     "distribution": "vulnevidenceops",
     "package": "vulnevidenceops",

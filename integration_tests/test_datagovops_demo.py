@@ -39,6 +39,7 @@ from tools.datagovops_demo.common import (
     read_json,
     timestamp,
 )
+from tools.datagovops_demo.demo_signer import sign_packet
 from vulnevidenceops import IntegrationHandoff, verify_integration_handoff
 
 
@@ -55,6 +56,7 @@ class DataGovOpsConsumerTests(unittest.TestCase):
 
     def rehash(self):
         self.packet["handoff"]["payload_sha256"] = digest(self.packet["dossier"])
+        self.packet["signed-envelope"] = sign_packet(self.packet)
 
     def reject(self, code, **kwargs):
         with self.assertRaises(DemoRejected) as caught:
@@ -384,7 +386,7 @@ class DataGovOpsConsumerTests(unittest.TestCase):
             self.assertEqual(run_demo(second), summary)
             self.assertTrue(summary["positive_case_accepted"])
             self.assertTrue(summary["incompatible_schema_passes_digest_only_check"])
-            self.assertEqual(len(summary["negative_cases"]), 2)
+            self.assertEqual(len(summary["negative_cases"]), 6)
             manifest = read_json(first / "manifest.json")
             for item in manifest["artifacts"]:
                 content = (first / item["path"]).read_bytes()
