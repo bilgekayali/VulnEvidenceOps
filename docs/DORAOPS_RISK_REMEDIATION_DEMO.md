@@ -21,7 +21,9 @@ python tools/demo_doraops.py --test
 This installs VulnEvidenceOps, DataGovOps and DORAOps as non-editable wheels in a
 temporary isolated environment, runs the DORAOps integration suite and runs the full
 three-project scenario. GitHub and the configured package index are needed only during
-installation. No global environment is modified. All scenario execution is offline:
+initial wheel acquisition/building. Build/runtime versions are locked and the execution
+environment uses only hash-verified wheel bytes. No global environment is modified.
+All scenario execution is offline:
 no scanner, ticketing system, evidence URL, remote schema or live institution is accessed.
 
 Outputs are retained under `artifacts/doraops-demo/`. Existing output is rejected:
@@ -41,6 +43,11 @@ workflow on Python 3.11/3.12/3.13. The separate DataGovOps job still runs its en
 integration/signature/bundle suite. Each successful job uploads a SHA-bound artifact
 and readable report, retained for 30 days; failed/partial demos are not published as
 successful bundles. No package-index publication is performed.
+
+The Python 3.12 job also replays the exact wheelhouse in a second new environment
+with no index access and requires every evidence byte to match before creating a
+durable demo candidate. See [durable release and replay](PORTFOLIO_DEMO_RELEASE.md)
+for the separate publication gate, assets and platform-specific replay instructions.
 
 ## The correct consumer boundary
 
@@ -192,8 +199,9 @@ python tools/demo_evidence.py path/to/evidence \
 The source SHA and manifest digest should come from the trusted job, not a potentially
 modified bundle. Native/input digests use canonical JSON; schema/context file fingerprints
 and the emitted-file manifest use exact bytes. Repeated runs in the same source/worktree,
-environment and CI identity produce byte-identical evidence. Cross-runtime dependency
-wheel reproducibility is not claimed.
+environment and CI identity produce byte-identical evidence. Retained-wheel offline
+replay is now explicitly checked; cross-runtime portability and independent
+bit-reproducible wheel rebuilding are not claimed.
 
 ## Exact pins and non-claims
 

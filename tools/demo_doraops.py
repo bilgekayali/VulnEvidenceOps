@@ -7,7 +7,6 @@ in a temporary environment; only installation needs network access.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import subprocess
 import sys
@@ -43,47 +42,57 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="use hash-checked installed packages offline",
     )
+    parser.add_argument(
+        "--wheelhouse",
+        type=Path,
+        help="replay recorded wheel bytes without an index (exact checkout/platform required)",
+    )
+    parser.add_argument(
+        "--export-wheelhouse",
+        type=Path,
+        help="retain the complete hash-verified wheelhouse in a new directory",
+    )
     args = parser.parse_args(argv)
     if sys.version_info < (3, 11):  # noqa: UP036 - bootstrap runs before package installation
         parser.error("Python 3.11 or newer is required")
     output = args.output_dir.resolve()
     if output.exists():
         parser.error("output already exists; choose another directory to retain prior evidence")
+    if args.prepared_environment and (args.wheelhouse or args.export_wheelhouse):
+        parser.error("prepared mode cannot claim or export isolated wheel replay")
+    if args.wheelhouse and args.export_wheelhouse:
+        parser.error("choose either replay or a new wheelhouse export")
+    # This file is a standalone stdlib bootstrap; tools is imported from this exact checkout.
+    sys.path.insert(0, str(ROOT))
+    from tools.demo_environment import WHEEL_ENV, install_wheelhouse, prepare_wheelhouse
+    from tools.demo_evidence import EvidenceRejected
+
     environment = dict(os.environ)
+    environment.pop(WHEEL_ENV, None)
     try:
         if args.prepared_environment:
             _run(sys.executable, output, tests=args.test, installed=False, environment=environment)
         else:
             environment.pop("PYTHONPATH", None)
             environment.pop("PYTHONHOME", None)
-            dependencies = []
-            for name in ("datagovops", "doraops"):
-                contract = json.loads(
-                    (ROOT / f"examples/{name}-demo/demo-contract.json").read_text()
-                )
-                peer = contract["consumer"]
-                dependencies.append(f"{name} @ git+{peer['repository']}.git@{peer['commit']}")
             with tempfile.TemporaryDirectory(prefix="vulnevidenceops-doraops-") as temporary:
                 directory = Path(temporary)
-                venv.EnvBuilder(with_pip=True).create(directory)
-                python = directory / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-                subprocess.run(
-                    [
-                        str(python),
-                        "-m",
-                        "pip",
-                        "install",
-                        "--disable-pip-version-check",
-                        "--no-input",
-                        str(ROOT),
-                        *dependencies,
-                    ],
-                    cwd=directory,
-                    env=environment,
-                    check=True,
+                wheels = (
+                    args.wheelhouse.resolve()
+                    if args.wheelhouse
+                    else args.export_wheelhouse.resolve()
+                    if args.export_wheelhouse
+                    else directory / "wheels"
                 )
+                if not args.wheelhouse:
+                    prepare_wheelhouse(wheels, environment)
+                runtime = directory / "runtime"
+                venv.EnvBuilder(with_pip=True).create(runtime)
+                python = runtime / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+                install_wheelhouse(python, wheels, environment)
+                environment[WHEEL_ENV] = str(wheels)
                 _run(str(python), output, tests=args.test, installed=True, environment=environment)
-    except (OSError, subprocess.SubprocessError) as exc:
+    except (EvidenceRejected, OSError, subprocess.SubprocessError) as exc:
         print(f"Demo did not complete: {exc}", file=sys.stderr)
         return 2
     return 0

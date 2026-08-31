@@ -1,0 +1,21 @@
+{
+  "schema_version": "vulnevidenceops.demo-dependency-lock.v1",
+  "scope": "repository-demo-only",
+  "runtime": {
+    "attrs": "26.1.0",
+    "cffi": "2.1.1",
+    "cryptography": "46.0.7",
+    "jsonschema": "4.26.0",
+    "jsonschema-specifications": "2025.9.1",
+    "pycparser": "3.0",
+    "referencing": "0.37.0",
+    "rpds-py": "2026.6.3",
+    "typing-extensions": "4.16.0"
+  },
+  "build": {
+    "packaging": "26.3",
+    "setuptools": "84.0.0",
+    "wheel": "0.48.0"
+  },
+  "notes": "Version-pinned complete demo runtime closure. Selected wheel bytes are SHA-256 recorded and enforced for offline replay; independent rebuilds are not claimed byte-identical. Frozen package dependency ranges are unchanged."
+}
