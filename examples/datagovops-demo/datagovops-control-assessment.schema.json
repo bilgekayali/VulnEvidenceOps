@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DataGovOps Control Assessment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "institution_id",
+    "control_digest",
+    "evidence_reference_digests",
+    "represented_evidence_types",
+    "missing_evidence_types",
+    "stale_evidence_types",
+    "state",
+    "assessed_at",
+    "requires_human_review",
+    "framework_applicability_determined",
+    "control_effectiveness_determined",
+    "legal_compliance_determined",
+    "regulatory_compliance_determined",
+    "schema_version"
+  ],
+  "properties": {
+    "institution_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "control_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence_reference_digests": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "represented_evidence_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 512}
+    },
+    "missing_evidence_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 512}
+    },
+    "stale_evidence_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 512}
+    },
+    "state": {"enum": ["represented", "gap", "revalidation_required"]},
+    "assessed_at": {"type": "integer", "minimum": 0},
+    "requires_human_review": {"const": true},
+    "framework_applicability_determined": {"const": false},
+    "control_effectiveness_determined": {"const": false},
+    "legal_compliance_determined": {"const": false},
+    "regulatory_compliance_determined": {"const": false},
+    "schema_version": {"const": "datagovops.control-assessment.v1"}
+  }
+}
