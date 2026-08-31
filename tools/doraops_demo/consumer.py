@@ -55,6 +55,7 @@ from tools.datagovops_demo.common import (
 from tools.datagovops_demo.consumer import consume as consume_datagovops
 
 from .common import Schemas, load_context, load_contract
+from .signatures import verify_packet_signature
 
 
 def _require(condition: bool, code: str, message: str) -> None:
@@ -74,6 +75,11 @@ def validate_packet(
     verified_at: str,
     installed_wheel: bool,
 ) -> dict:
+    _require(
+        isinstance(packet, dict) and "signed_envelope" in packet,
+        "doraops_signature_required",
+        "a separate DORAOps signature is required; upstream signing cannot substitute",
+    )
     schemas.validate("input", packet)
     handoff = packet["handoff"]
     _require(
@@ -413,6 +419,7 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
     runtime = check_runtime(contract["consumer"], installed_wheel=installed_wheel)
     verified_at = verified_at or contract["verified_at"]
     upstream = validate_packet(packet, contract, context, schemas, verified_at, installed_wheel)
+    signature = verify_packet_signature(packet, contract, verified_at)
     try:
         _, native, inventory = build_native_records(packet, context)
     except (GovernanceError, ValueError) as exc:
@@ -437,9 +444,10 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
         schemas.validate("dependency-edge", edge)
     documents["inventory.json"] = inventory
     documents["governance-context.json"] = context
+    documents["signature-verification.json"] = signature
     final, risk = native["resolution-final"], native["risk-decision"]
     documents["receipt.json"] = {
-        "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-receipt.v1",
+        "schema_version": "vulnevidenceops.doraops-risk-remediation-demo-receipt.v2",
         "scope": "local-synthetic-demo",
         "accepted": True,
         "consumer_backend": "doraops.assess_ict_risk + doraops.resolve_test",
@@ -452,6 +460,9 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
         "upstream_receipt_sha256": digest(upstream["receipt.json"]),
         "upstream_datagovops_reconsumed": True,
         "change_completion_sha256": digest(packet["change_completion"]),
+        "doraops_handoff_signature_verified": True,
+        "signature_verification_sha256": digest(signature),
+        "signed_envelope_sha256": digest(packet["signed_envelope"]),
         "native_artifact_sha256": {
             name: digest(value) for name, value in sorted(documents.items())
         },
@@ -471,7 +482,9 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
             "risk_acceptance_approved": False,
             "risk_reduced_by_dossier_closure": False,
             "regulatory_compliance_determined": False,
-            "doraops_handoff_signature_verified": False,
+            "production_sender_identity_established": False,
+            "production_signing_authority_established": False,
+            "private_key_custody_established": False,
             "production_interoperability_established": False,
         },
     }

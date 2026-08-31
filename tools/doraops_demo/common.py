@@ -18,7 +18,7 @@ def load_contract() -> dict:
     contract = read_json(CONTRACT_PATH)
     if (
         contract.get("schema_version")
-        != "vulnevidenceops.doraops-risk-remediation-demo-contract.v1"
+        != "vulnevidenceops.doraops-risk-remediation-demo-contract.v2"
     ):
         raise DemoRejected("contract_mismatch", "unsupported DORAOps demo contract")
     return contract

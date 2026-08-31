@@ -1,0 +1,38 @@
+{
+  "schema_version": "vulnevidenceops.doraops-demo-signing-policy.v1",
+  "policy_id": "synthetic-doraops-consumer-key-policy-v1",
+  "scope": "local-synthetic-demo",
+  "signature_required": true,
+  "public_test_keys_only": true,
+  "audience": "doraops.local-synthetic-risk-remediation-consumer",
+  "purpose": "consume-risk-remediation-evidence",
+  "payload_type": "application/vnd.vulnevidenceops.doraops-demo-transcript.v1+json",
+  "claimed_signed_at": "2026-01-20T00:06:00Z",
+  "warning": "RFC 8032 test-vector keys are public and forgeable by anyone; never use for real trust or production.",
+  "keys": [
+    {
+      "schema_version": "vulnevidenceops.verification-key.v1",
+      "key_id": "synthetic-dora-rfc8032-active",
+      "algorithm": "ed25519",
+      "public_key_base64": "11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo=",
+      "public_key_sha256": "21fe31dfa154a261626bf854046fd2271b7bed4b6abe45aa58877ef47f9721b9",
+      "issuer_identity": "synthetic-demo-only-not-an-identity-provider",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_until": "2026-01-22T00:00:00Z",
+      "revoked_at": null,
+      "synthetic": true
+    },
+    {
+      "schema_version": "vulnevidenceops.verification-key.v1",
+      "key_id": "synthetic-dora-rfc8032-revoked",
+      "algorithm": "ed25519",
+      "public_key_base64": "PUAXw+hDiVqStwqnTRt+vJyYLM8uxJaMwM1V8Sr0Zgw=",
+      "public_key_sha256": "39f713d0a644253f04529421b9f51b9b08979d08295959c4f3990ee617f5139f",
+      "issuer_identity": "synthetic-demo-only-not-an-identity-provider",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_until": "2026-01-22T00:00:00Z",
+      "revoked_at": "2026-01-20T00:08:00Z",
+      "synthetic": true
+    }
+  ]
+}
