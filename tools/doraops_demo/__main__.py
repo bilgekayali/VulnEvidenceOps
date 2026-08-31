@@ -6,6 +6,7 @@ import argparse
 import copy
 import importlib.metadata
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -23,6 +24,7 @@ from tools.datagovops_demo.common import (
 )
 from tools.datagovops_demo.consumer import PACKET_PARTS
 from tools.datagovops_demo.consumer import consume as consume_datagovops
+from tools.demo_environment import MANIFEST, WHEEL_ENV, verify_wheelhouse
 from tools.demo_evidence import EvidenceRejected, finalize_bundle, source_identity
 
 from .common import load_context, load_contract
@@ -153,6 +155,11 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
     source_identity_value = source_identity(ROOT)
     contract = load_contract()
     runtime = check_runtime(contract["consumer"], installed_wheel=installed_wheels)
+    wheelhouse = None
+    if installed_wheels:
+        if not os.environ.get(WHEEL_ENV):
+            raise DemoRejected("wheelhouse_required", "isolated demo requires hash-verified wheels")
+        wheelhouse = verify_wheelhouse(Path(os.environ[WHEEL_ENV]))
     upstream_summary = run_datagovops_demo(output / "datagovops", installed_wheels=installed_wheels)
     source = {
         name: read_json(output / "datagovops/producer" / (name + ".json")) for name in PACKET_PARTS
@@ -231,6 +238,8 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "production_interoperability_established": False,
     }
     write_json(output / "summary.json", summary)
+    if wheelhouse is not None:
+        write_json(output / MANIFEST, wheelhouse)
     write_json(
         output / "execution-environment.json",
         {
@@ -248,6 +257,10 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
                 )
             },
             "dependency_wheel_reproducibility_established": False,
+            "exact_runtime_wheel_bytes_verified": wheelhouse is not None,
+            "dependency_lock_sha256": (
+                wheelhouse["dependency_lock_sha256"] if wheelhouse is not None else None
+            ),
         },
     )
     report = (
@@ -257,6 +270,8 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         f"clean: `{source_identity_value['worktree_clean']}`.\n\n"
         f"Tree: `{source_identity_value['tree_sha']}`.\n\n"
         f"DORAOps exact pin: `{contract['consumer']['commit']}`.\n\n"
+        f"Exact runtime wheel bytes verified: `{wheelhouse is not None}`; "
+        "independent bit-reproducible rebuilding is not claimed.\n\n"
         "| Stage | Actual consumer outcome |\n|---|---|\n"
         "| Signed DataGovOps indexing | Accepted under public RFC demo-key policy |\n"
         "| Separate DORAOps input signature | All four inputs bound to DORAOps audience/purpose |\n"

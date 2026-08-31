@@ -127,6 +127,10 @@ contract, native outputs, fourteen rejection scenarios, attention cases and down
 CI evidence. All data, keys and reviewer roles remain synthetic; existing stable APIs/tags
 and both peer repositories are unchanged.
 
+The [durable demo/replay guide](docs/PORTFOLIO_DEMO_RELEASE.md) describes the separately
+versioned demo release, complete dependency lock, SHA-256-verified wheelhouse and
+byte-identical offline replay gate. This publication never moves the core `v1.0.0` tag.
+
 ## Portfolio boundary
 
 | Repository | Primary ownership |

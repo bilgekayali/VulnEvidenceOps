@@ -27,7 +27,28 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Three wheel-installed projects and real-consumer negative tests
-        run: python tools/demo_doraops.py --test --output-dir /tmp/doraops-e2e-evidence
+        run: >-
+          python tools/demo_doraops.py --test --output-dir /tmp/doraops-e2e-evidence
+          --export-wheelhouse /tmp/doraops-demo-wheels
+      - name: Replay the exact wheel bytes without an index in another clean environment
+        if: matrix.python-version == '3.12'
+        run: >-
+          python tools/demo_doraops.py --wheelhouse /tmp/doraops-demo-wheels
+          --output-dir /tmp/doraops-replay-evidence
+      - name: Require byte-identical offline replay and freeze durable release candidate
+        if: matrix.python-version == '3.12'
+        run: >-
+          python -m tools.demo_release_bundle --evidence /tmp/doraops-e2e-evidence
+          --replay-evidence /tmp/doraops-replay-evidence --wheelhouse /tmp/doraops-demo-wheels
+          --output-dir /tmp/portfolio-demo-candidate
+      - name: Upload the verified durable demo candidate
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: portfolio-demo-candidate-${{ env.DEMO_SOURCE_SHA }}-py3.12-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/portfolio-demo-candidate/
+          if-no-files-found: error
+          retention-days: 30
       - name: Verify complete evidence and publish readable job summary
         run: >-
           python tools/demo_evidence.py /tmp/doraops-e2e-evidence
