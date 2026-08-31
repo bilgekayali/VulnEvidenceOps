@@ -1,0 +1,34 @@
+{
+  "EVD-SYNTH-OBS-001": {
+    "schema_version": "vulnevidenceops.demo.synthetic-material.v1",
+    "synthetic": true,
+    "finding_id": "FIND-SYNTH-001",
+    "kind": "observation",
+    "asset_ref": "synthetic-asset:web-001",
+    "result": "synthetic-finding-present"
+  },
+  "EVD-SYNTH-TRI-001": {
+    "schema_version": "vulnevidenceops.demo.synthetic-material.v1",
+    "synthetic": true,
+    "finding_id": "FIND-SYNTH-001",
+    "kind": "triage",
+    "accountable_role": "synthetic-vulnerability-owner",
+    "disposition": "confirmed"
+  },
+  "EVD-SYNTH-REM-001": {
+    "schema_version": "vulnevidenceops.demo.synthetic-material.v1",
+    "synthetic": true,
+    "finding_id": "FIND-SYNTH-001",
+    "kind": "change",
+    "change_ref": "synthetic-change:CHG-001",
+    "result": "synthetic-remediation-applied"
+  },
+  "EVD-SYNTH-VER-001": {
+    "schema_version": "vulnevidenceops.demo.synthetic-material.v1",
+    "synthetic": true,
+    "finding_id": "FIND-SYNTH-001",
+    "kind": "retest",
+    "verifier_role": "synthetic-independent-assurance",
+    "result": "expected-synthetic-result-observed"
+  }
+}

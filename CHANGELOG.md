@@ -4,6 +4,11 @@ All notable source releases are documented here.
 
 ## Unreleased (maintenance)
 
+- Add a one-command, wheel-installed VulnEvidenceOps → DataGovOps synthetic demo using
+  the real pinned DataGovOps control/evidence registry, independently validated dossiers,
+  four materialized evidence hashes, before/after/expired matrices and fail-closed negatives.
+- Test the consumer boundary on Python 3.11/3.12/3.13 as part of the existing required CI
+  workflow. Keep the frozen v1 package/API/schema/dependency surfaces and tags unchanged.
 - Require all latest exact-SHA main push workflows before GitHub publication, recheck before
   writing, and retain existing releases/tags unchanged on retries and maintenance commits.
 

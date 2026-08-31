@@ -84,6 +84,25 @@ public-schema surfaces. Independent human review was not performed; the reposito
 waived that prerequisite. “Stable” describes the package and compatibility contract, not a
 production-safety, compliance or effectiveness attestation.
 
+## Run the real DataGovOps consumer demo
+
+From this repository's current `main` checkout, with Python 3.11+ and Git available:
+
+```bash
+python tools/demo_datagovops.py --test
+```
+
+The command installs both projects as wheels in a temporary isolated environment, then
+runs an offline synthetic case → dossier → **actual DataGovOps registry** pipeline.
+Five missing evidence records become five represented records; at expiry they require
+revalidation. Corrupted content and a re-hashed incompatible schema are rejected before
+any accepted consumer receipt is written. The full integration test suite also runs.
+
+See [the end-to-end walkthrough](docs/DATAGOVOPS_E2E_DEMO.md) for exact mapping, outputs,
+pins and boundaries. Results are written under `artifacts/datagovops-demo/`; existing
+output is never overwritten. The demo is an additive repository example after the
+immutable v1.0.0 tag, not a new stable package API or a production integration claim.
+
 ## Portfolio boundary
 
 | Repository | Primary ownership |

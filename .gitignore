@@ -5,5 +5,6 @@
 __pycache__/
 build/
 dist/
+artifacts/
 *.egg-info/
 *.py[cod]

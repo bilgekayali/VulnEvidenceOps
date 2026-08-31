@@ -1,0 +1,102 @@
+{
+  "schema_version": "vulnevidenceops.datagovops-demo-contract.v1",
+  "scope": "local-synthetic-demo",
+  "assessed_at": "2026-01-20T00:00:00Z",
+  "verified_at": "2026-01-20T00:05:00Z",
+  "valid_until": "2026-01-21T00:00:00Z",
+  "institution_id": "synthetic-institution:demo",
+  "verifier_id": "synthetic-local-datagovops-consumer",
+  "producer": {
+    "distribution": "vulnevidenceops",
+    "package": "vulnevidenceops",
+    "version": "1.0.0",
+    "source_snapshot": "1f285ded70d2c10d23d12fa5ead0a88b326eba0d",
+    "python_files_sha256": {
+      "__init__.py": "05da24e3cfd919ab8e2114e324a82fce9f3d1a65140853e41074a2de0c20a4b5",
+      "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "_validation.py": "d1176bc7e3e948d479d6152da9f9ba77420f2dd932003efc5086bb150073de2f",
+      "_version.py": "1dc253651f75b2ad947a3a03d266cffcbf1cc2c4267cc162e87a6601daabece3",
+      "assurance.py": "c78347a381ede95689391e158087d063622374303d709f0090704fede2606974",
+      "canonical.py": "62191c75ef86e7d3c3fbe1ead3d72d36c87e939e68d2e7b238ca2b2e596d66e4",
+      "cli.py": "d645ce8ab60d7202823e2fb1ca1d0674e069311e3afb14de05aef3c7e3442fd3",
+      "exposure.py": "b75c055d217eedf7a824583ccaa8bfa49d3fb30cfb9a1dc597fcf83d0dafd5e5",
+      "intake.py": "378ffdef2c6a98b6833c8f998b1dc0e1a41295d04520526634d7b14dfb11e833",
+      "integration.py": "addba4bf018d54c60eec33e15a669b531de53270331d9bf4a7e980ec8f6c1ae5",
+      "models.py": "21524df062e74c47cc716d2f0ca9fff58519d77e00e474433fd4380874381bf1",
+      "portfolio.py": "a1923551207428086c51cfff60b7acd87a4ed1601714b432758c16cd17df9b27",
+      "schema.py": "ac9381dd10f9e9cc4543817606115787836555e9583c6210b91ce36ffbf5eba0",
+      "signed_evidence.py": "8cf2c314caecac314f782973ec8adc18403b45b04350f1940348d6638c284797"
+    },
+    "schema_set_sha256": "3c3699f8b622f2a0240287ebc02e6900463eeb58263e2f38393e5b2d30bc8ce9"
+  },
+  "consumer": {
+    "distribution": "datagovops",
+    "package": "datagovops",
+    "version": "1.0.0",
+    "repository": "https://github.com/bilgekayali/DataGovOps",
+    "commit": "8bfd1b9558ae996e15f4c3d21158e8688d657f16",
+    "tree": "d9230e35735f75988a9018333ece9ee4399fa1bf",
+    "python_files_sha256": {
+      "__init__.py": "0db107908c2bd13f5efd20ba48c51e488f77a67a64d5a968b491b1c8f4e3b55f",
+      "__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+      "_release_v02.py": "fda2aaa163ac0220064886b835e1ad5192a447269d5b21b29de47d24ff4b8700",
+      "access_retention.py": "0bb36bdb118d7076c51bde7392d73ad9185d094ba54c44be80e5726149387dd1",
+      "access_retention_strict.py": "bb142969ba870c192ec8450abe1e876df075dfc92e3b6e24b103d22a53d37893",
+      "audit_recovery.py": "20317904029e8a93c224ee497159351f4f95831c7c2bed7c40991883c1bea890",
+      "bcbs239.py": "dbc99b7511024487baefc5bfaf1a97c71beccf99738bd17951ddd51f57671336",
+      "cli.py": "0e9489461daa1ece70f9ac6e02dbd989af2f729c00b2aaa9e93fe7a460e653ec",
+      "control_matrix.py": "b9a3af4b9c42b77a198d2a110b07313dff02ad69254ce17749c2ca5b987d1227",
+      "deployment_hardening.py": "227532fb87f28c199916a2283b200f82f1b3e9c0b33a33b70e33b3ce5e53d1eb",
+      "dossier.py": "007bca03bc03ad828fd574e6ce315e582c435dcdc0a16206680d46b9341173dd",
+      "dossier_release.py": "609820a4ccdfb2d40392652eda8099bf54e2eecc6c26b00fa9fda6e6c2f893c2",
+      "dossier_release_strict.py": "b49cf83047136330287f11786a394064c96adde52ec59f5953291534f9e8c428",
+      "dossier_v02.py": "0ed784839f2b77287fe6ba22b672051e8a4740579d2982ccdd6379ba41673d2b",
+      "dossier_verify.py": "3c98e593641db3d122217ed976b109a1644d35a816f43155efe7951cb4d41ada",
+      "dossier_verify_v02.py": "c71c66312ee56e8fff9256fd9660e9211e5f3261a79260f409cff693d14c3879",
+      "evidence_integrity.py": "b713ea1f0ec8464467a634df99f441ee18b56fb1365d14ad11ac74d8e4e73a76",
+      "lineage.py": "0c660cd3e04fc94ee6b74f5438567c99245e21155adddfc14b14fa4c9ef6fa81",
+      "models.py": "9bce59700f3f1816fcf354a2a4002278ce21fdd50dd8b75305f80958df57e27f",
+      "quality.py": "96d6dc91d764a83459d31db9c02bb29e2a886a02e43b99318d9c0c4f676f5d75",
+      "registry.py": "0c329456aa489a14643f8bcf178891fce368d375a62eade1d308d8e69e842b8e",
+      "reporting.py": "62229da1324466276a5256a17d067f05837e3205e4438c8093d1f1098521b72f",
+      "reporting_strict.py": "97f129d9c9d56f48a0e24b4e30a01f1b69710aa3e977d0dcf15c45f6c158bab3",
+      "security.py": "e6d84e21c285774aff95e5285477f6a42436d33bf492e7f6a2d1ff8ed75ff8a9",
+      "semantic.py": "cb8624bdbc17732ef57018bd4c1f6c7bc84beecca7893801fd000b84277d2862",
+      "validation.py": "a2b75d9166ce05bcccb05e68e25c5192af527c7e6bbe47140aae982a8ebce4c5"
+    },
+    "schemas": {
+      "control-definition": {
+        "path": "examples/datagovops-demo/datagovops-control-definition.schema.json",
+        "source_path": "schemas/control-definition.schema.json",
+        "blob": "ba2fa62258c1331b4d9a23397ff995ebee683d0d",
+        "sha256": "d3e17f605a8483cc525c974fb6c1627245ee4270b428a6a1a0ef10b104f65d43"
+      },
+      "control-evidence-reference": {
+        "path": "examples/peer-contracts/datagovops-control-evidence-reference.schema.json",
+        "source_path": "schemas/control-evidence-reference.schema.json",
+        "blob": "0c5fa5ac54aca4d482079fed5c8300609ef4439d",
+        "sha256": "aacb816763e7210d49945930410d43a166c25028e734af0d1d5d9a58a52d277e"
+      },
+      "control-assessment": {
+        "path": "examples/datagovops-demo/datagovops-control-assessment.schema.json",
+        "source_path": "schemas/control-assessment.schema.json",
+        "blob": "af929806ec29b6d1bfae943349f8661a18fbe4a1",
+        "sha256": "a9b30b4ee40462ee860c97c61c5216ca212a905db9b025180f75d536e2e4f558"
+      },
+      "control-evidence-matrix": {
+        "path": "examples/datagovops-demo/datagovops-control-evidence-matrix.schema.json",
+        "source_path": "schemas/control-evidence-matrix.schema.json",
+        "blob": "2af338e3530ae974fb3883b082fb942bd538ee73",
+        "sha256": "de8f2bff90152a91e93e1069a4a826c71962916bda4d7297c1ef107f9838dc9b"
+      }
+    }
+  },
+  "controls": {
+    "VEO-ACC-001": "vulnerability_risk_acceptance",
+    "VEO-CLS-001": "vulnerability_closure",
+    "VEO-INV-001": "vulnerability_finding",
+    "VEO-REM-001": "vulnerability_remediation",
+    "VEO-TRI-001": "vulnerability_triage",
+    "VEO-VER-001": "vulnerability_verification"
+  }
+}
