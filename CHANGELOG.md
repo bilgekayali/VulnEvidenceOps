@@ -2,6 +2,11 @@
 
 All notable source releases are documented here.
 
+## Unreleased (maintenance)
+
+- Require all latest exact-SHA main push workflows before GitHub publication, recheck before
+  writing, and retain existing releases/tags unchanged on retries and maintenance commits.
+
 ## 1.0.0 - 2026-08-28
 
 - Promoted the frozen v1 API, CLI, dependency and schema contract to Stable Reference.

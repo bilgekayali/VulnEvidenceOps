@@ -1,0 +1,54 @@
+name: Publish release
+
+on:
+  workflow_run:
+    workflows: [CI, CodeQL, Reference Gate, Stable Release]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.gate.outputs.ready }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - id: gate
+        name: Require every exact-SHA main push gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: python tools/publish_release.py gate --sha "$CANDIDATE_SHA"
+  publish:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Recheck gates and publish without moving any tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: python tools/publish_release.py publish --sha "$CANDIDATE_SHA"

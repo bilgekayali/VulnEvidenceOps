@@ -26,3 +26,17 @@ The waiver does not constitute or imply independent review.
 
 Tagging and GitHub Release creation require a separate human decision after the exact merged
 `main` SHA has passed the same gates. Package publication and deployment are separate decisions.
+
+## Publication gate
+
+`release/publish-policy.json` records the authorized version, notes and exact workflow paths/names.
+`Publish release` reacts only to completed main-branch push workflows from this repository. It
+requires every configured workflow's latest run/attempt on the same exact SHA to succeed, and
+requires that SHA to still be `main`. A PR check, fork run, older success, missing check, failed
+check or different SHA cannot authorize publication. The gate job has read-only permissions;
+only the publish job has contents-write permission and it rechecks the gate before writing.
+
+Existing published versions are no-ops: the tag is never moved and the Release is never edited.
+A tag without a Release may only be completed if it already points to the exact tested candidate.
+The original `v1.0.0` tag therefore remains unchanged by later maintenance commits. Future versions
+require an explicit publication-policy update; a version bump alone cannot publish them.
