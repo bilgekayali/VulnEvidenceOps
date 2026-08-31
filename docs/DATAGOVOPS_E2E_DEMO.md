@@ -5,6 +5,11 @@ It calls the real DataGovOps v1 `ControlEvidenceRegistry`, registers evidence an
 builds DataGovOps control assessments and matrices. It does not copy/reimplement the
 registry or treat a successful producer-side hash check as consumer acceptance.
 
+For the complete three-project continuation, see
+[DORAOps risk/remediation consumption](DORAOPS_RISK_REMEDIATION_DEMO.md). It revalidates
+this signed source and actual DataGovOps receipt before invoking DORAOps' separate
+risk/resilience APIs; it does not reuse the operational-deployment-control profile.
+
 ## One command
 
 In a checkout of VulnEvidenceOps `main`, with Python 3.11+ (including venv/pip) and Git:

@@ -107,6 +107,24 @@ pins and boundaries. Results are written under `artifacts/datagovops-demo/`; exi
 output is never overwritten. The demo is an additive repository example after the
 immutable v1.0.0 tag, not a new stable package API or a production integration claim.
 
+## Extend the same evidence into real DORAOps governance
+
+```bash
+python tools/demo_doraops.py --test
+```
+
+This runs the signed DataGovOps demo, then reconsumes the source through a separately
+defined **DORAOps ICT risk and resilience-testing** adapter. Actual DORAOps APIs compute
+the risk decision and `open → remediation_submitted → closed` finding lifecycle.
+Completion evidence is separate from the plan; missing/failed retests remain blocked.
+No vulnerability is turned into an incident, no deployment controls are fabricated,
+and finding closure does not automatically lower risk or approve risk acceptance.
+
+See [the three-project walkthrough](docs/DORAOPS_RISK_REMEDIATION_DEMO.md) for the exact
+contract, native outputs, seven rejection scenarios, attention cases and downloadable
+CI evidence. All data and reviewer roles remain synthetic; existing stable APIs/tags
+and both peer repositories are unchanged.
+
 ## Portfolio boundary
 
 | Repository | Primary ownership |

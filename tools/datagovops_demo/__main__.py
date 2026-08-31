@@ -36,10 +36,20 @@ from .demo_signer import sign_packet
 from .signatures import load_signing_policy, transcript
 
 
-def produce() -> tuple[dict, dict]:
+def produce(
+    *, case_document: dict | None = None, materials_document: dict | None = None
+) -> tuple[dict, dict]:
     contract = load_contract()
-    materials = read_json(ROOT / "examples/datagovops-demo/evidence-materials.json")
-    document = read_json(ROOT / "examples/synthetic-case.json")
+    materials = (
+        read_json(ROOT / "examples/datagovops-demo/evidence-materials.json")
+        if materials_document is None
+        else copy.deepcopy(materials_document)
+    )
+    document = (
+        read_json(ROOT / "examples/synthetic-case.json")
+        if case_document is None
+        else copy.deepcopy(case_document)
+    )
     for item in document["evidence_catalog"]:
         item["artifact_sha256"] = digest(materials[item["evidence_id"]])
     case = VulnerabilityCase.from_dict(document)

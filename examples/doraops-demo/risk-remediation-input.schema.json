@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.vulnevidenceops.dev/examples/doraops-risk-remediation-input.v1.schema.json",
+  "title": "Repository-only DORAOps risk/remediation demo input (not a stable public API)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "handoff", "source_packet", "datagovops_receipt", "change_completion"],
+  "properties": {
+    "schema_version": {"const": "vulnevidenceops.doraops-risk-remediation-input.v1"},
+    "source_packet": {"type": "object", "description": "Independently revalidated by the real signed DataGovOps adapter, not trusted from this shallow type check."},
+    "datagovops_receipt": {"type": "object", "description": "Must exactly equal a fresh real DataGovOps consumer receipt for this source packet."},
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "handoff_id", "profile", "consumer_system", "consumer_commit", "consumer_tree", "boundary", "demo_contract_sha256", "governance_context_sha256", "source_packet_sha256", "datagovops_receipt_sha256", "change_completion_sha256", "case_id", "finding_id", "source_asset_ref", "target_node", "created_at", "valid_until", "synthetic", "incident_created", "requires_human_review"],
+      "properties": {
+        "schema_version": {"const": "vulnevidenceops.doraops-risk-remediation-handoff.v1"},
+        "handoff_id": {"type": "string", "minLength": 1},
+        "profile": {"type": "string", "minLength": 1},
+        "consumer_system": {"const": "doraops"},
+        "consumer_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "consumer_tree": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "boundary": {"type": "string", "minLength": 1},
+        "demo_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "governance_context_sha256": {"$ref": "#/$defs/sha256"},
+        "source_packet_sha256": {"$ref": "#/$defs/sha256"},
+        "datagovops_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "change_completion_sha256": {"$ref": "#/$defs/sha256"},
+        "case_id": {"type": "string", "minLength": 1},
+        "finding_id": {"type": "string", "minLength": 1},
+        "source_asset_ref": {"type": "string", "pattern": "^synthetic-asset:"},
+        "target_node": {
+          "type": "object", "additionalProperties": false,
+          "required": ["entity_id", "kind", "node_id"],
+          "properties": {
+            "entity_id": {"type": "string", "pattern": "^synthetic-entity:"},
+            "kind": {"const": "ict_asset"},
+            "node_id": {"type": "string", "pattern": "^synthetic-asset:"}
+          }
+        },
+        "created_at": {"type": "string", "format": "date-time"},
+        "valid_until": {"type": "string", "format": "date-time"},
+        "synthetic": {"const": true},
+        "incident_created": {"const": false},
+        "requires_human_review": {"const": true}
+      }
+    },
+    "change_completion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "synthetic", "evidence_id", "artifact_ref", "finding_id", "remediation_id", "change_ref", "owner_role", "completed_at", "collected_at", "outcome", "statement"],
+      "properties": {
+        "schema_version": {"const": "vulnevidenceops.doraops-demo-change-completion.v1"},
+        "synthetic": {"const": true},
+        "evidence_id": {"type": "string", "minLength": 1},
+        "artifact_ref": {"type": "string", "pattern": "^synthetic://"},
+        "finding_id": {"type": "string", "minLength": 1},
+        "remediation_id": {"type": "string", "minLength": 1},
+        "change_ref": {"type": "string", "pattern": "^synthetic-change:"},
+        "owner_role": {"type": "string", "minLength": 1},
+        "completed_at": {"type": "string", "format": "date-time"},
+        "collected_at": {"type": "string", "format": "date-time"},
+        "outcome": {"const": "applied"},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}
