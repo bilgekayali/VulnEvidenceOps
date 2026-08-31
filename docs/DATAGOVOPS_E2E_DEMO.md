@@ -15,12 +15,13 @@ python tools/demo_datagovops.py --test
 
 The command creates a temporary isolated environment, installs both projects as
 non-editable wheels, runs the full integration suite, and runs the positive and two
-negative scenarios. GitHub and the configured Python package index are needed for
+negative integrity scenarios plus four signature/key-policy rejection scenarios.
+GitHub and the configured Python package index are needed for
 installation only. The scenario and consumer perform no network operations, retrieve
 no evidence URLs and resolve no remote schemas. No global Python environment is changed.
 The temporary environment is removed afterward; generated evidence is retained.
 
-`--test` is optional: the positive/corrupt/incompatible-schema scenarios always run.
+`--test` is optional: the positive case and all six negative scenarios always run.
 To preserve an earlier result, choose another directory:
 
 ```bash
@@ -78,6 +79,8 @@ explicitly labeled and do not claim exact committed-source evidence.
 3. A separate consumer process, which does not import the VulnEvidenceOps runtime,
    independently checks strict JSON, pinned producer schemas, exact peer identity,
    payload/case/policy/material digests, subject/evidence links and the validity window.
+   It also independently verifies Ed25519 over all five packet members and the exact
+   consumer context, using only its pinned, explicitly public demo-key policy.
 4. The adapter creates real DataGovOps `ControlDefinition` and
    `ControlEvidenceReference` objects. DataGovOps enforces institution, exact control
    version, evidence type, source boundary, duplicate identity and schema constraints.
@@ -122,12 +125,46 @@ No framework applicability or control effectiveness is inferred from a represent
 |---|---|---|
 | Dossier content changed without rehashing | Digest mismatch | `payload_digest_mismatch`, exit 2 |
 | Dossier schema changed to v999, digest recalculated | `verified` | `schema_incompatible`, exit 2 |
+| Wrong private key, same allowed key ID | Hashes unchanged | `signature_invalid`, exit 2 |
+| Valid signature under an unknown key ID | Hashes unchanged | `key_not_trusted`, exit 2 |
+| Signature predating key revocation | Library reports valid at claimed signing time | `key_revoked` at consumption, exit 2 |
+| Modified dossier; all exposed hashes/transcript recalculated | Hashes match | Old signature fails: `signature_invalid`, exit 2 |
 
 The second row is intentional: a valid digest does not prove a compatible payload.
-Both failed cases leave **no consumer output directory or accepted receipt**. Their
+All failed cases leave **no consumer output directory or accepted receipt**. Their
 packets, rejection records and the misleading-but-correctly-bounded old local check
 are preserved under `negative/`. The overall demo exits 0 only when the positive
-case succeeds and both negative cases fail at their expected boundary.
+case succeeds and all six negative cases fail at their expected boundary. The incompatible
+schema case is re-signed with a valid demo key: signatures do not bypass schema validation.
+
+## Signed consumption and deliberately limited trust
+
+`examples/datagovops-demo/signing-policy.json` is consumer-owned configuration whose exact
+SHA-256 is pinned in the demo contract. It requires a signature and lists exact Ed25519
+public keys/fingerprints, validity windows and revocation dates. A packet cannot provide
+its own trusted verification key or disable signature checking. There is no unsigned
+fallback in the consumer CLI or function.
+
+The producer uses the existing public `sign_evidence` API. The consumer does **not** call
+the producer's verifier: it reconstructs the public `signature-input.v1` format and uses
+`cryptography`'s Ed25519 verifier directly. The signed transcript binds the case, policy,
+materials, dossier and handoff hashes; exact demo-contract/key-policy hashes; target
+audience; and registration purpose. The envelope additionally binds key ID, algorithm,
+payload type, claimed signing time and transcript digest. DataGovOps' reference hashes
+bind the resulting signature verification through the independent validation report.
+
+Key validity is required both at claimed signing time and at consumption time. A key
+revoked before the synthetic verification time is rejected even when its claimed
+signature predates revocation. Handoff creation/signing/verification times must be ordered.
+These are **fixture dates in January 2026**, not a claim that the evidence/key is current
+on the CI run date. There is no trusted clock, external timestamp or revocation service.
+
+The two seeds are **public RFC 8032 §7.1 test vectors**, not real credentials. They are
+used in memory by the producer-only demo signer; private seed bytes are not serialized
+into the evidence bundle. Anyone can forge these demo signatures because the test keys
+are public. Never use the policy, seeds or receipt as production sender authentication,
+key-custody evidence, authorization or non-repudiation. No real key material is required.
+The receipt proves only that this specific independent consumer enforced this demo policy.
 
 The integration suite additionally covers rehashed malformed payloads, inflated claims,
 wrong subjects/peer commits, case/policy changes, missing/tampered/non-synthetic materials,
@@ -142,6 +179,9 @@ unknown reference versions and conflicting evidence identities are still rejecte
 - `producer/`: case, policy, four material bodies, dossier, handoff and original local check.
 - `consumer/receipt.json`: actual registration identities, runtime pin and matrix digests.
 - `consumer/validation-report.json`: independent boundary checks with explicit non-claims.
+- `producer/signed-envelope.json`: context-bound signature over the full packet transcript.
+- `consumer/signature-verification.json`: independent Ed25519/key-policy result, digest-bound into the receipt.
+- `consumer/key-policy.json`: exact public demo key policy used by the consumer.
 - `consumer/control-definitions.json`, `evidence-references.json`, `control-assessments.json`.
 - `consumer/matrix-before.json`, `matrix-after.json`, `matrix-at-expiry.json`.
 - `negative/`: corrupted and incompatible packets, exact rejection codes, local-check contrast.
@@ -171,7 +211,7 @@ scripts/receipt formats are not newly promised stable public interfaces.
 
 Consumer acceptance means **local schema/integrity acceptance and registry indexing
 for these synthetic inputs**. It does not establish sender authority, observation truth,
-correct producer assurance reasoning, signed authenticity, remote delivery, production
+correct producer assurance reasoning, production sender authenticity, remote delivery, production
 interoperability, effective remediation, legal/regulatory compliance or certification.
 The prior handoff's broad `consumer_acceptance_established=false` stays unchanged;
 the separate receipt records only this demonstrated local acceptance.

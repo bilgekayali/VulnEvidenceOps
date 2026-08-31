@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import importlib.metadata
 import json
@@ -23,12 +24,16 @@ from vulnevidenceops import (
 from .common import (
     ROOT,
     DemoRejected,
+    Schemas,
+    canonical_bytes,
     check_runtime,
     digest,
     load_contract,
     read_json,
     write_json,
 )
+from .demo_signer import sign_packet
+from .signatures import load_signing_policy, transcript
 
 
 def produce() -> tuple[dict, dict]:
@@ -56,13 +61,15 @@ def produce() -> tuple[dict, dict]:
         (ROOT / peer["path"]).read_bytes(),
         verified_at=contract["verified_at"],
     ).to_dict()
-    return {
+    packet = {
         "case": case.to_dict(),
         "policy": policy.to_dict(),
         "materials": materials,
         "dossier": dossier,
         "handoff": handoff.to_dict(),
-    }, verification
+    }
+    packet["signed-envelope"] = sign_packet(packet)
+    return packet, verification
 
 
 def _packet_files(path: Path, packet: dict) -> None:
@@ -121,6 +128,8 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
     incompatible["dossier"]["schema_version"] = "vulnevidenceops.assurance-dossier.v999"
     # Re-hash deliberately: a digest/profile-only validator accepts this payload.
     incompatible["handoff"]["payload_sha256"] = digest(incompatible["dossier"])
+    # A valid signature must not turn an incompatible payload into accepted evidence.
+    incompatible["signed-envelope"] = sign_packet(incompatible)
     from vulnevidenceops import IntegrationHandoff
 
     peer = contract["consumer"]["schemas"]["control-evidence-reference"]
@@ -133,9 +142,29 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
     if incompatible_local["integration_position"] != "verified":
         raise DemoRejected("unexpected_local_state", "rehashed schema scenario was not constructed")
     negatives = {}
+    wrong_key = copy.deepcopy(packet)
+    wrong_key["signed-envelope"] = sign_packet(wrong_key, wrong_key=True)
+    untrusted = copy.deepcopy(packet)
+    untrusted["signed-envelope"] = sign_packet(untrusted, key_id="synthetic-untrusted")
+    revoked = copy.deepcopy(packet)
+    revoked["signed-envelope"] = sign_packet(revoked, key_id="synthetic-rfc8032-revoked")
+    tampered = copy.deepcopy(packet)
+    tampered["dossier"]["overdue"] = not tampered["dossier"]["overdue"]
+    tampered["handoff"]["payload_sha256"] = digest(tampered["dossier"])
+    key_policy = load_signing_policy(contract, Schemas(contract))
+    changed_transcript = transcript(tampered, contract, key_policy)
+    # Attacker updates every exposed digest and signed payload, but cannot retain the signature.
+    tampered["signed-envelope"]["payload_base64"] = base64.b64encode(
+        canonical_bytes(changed_transcript)
+    ).decode()
+    tampered["signed-envelope"]["payload_sha256"] = digest(changed_transcript)
     for name, candidate, expected in (
         ("corrupted-content", corrupted, "payload_digest_mismatch"),
         ("incompatible-schema", incompatible, "schema_incompatible"),
+        ("wrong-key", wrong_key, "signature_invalid"),
+        ("untrusted-key", untrusted, "key_not_trusted"),
+        ("revoked-key", revoked, "key_revoked"),
+        ("rehashed-signed-content", tampered, "signature_invalid"),
     ):
         directory = output / "negative" / name
         _packet_files(directory / "packet", candidate)
@@ -154,6 +183,8 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "schema_version": "vulnevidenceops.datagovops-demo-summary.v1",
         "scope": "local-synthetic-demo",
         "positive_case_accepted": receipt["accepted"],
+        "consumer_signature_verified": True,
+        "public_test_keys_only": True,
         "consumer_backend": receipt["consumer_backend"],
         "matrix_before": before["state"],
         "matrix_after": after["state"],
@@ -168,6 +199,7 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "production_interoperability_established": False,
     }
     write_json(output / "summary.json", summary)
+    write_json(output / "consumer/key-policy.json", key_policy)
     write_json(
         output / "execution-environment.json",
         {
@@ -207,10 +239,17 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "| At expiry | 5 controls require revalidation |\n"
         "| Non-applicable risk acceptance | 1 explicitly excluded control |\n"
         "| Modified dossier | Rejected: payload_digest_mismatch |\n"
-        "| Rehashed incompatible schema | Rejected: schema_incompatible |\n\n"
+        "| Rehashed incompatible schema | Rejected: schema_incompatible |\n"
+        "| Wrong private key | Rejected: signature_invalid |\n"
+        "| Untrusted key ID | Rejected: key_not_trusted |\n"
+        "| Revoked key, backdated signature | Rejected: key_revoked |\n"
+        "| Rehashed signed content | Rejected: signature_invalid |\n\n"
         "Inspect [receipt](consumer/receipt.json), [summary](summary.json), "
         "[runtime](execution-environment.json), and [file manifest](manifest.json).\n\n"
-        "The manifest checks file integrity, not origin authentication. A rebuilt manifest "
+        "The consumer verified Ed25519 over all packet members and the exact consumer contract "
+        "using its pinned **public RFC demo key** policy. Anyone knows these test keys; "
+        "this is not production origin authentication. The manifest checks file integrity. "
+        "A rebuilt manifest "
         "is not a trusted signature. Compare the exact source SHA and manifest digest with "
         "the trusted CI run. Human review remains required; no real remediation, sender "
         "authority, production interoperability or regulatory compliance is established.\n"

@@ -32,8 +32,9 @@ from .common import (
     timestamp,
     write_json,
 )
+from .signatures import BODY_PARTS, verify_packet_signature
 
-PACKET_PARTS = ("case", "policy", "materials", "dossier", "handoff")
+PACKET_PARTS = (*BODY_PARTS, "signed-envelope")
 
 
 def _require(condition: bool, code: str, message: str) -> None:
@@ -42,8 +43,9 @@ def _require(condition: bool, code: str, message: str) -> None:
 
 
 def validate_packet(packet: dict, contract: dict, schemas: Schemas, verified_at: str) -> dict:
+    _require("signed-envelope" in packet, "signature_required", "unsigned consumption is disabled")
     _require(set(packet) == set(PACKET_PARTS), "invalid_packet", "unexpected packet parts")
-    case, policy, materials, dossier, handoff = (packet[key] for key in PACKET_PARTS)
+    case, policy, materials, dossier, handoff = (packet[key] for key in BODY_PARTS)
     for name, value in (
         ("integration-handoff", handoff),
         ("case-bundle", case),
@@ -204,6 +206,7 @@ def validate_packet(packet: dict, contract: dict, schemas: Schemas, verified_at:
         "snapshot_binding_valid": True,
         "local_material_digests_valid": True,
         "handoff_current": True,
+        "signature_verification": verify_packet_signature(packet, contract, schemas, verified_at),
         "non_claims": {
             "producer_authority_established": False,
             "producer_assurance_semantics_verified": False,
@@ -307,6 +310,7 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
         "dossier_sha256": digest(dossier),
         "handoff_sha256": digest(handoff),
         "validation_report_sha256": digest(validation),
+        "signature_verification_sha256": digest(validation["signature_verification"]),
         "registered_evidence_digests": registered,
         "excluded_controls": [row for row in rows if row["status"] == "not_applicable"],
         "matrix_before_digest": before.artifact_digest,
@@ -325,6 +329,7 @@ def consume(packet: dict, *, verified_at: str | None = None, installed_wheel: bo
     }
     return {
         "validation-report.json": validation,
+        "signature-verification.json": validation["signature_verification"],
         "control-definitions.json": [_document(item) for item in definitions],
         "evidence-references.json": [_document(item) for item in references],
         "control-assessments.json": [_document(item) for item in assessments],

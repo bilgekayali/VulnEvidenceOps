@@ -97,6 +97,10 @@ runs an offline synthetic case → dossier → **actual DataGovOps registry** pi
 Five missing evidence records become five represented records; at expiry they require
 revalidation. Corrupted content and a re-hashed incompatible schema are rejected before
 any accepted consumer receipt is written. The full integration test suite also runs.
+The consumer independently verifies Ed25519 over the whole packet under an explicit
+public-test-key policy; wrong, untrusted and revoked keys plus rehashed tampering are
+rejected. Public RFC test keys demonstrate policy enforcement, not real sender identity.
+Successful CI runs provide SHA-bound downloadable evidence and a readable report.
 
 See [the end-to-end walkthrough](docs/DATAGOVOPS_E2E_DEMO.md) for exact mapping, outputs,
 pins and boundaries. Results are written under `artifacts/datagovops-demo/`; existing

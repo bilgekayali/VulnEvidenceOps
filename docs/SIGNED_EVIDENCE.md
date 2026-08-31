@@ -1,5 +1,10 @@
 # Signed evidence
 
+For the repository-only end-to-end example, see
+[signed DataGovOps consumption](DATAGOVOPS_E2E_DEMO.md#signed-consumption-and-deliberately-limited-trust).
+It uses this public signing API and an independent consumer verifier with a pinned
+public-test-key policy. It does not change the frozen package contract below.
+
 ## Boundary
 
 VulnEvidenceOps v0.5 signs strict canonical JSON with Ed25519 and verifies local cryptographic,
