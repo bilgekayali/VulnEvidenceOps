@@ -223,6 +223,13 @@ All **27** installed Python source files and **10** byte-exact official schema s
 demo contract to preserve even final-newline differences. All `$ref` values are local.
 The [DataGovOps pin and signed-consumer boundary](DATAGOVOPS_E2E_DEMO.md) remain in force.
 
+DORAOps later published its independent
+[`v1.0.0` stable GitHub Release](https://github.com/bilgekayali/DORAOps/releases/tag/v1.0.0)
+at `6b1fd28ad8a83f0c8ac83b33709d34f7d964f539`. That release-publication commit is
+one commit after the tested demo pin and does not modify package source or schemas. It is
+recorded as supplemental repository-release identity, not substituted for the install pin;
+see the [peer-release ledger](PEER_RELEASES.md).
+
 Two independent Ed25519 verifications now have distinct audience/purpose scopes. The
 DataGovOps signature still covers its original transcript. A **second DORAOps signature**
 covers the entire new handoff, source packet, actual DataGovOps receipt and additional

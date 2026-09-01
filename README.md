@@ -139,6 +139,11 @@ byte-identical offline replay gate. The authorized `demo-v1.0.0` prerelease is p
 only after the visual candidate and all four exact-main workflows pass. This publication
 never moves the core `v1.0.0` tag.
 
+The [verified peer-release ledger](docs/PEER_RELEASES.md) records the independently
+published DataGovOps and DORAOps `v1.0.0` GitHub Releases and their exact target commits.
+Those release identities supplement traceability; they do not replace the byte-exact peer
+commits already frozen into `demo-v1.0.0` or alter any existing release artifact.
+
 ## Portfolio boundary
 
 | Repository | Primary ownership |
