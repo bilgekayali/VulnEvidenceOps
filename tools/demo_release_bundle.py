@@ -30,6 +30,7 @@ from tools.demo_evidence import (
     source_identity,
     verify_bundle,
 )
+from tools.demo_presentation import NEGATIVE_EXPECTATIONS, verify_presentation
 
 ASSET_NAMES = {
     "portfolio-evidence.zip",
@@ -39,22 +40,7 @@ ASSET_NAMES = {
     "SHA256SUMS",
 }
 MAX_ARCHIVE_BYTES = 150_000_000
-REQUIRED_NEGATIVES = {
-    "modified-input": "input_digest_mismatch",
-    "incompatible-schema": "schema_incompatible",
-    "wrong-operational-boundary": "boundary_mismatch",
-    "forged-datagovops-receipt": "upstream_receipt_mismatch",
-    "plan-is-not-completion": "schema_incompatible",
-    "wrong-independent-reviewer": "doraops_rejected",
-    "retest-before-completion": "doraops_rejected",
-    "unsigned-doraops-input": "doraops_signature_required",
-    "wrong-signature-audience": "doraops_signature_context_mismatch",
-    "wrong-signing-key": "doraops_signature_invalid",
-    "untrusted-signing-key": "doraops_key_not_trusted",
-    "revoked-signing-key": "doraops_key_revoked",
-    "rehashed-completion": "doraops_signature_invalid",
-    "upstream-signature-replay": "doraops_signature_context_mismatch",
-}
+REQUIRED_NEGATIVES = NEGATIVE_EXPECTATIONS
 
 
 def _hash(raw: bytes) -> str:
@@ -184,8 +170,14 @@ def _assert_outcomes(evidence: Path, *, require_visual: bool) -> None:
         )
     ):
         raise EvidenceRejected("demo candidate does not prove the required outcomes")
-    if require_visual and not {"index.html", "presentation.json"} <= _files(evidence).keys():
+    visual_names = {"index.html", "presentation.json"}
+    present = visual_names & _files(evidence).keys()
+    if present and present != visual_names:
+        raise EvidenceRejected("visual presentation is incomplete")
+    if require_visual and present != visual_names:
         raise EvidenceRejected("publication requires the evidence-linked visual presentation")
+    if present == visual_names:
+        verify_presentation(evidence)
 
 
 def create_candidate(

@@ -176,6 +176,8 @@ no-output-on-rejection. The consumer never imports the producer runtime or verif
 
 ## Evidence to inspect
 
+- `index.html`: responsive five-minute walkthrough generated only from the retained JSON.
+- `presentation.json`: strict display model with source identity and SHA-256/size-bound links.
 - `REPORT.md`, `summary.json`, `source-provenance.json`, `execution-environment.json`.
 - `datagovops/`: the complete signed DataGovOps evidence bundle, with its own report/manifest.
 - `doraops/input.json`: handoff, signed source, actual receipt, completion and separate signed envelope.
@@ -185,6 +187,15 @@ no-output-on-rejection. The consumer never imports the producer runtime or verif
 - `doraops/consumer/resolution-*.json` and `receipt.json`.
 - `negative/`: exact rejected inputs/reasons; `attention/`: accepted metadata with blocked findings.
 - `manifest.json`: complete sorted file inventory, sizes and raw-file SHA-256 hashes.
+
+The HTML is self-contained: no CDN, remote font, image, analytics or network request is
+permitted. Its restrictive content-security policy hashes the exact embedded CSS and
+script. Native buttons filter the four comparison outcomes and the fourteen rejection
+boundaries remain available in an expandable audit table. The verifier re-derives the
+complete model from actual receipts, signature reports, risk/resolution records,
+attention receipts and rejection files, then requires byte-exact model and HTML matches.
+It therefore cannot turn a changed risk score, failed signature, blocked case or altered
+rejection into a stale success page.
 
 Download `doraops-evidence-<SHA>-py<version>-<run>-<attempt>` from a successful
 [CI run](https://github.com/bilgekayali/VulnEvidenceOps/actions/workflows/ci.yml).

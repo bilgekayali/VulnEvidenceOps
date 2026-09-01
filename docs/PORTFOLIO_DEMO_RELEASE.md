@@ -3,7 +3,8 @@
 The repository demo has its own `demo-v1.0.0` release boundary. It does not bump any
 of the three stable packages, move `v1.0.0`, publish to a package index, change peer
 repositories or deploy a service. Publication policy is in `demo/publish-policy.json`;
-it remains disabled during preparation and requires the visual presentation when enabled.
+the owner-authorized `demo-v1.0.0` prerelease is enabled only with the required visual
+presentation and remains gated on the final exact-main candidate.
 
 ## Two ways to run
 
@@ -46,7 +47,7 @@ hash-verified wheel replay claim and cannot export or select a wheelhouse.
 
 | Asset | Contents |
 |---|---|
-| `portfolio-evidence.zip` | Complete reports, source/run identity, both signatures, native JSON results, rejection/attention evidence and file manifest |
+| `portfolio-evidence.zip` | Complete reports, evidence-linked `index.html`/`presentation.json`, source/run identity, both signatures, native JSON results, rejection/attention evidence and file manifest |
 | `portfolio-wheels.zip` | Twelve runtime wheels, exact wheel manifest and hash-enforced installation requirements |
 | `REPLAY.md` | Exact source checkout, platform, download verification and offline replay instructions |
 | `demo-release-manifest.json` | Source/tree/CI attempt, dependency lock, peer pins, evidence/replay hashes and asset inventory |
@@ -63,13 +64,21 @@ All archives are generated with fixed timestamps, sorted safe names and regular-
 modes. Publication independently rejects traversal, symlinks, duplicate names,
 oversized expansion and unlisted or modified assets before uploading anything.
 
+Open `index.html` locally for the five-minute report. It has no external resources or
+network calls. Each evidence link stays inside the extracted directory and carries the
+actual target size and SHA-256 in `presentation.json`. Candidate validation re-derives
+that model and the complete HTML from the underlying JSON, including both signature
+scopes, score 9 → 9, zero control credit, passing/missing/failed retest outcomes and all
+fourteen rejection codes. An incomplete or stale visual report cannot be published.
+
 ## CI and publication ordering
 
 The Python 3.12 CI job runs the full signed three-project demo, then installs the
 retained wheels in **another new environment without an index** and reruns all
 fourteen rejection and both blocked-attention scenarios. Every output byte and the
 complete evidence manifest must be identical. A mismatch prevents the candidate
-artifact from being created. The other matrix jobs and release/security gates remain required.
+artifact from being created. The visual HTML and its machine model must also be byte
+identical. The other matrix jobs and release/security gates remain required.
 
 The read-only publication gate requires the latest successful CI, CodeQL, Reference
 Gate and Stable Release **main push runs on the same exact SHA**, which must still
