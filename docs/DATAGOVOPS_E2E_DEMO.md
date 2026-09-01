@@ -210,6 +210,13 @@ all 14 producer Python files, the 26-schema producer set, and four consumer sche
 are checked against committed fingerprints. Consumer schema snapshots also have exact
 Git blob identities. The demo does not require a DataGovOps runtime/API change.
 
+DataGovOps later published its independent
+[`v1.0.0` stable GitHub Release](https://github.com/bilgekayali/DataGovOps/releases/tag/v1.0.0)
+at `065a14e77487f97adf5c6228f93c3737f2dd409a`. That release-publication commit is
+one commit after the tested demo pin and does not modify package source or schemas. It is
+recorded as supplemental repository-release identity, not substituted for the install pin;
+see the [peer-release ledger](PEER_RELEASES.md).
+
 This is an additive repository example after VulnEvidenceOps v1.0.0. It does not change
 the frozen package API, CLI, dependency bounds, public schemas or existing tag. Demo
 scripts/receipt formats are not newly promised stable public interfaces.
