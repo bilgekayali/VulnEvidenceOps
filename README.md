@@ -127,9 +127,17 @@ contract, native outputs, fourteen rejection scenarios, attention cases and down
 CI evidence. All data, keys and reviewer roles remain synthetic; existing stable APIs/tags
 and both peer repositories are unchanged.
 
+Each complete DORAOps evidence bundle also contains `index.html`, a self-contained
+five-minute visual walkthrough, and `presentation.json`, its machine-readable derivation.
+Every displayed receipt, signature, risk decision and scenario links to the underlying
+JSON plus its byte size and SHA-256. The report is rebuilt and byte-compared during
+verification; changed evidence, claims, links, CSP or HTML fail the publication gate.
+
 The [durable demo/replay guide](docs/PORTFOLIO_DEMO_RELEASE.md) describes the separately
 versioned demo release, complete dependency lock, SHA-256-verified wheelhouse and
-byte-identical offline replay gate. This publication never moves the core `v1.0.0` tag.
+byte-identical offline replay gate. The authorized `demo-v1.0.0` prerelease is published
+only after the visual candidate and all four exact-main workflows pass. This publication
+never moves the core `v1.0.0` tag.
 
 ## Portfolio boundary
 

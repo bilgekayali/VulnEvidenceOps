@@ -296,6 +296,18 @@ def test_visual_stage_cannot_publish_without_a_presentation(candidate_inputs, tm
         bundle.create_candidate(evidence, replay, wheels, tmp_path / "candidate", policy)
 
 
+def test_visual_stage_invokes_the_evidence_derivation_verifier(
+    candidate_inputs, monkeypatch
+):
+    evidence, _replay, _wheels, _policy = candidate_inputs
+    (evidence / "index.html").write_text("<!doctype html>")
+    (evidence / "presentation.json").write_text("{}")
+    calls = []
+    monkeypatch.setattr(bundle, "verify_presentation", lambda path: calls.append(path))
+    bundle._assert_outcomes(evidence, require_visual=True)
+    assert calls == [evidence]
+
+
 @pytest.mark.parametrize("filename", sorted(bundle.ASSET_NAMES))
 def test_every_release_asset_is_tamper_checked(candidate_inputs, tmp_path, filename):
     evidence, replay, wheels, policy = candidate_inputs

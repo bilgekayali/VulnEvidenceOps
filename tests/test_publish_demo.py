@@ -126,6 +126,15 @@ def policy():
     return {**publish.load_policy(), "enabled": True, "require_visual_report": True}
 
 
+def test_repository_policy_enables_one_visual_prerelease():
+    configured = publish.load_policy()
+    assert configured["enabled"] is True
+    assert configured["require_visual_report"] is True
+    assert configured["tag"] == "demo-v1.0.0"
+    assert configured["prerelease"] is True
+    assert configured["make_latest"] is False
+
+
 @pytest.fixture
 def api(policy, monkeypatch):
     value = FakeAPI(policy)

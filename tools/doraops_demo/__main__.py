@@ -26,6 +26,7 @@ from tools.datagovops_demo.consumer import PACKET_PARTS
 from tools.datagovops_demo.consumer import consume as consume_datagovops
 from tools.demo_environment import MANIFEST, WHEEL_ENV, verify_wheelhouse
 from tools.demo_evidence import EvidenceRejected, finalize_bundle, source_identity
+from tools.demo_presentation import create_presentation
 
 from .common import load_context, load_contract
 from .demo_signer import sign_packet, signature_scenarios
@@ -263,6 +264,7 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
             ),
         },
     )
+    create_presentation(output, source=source_identity_value)
     report = (
         "# VulnEvidenceOps → DataGovOps → DORAOps evidence report\n\n"
         "Result: **PASS — bounded synthetic risk/remediation consumption**.\n\n"
@@ -285,7 +287,9 @@ def run_demo(output: Path, *, installed_wheels: bool = False) -> dict:
         "Inspect [DORAOps receipt](doraops/consumer/receipt.json), "
         "[native risk decision](doraops/consumer/risk-decision.json), "
         "[resolution](doraops/consumer/resolution-final.json), "
-        "[DataGovOps report](datagovops/REPORT.md), and [summary](summary.json).\n\n"
+        "[DataGovOps report](datagovops/REPORT.md), [summary](summary.json), and the "
+        "[five-minute evidence presentation](index.html). Its machine-readable derivation "
+        "is [presentation.json](presentation.json).\n\n"
         "A remediation plan is not completed work; completion is additional fictional evidence. "
         "Finding closure does not reduce the independently assessed risk "
         "or approve risk acceptance. No vulnerability is classified as an incident, "

@@ -176,7 +176,7 @@ def _candidate_artifact(api, policy: dict, sha: str) -> dict:
 
 def readiness(api, policy: dict, sha: str) -> dict:
     if not policy["enabled"]:
-        return {"ready": False, "reason": "publication disabled until presentation phase"}
+        return {"ready": False, "reason": "publication policy is disabled"}
     protected_tag_check(api, policy)
     reference, release = existing_publication(api, policy)
     if release is not None and not release["draft"]:

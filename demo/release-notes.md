@@ -8,6 +8,12 @@ The evidence demonstrates two independently verified signature scopes, a real
 risk/remediation lifecycle, blocked closure without a passing retest, and rejection
 of altered or misbound inputs. Finding closure does not automatically lower risk.
 
+`portfolio-evidence.zip` now opens with a self-contained `index.html` five-minute
+walkthrough. Its `presentation.json` model is derived from actual receipts, signature
+reports, risk/resolution records and all fourteen rejection files. Every displayed
+evidence link includes the retained target's byte size and SHA-256. The verifier
+rebuilds both files byte-for-byte; the page uses no external resources or network calls.
+
 Download `portfolio-evidence.zip` for reports and underlying JSON evidence.
 `portfolio-wheels.zip` contains the exact Linux x86-64 / CPython 3.12 runtime wheel
 bytes used in CI; `REPLAY.md` explains hash verification and offline replay from
